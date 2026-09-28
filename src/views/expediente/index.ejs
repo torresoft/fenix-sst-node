@@ -9,7 +9,7 @@
       <li><code>verificar.html</code>: comprueba la integridad de los archivos en el equipo del inspector, sin conexi&oacute;n.</li>
       <li>CSV de la matriz de peligros vigente y de la &uacute;ltima autoevaluaci&oacute;n cerrada.</li>
     </ul>
-    <form method="post" action="/expediente" data-descarga>
+    <form method="post" action="/expediente" data-turbo="false">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <div class="form-check mb-3">
         <input class="form-check-input" type="checkbox" name="historico" value="1" id="historico">

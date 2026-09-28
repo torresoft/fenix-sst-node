@@ -1,12 +1,15 @@
-// Comportamiento comun: tooltips, CSRF en AJAX, confirmacion de formularios, autoenvio de filtros y barras de progreso.
+// Comportamiento comun: navegacion con Turbo, cargando, tooltips, CSRF en AJAX, confirmacion de formularios,
+// autoenvio de filtros, pestanas y barras de progreso. Se carga una vez en el head; lo de cada pagina va en iniciar().
 (function ($) {
   'use strict';
 
-  var token = $('meta[name="csrf-token"]').attr('content');
+  // La barra de Turbo inserta estilos en linea (CSP): se usa la capa propia.
+  if (window.Turbo) Turbo.config.drive.progressBarDelay = 1e9;
 
+  // El token cambia al iniciar sesion (sesion regenerada) y Turbo reemplaza la meta: se lee en cada envio.
   $.ajaxSetup({
-    headers: { 'X-CSRF-Token': token },
-    dataType: 'json'
+    dataType: 'json',
+    beforeSend: function (xhr) { xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content')); }
   });
 
   $(document).ajaxError(function (evento, xhr) {
@@ -14,13 +17,16 @@
   });
 
   $(document).on('submit', 'form.js-confirmar', function (e) {
-    if (!window.confirm($(this).data('confirmar') || '\u00bfConfirma la acci\u00f3n?')) e.preventDefault();
+    if (!window.confirm($(this).data('confirmar') || '¿Confirma la acción?')) e.preventDefault();
   });
 
-  $(document).on('change', '.js-autoenvio', function () { $(this).closest('form').trigger('submit'); });
+  // requestSubmit dispara el evento submit (Turbo lo intercepta); form.submit() recargaria toda la pagina.
+  $(document).on('change', '.js-autoenvio', function () {
+    var form = $(this).closest('form')[0];
+    if (form.requestSubmit) form.requestSubmit(); else form.submit();
+  });
 
   // Cargando: capa al navegar o enviar (con retardo para no parpadear) y barra superior durante AJAX.
-  // Las descargas (a[download], form[data-descarga]) no cambian de pagina: no la muestran.
   var capa = $('<div class="cargando" role="status" hidden><div class="cargando-caja"><i class="fas fa-circle-notch fa-spin"></i><span>Cargando...</span></div></div>');
   var barra = $('<div class="cargando-barra" hidden></div>');
   var retardo = null;
@@ -34,31 +40,13 @@
     clearTimeout(retardo);
     retardo = null;
     capa.prop('hidden', true);
-    $('.js-cargando-off').prop('disabled', false).removeClass('js-cargando-off');
   }
 
-  $(document).on('click', 'a[href]', function (e) {
-    var a = this;
-    var href = a.getAttribute('href');
-    if (e.isDefaultPrevented() || e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
-    if (!href || href.charAt(0) === '#' || /^(javascript|mailto|tel):/i.test(href)) return;
-    if (a.hasAttribute('download') || (a.target && a.target !== '_self') || a.origin !== location.origin) return;
-    if ($(a).is('[data-toggle],[data-widget],[data-dismiss]')) return;
-    if (a.pathname === location.pathname && a.search === location.search && a.hash) return;
-    mostrarCargando();
+  $(document).on('turbo:visit turbo:submit-start', mostrarCargando);
+  $(document).on('turbo:fetch-request-error', ocultarCargando);
+  $(document).on('turbo:submit-end', function (e) {
+    if (!e.originalEvent.detail.success) ocultarCargando();
   });
-
-  // Va despues de js-confirmar: si el usuario cancela, no se muestra.
-  $(document).on('submit', 'form', function (e) {
-    var form = $(this);
-    if (e.isDefaultPrevented() || form.is('[data-descarga]') || (this.target && this.target !== '_self')) return;
-    mostrarCargando();
-    // Tras armar el envio: un boton deshabilitado antes no manda su name/value.
-    setTimeout(function () { form.find('[type="submit"]:enabled').prop('disabled', true).addClass('js-cargando-off'); }, 0);
-  });
-
-  // Volver con el boton atras (bfcache) restaura la pagina con la capa puesta.
-  window.addEventListener('pageshow', ocultarCargando);
 
   $(document).ajaxSend(function () { ajaxActivos += 1; barra.prop('hidden', false); });
   $(document).ajaxComplete(function () {
@@ -66,8 +54,29 @@
     if (!ajaxActivos) barra.prop('hidden', true);
   });
 
-  $(function () {
-    $('body').append(capa, barra);
+  // El body nuevo llega del server sin el estado del menu lateral: se conserva el colapso.
+  document.addEventListener('turbo:before-render', function (e) {
+    e.detail.newBody.classList.toggle('sidebar-collapse', document.body.classList.contains('sidebar-collapse'));
+  });
+
+  // AdminLTE inicia el menu en el load de la ventana; si se entro por /login (sin menu), nunca lo hizo.
+  // Su listener es delegado en document: basta iniciarlo una vez.
+  var menuListo = false;
+  $(window).on('load', function () { if ($('[data-widget="treeview"]').length) menuListo = true; });
+
+  // Cada pagina (carga inicial o body nuevo de Turbo). Idempotente: puede llegar por varios eventos.
+  function iniciar(e) {
+    ocultarCargando();
+    var body = $('body');
+    if (body.data('iniciado')) return;
+    body.data('iniciado', true).append(capa, barra.prop('hidden', !ajaxActivos));
+    setTimeout(function () { body.removeClass('hold-transition'); }, 50);
+    if (body.find('.content-wrapper').length && $.fn.Layout) body.Layout('fixLayoutHeight');
+    if (e && e.type === 'turbo:render' && !menuListo && $('[data-widget="treeview"]').length) {
+      $('[data-widget="treeview"]').Treeview('init');
+      menuListo = true;
+    }
+
     $('[data-toggle="tooltip"]').tooltip();
     // Pestanas del lado del cliente: recuerda la ultima abierta de cada pagina (tras un POST se vuelve a ella).
     var clave = 'pestana:' + location.pathname;
@@ -84,5 +93,10 @@
       var v = Math.max(0, Math.min(100, Number($(this).data('valor')) || 0));
       $(this).css('width', v + '%').attr('aria-valuenow', v);
     });
-  });
+  }
+
+  // Tooltips abiertos quedan colgando del body viejo.
+  document.addEventListener('turbo:before-render', function () { $('.tooltip').remove(); });
+  $(iniciar);
+  $(document).on('turbo:load turbo:render', iniciar);
 }(jQuery));

@@ -2,7 +2,7 @@
 (function ($) {
   'use strict';
 
-  $('.js-plan').on('change', function () { window.location.href = '/planeacion?plan=' + encodeURIComponent(this.value); });
+  $('.js-plan').on('change', function () { Turbo.visit('/planeacion?plan=' + encodeURIComponent(this.value)); });
 
   $('.js-cerrar').on('click', function () {
     var form = $('#form-cerrar').attr('action', '/planeacion/actividades/' + encodeURIComponent($(this).data('id')) + '/cerrar');

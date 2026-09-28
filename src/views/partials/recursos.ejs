@@ -1,0 +1,12 @@
+  <%# Recursos comunes: Turbo mantiene el head entre visitas; ?v= cambia en cada arranque y fuerza recarga completa. %>
+  <meta name="turbo-cache-control" content="no-cache">
+  <meta name="turbo-prefetch" content="false">
+  <link rel="icon" type="image/png" href="/img/brand.png">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css?v=<%= v %>" data-turbo-track="reload">
+  <link rel="stylesheet" href="/vendor/adminlte/css/adminlte.min.css?v=<%= v %>" data-turbo-track="reload">
+  <link rel="stylesheet" href="/css/app.css?v=<%= v %>" data-turbo-track="reload">
+  <script src="/vendor/jquery/jquery.min.js?v=<%= v %>" data-turbo-track="reload"></script>
+  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js?v=<%= v %>" data-turbo-track="reload"></script>
+  <script src="/vendor/adminlte/js/adminlte.min.js?v=<%= v %>" data-turbo-track="reload"></script>
+  <script src="/vendor/turbo/turbo.es2017-umd.js?v=<%= v %>" data-turbo-track="reload"></script>
+  <script src="/js/comun/app.js?v=<%= v %>" data-turbo-track="reload"></script>

@@ -2,7 +2,7 @@
 (function ($) {
   'use strict';
 
-  $('.js-version').on('change', function () { window.location.href = '/peligros/' + encodeURIComponent(this.value); });
+  $('.js-version').on('change', function () { Turbo.visit('/peligros/' + encodeURIComponent(this.value)); });
 
   $('.js-control').on('click', function () {
     var b = $(this);

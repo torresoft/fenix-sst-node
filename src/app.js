@@ -16,6 +16,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.locals.fh = require('./fechas/calendario').textoBogota;
 app.locals.textoPlano = require('./comun/html').textoPlano;
 app.locals.pesos = require('./comun/html').pesos;
+// Version de los assets (?v=): cambia en cada arranque; con maxAge de 7 dias es lo que invalida la cache.
+app.locals.v = Date.now().toString(36);
 app.set('trust proxy', 'loopback');
 app.disable('x-powered-by');
 
@@ -24,11 +26,14 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'"],
-      styleSrc: ["'self'"],
+      // Hash: hoja fija de la barra de progreso de Turbo (se instala al arrancar; cambia si se actualiza Turbo).
+      styleSrc: ["'self'", "'sha256-WAyOw4V+FqDc35lQPyRADLBWbuNK8ahvYEaQIYF1+Ps='"],
       imgSrc: ["'self'", 'data:'],
       fontSrc: ["'self'"],
       formAction: ["'self'"],
       frameAncestors: ["'none'"],
+      // En desarrollo (http) subiria a https los redirects que sigue Turbo por fetch.
+      upgradeInsecureRequests: config.produccion ? [] : null,
     },
   },
 }));
@@ -40,6 +45,7 @@ const dep = (modulo) => require.resolve(modulo, { paths: [adminlte] });
 app.use('/vendor/jquery', estatico(path.dirname(dep('jquery'))));
 app.use('/vendor/bootstrap', estatico(path.join(path.dirname(dep('bootstrap')), '..')));
 app.use('/vendor/fontawesome', estatico(path.dirname(dep('@fortawesome/fontawesome-free/package.json'))));
+app.use('/vendor/turbo', estatico(path.dirname(require.resolve('@hotwired/turbo'))));
 app.use(estatico(path.join(raiz, 'public')));
 
 app.use(express.urlencoded({ extended: false, limit: '1mb' }));
@@ -66,6 +72,18 @@ app.use(contexto);
 // Paginas con sesion: el navegador no las guarda (boton atras tras logout en equipos compartidos).
 app.use((req, res, next) => {
   if (req.session.usuario) res.set('Cache-Control', 'no-store');
+  next();
+});
+
+// Turbo exige redirect tras un envio: un formulario re-pintado con errores sale como 422 para que lo muestre.
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.get('x-turbo-request-id')) {
+    const render = res.render.bind(res);
+    res.render = (...args) => {
+      if (res.statusCode === 200) res.status(422);
+      return render(...args);
+    };
+  }
   next();
 });
 

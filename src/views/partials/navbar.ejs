@@ -41,7 +41,7 @@
         <span class="dropdown-header"><%= usuario.email %></span>
         <a href="/cambiar-password" class="dropdown-item"><i class="fas fa-key mr-2"></i>Cambiar contrase&ntilde;a</a>
         <div class="dropdown-divider"></div>
-        <form method="post" action="/logout">
+        <form method="post" action="/logout" data-turbo="false">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt mr-2"></i>Cerrar sesi&oacute;n</button>
         </form>

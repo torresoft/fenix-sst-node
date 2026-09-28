@@ -130,6 +130,9 @@ Del skill `project-standards` aplican, adaptadas a Node:
 - Titulos: se imprimen escapados con `textoPlano()` (admite entidades en el texto fijo).
 - JS comun (`public/js/comun/app.js`): `form.js-confirmar[data-confirmar]`,
   `.js-autoenvio`, `.js-barra[data-valor]`. No duplicarlos en los modulos.
+- Navegacion con Turbo Drive: el JS de modulo se re-ejecuta en cada visita (enlazar a elementos, no a
+  `document`); redirigir con `Turbo.visit`; descargas con `a[download]` o `data-turbo="false"`;
+  un POST que re-pinta el formulario sale como 422 (lo hace `app.js`).
 - Obligaciones abiertas de una entidad: `plazos.abiertasDe(tx, entidad, id, plazo?)`.
   Acciones correctivas: `src/capa/servicio.js` (tabla unica `accion_mejora`).
 
