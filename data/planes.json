@@ -1,0 +1,42 @@
+{
+  "_corte": "2026-09-27",
+  "_nota": "Planes comerciales: decision del negocio, no norma. Limites editables desde Plataforma > Catalogos. null = sin limite. conjuntos = clasificaciones de la Res. 0312 que cubre el plan (estandar_conjunto.codigo).",
+  "planes": [
+    {
+      "codigo": "BASICO",
+      "nombre": "Básico · 7 estándares",
+      "descripcion": "Empresas de hasta 10 trabajadores en riesgo I, II o III (y unidades agropecuarias de 3 estándares).",
+      "conjuntos": ["AGRO_3", "MIN_7"],
+      "max_empresas": 1,
+      "max_usuarios": 3,
+      "orden": 1
+    },
+    {
+      "codigo": "INTERMEDIO",
+      "nombre": "Intermedio · 21 estándares",
+      "descripcion": "Empresas de 11 a 50 trabajadores en riesgo I, II o III.",
+      "conjuntos": ["AGRO_3", "MIN_7", "MED_21"],
+      "max_empresas": 1,
+      "max_usuarios": 8,
+      "orden": 2
+    },
+    {
+      "codigo": "COMPLETO",
+      "nombre": "Completo · 60 estándares",
+      "descripcion": "Más de 50 trabajadores o riesgo IV y V.",
+      "conjuntos": ["AGRO_3", "MIN_7", "MED_21", "FULL_60"],
+      "max_empresas": 3,
+      "max_usuarios": 25,
+      "orden": 3
+    },
+    {
+      "codigo": "CONSULTOR",
+      "nombre": "Consultor SST",
+      "descripcion": "Profesional o firma que administra el SG-SST de varias empresas desde una cuenta.",
+      "conjuntos": ["AGRO_3", "MIN_7", "MED_21", "FULL_60"],
+      "max_empresas": 20,
+      "max_usuarios": 10,
+      "orden": 4
+    }
+  ]
+}

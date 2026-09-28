@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<body style="font-family: Arial, sans-serif; color: #212529;">
+  <h2 style="margin-bottom: 4px;">Resumen de obligaciones SG-SST</h2>
+  <p style="margin-top: 0; color: #6c757d;">Corte <%= fecha %> &middot; <%= nombre %></p>
+  <p>
+    <strong style="color: #dc3545;"><%= vencidas.length %> vencida(s)</strong> &middot;
+    <strong style="color: #b8860b;"><%= porVencer.length %> por vencer</strong>
+  </p>
+  <% [['Vencidas', vencidas, '#dc3545'], ['Por vencer', porVencer, '#b8860b']].forEach(function (g) { if (!g[1].length) return; %>
+  <h3 style="color: <%= g[2] %>;"><%= g[0] %></h3>
+  <table cellpadding="6" cellspacing="0" border="1" style="border-collapse: collapse; border-color: #dee2e6; font-size: 13px;">
+    <tr style="background: #f8f9fa;">
+      <th align="left">Empresa</th><th align="left">Obligaci&oacute;n</th><th align="left">Norma</th><th align="left">Fecha l&iacute;mite</th><th align="left">Severidad</th>
+    </tr>
+    <% g[1].forEach(function (o) { %>
+    <tr>
+      <td><%= o.razon_social %></td>
+      <td><%= o.descripcion %></td>
+      <td><%= o.norma_codigo %></td>
+      <td><%= o.fecha_limite %></td>
+      <td><%= o.severidad %></td>
+    </tr>
+    <% }) %>
+  </table>
+  <% }) %>
+  <p><a href="<%= appUrl %>/obligaciones">Ver el panel de obligaciones</a></p>
+  <p style="font-size: 11px; color: #6c757d;">Mensaje autom&aacute;tico de F&eacute;nix SST. Este env&iacute;o queda registrado como evidencia de alerta.</p>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<%- include('../partials/cabecera') %>
+<%
+  var c = contratista;
+  var r = resumen;
+  var colorEstado = { en_evaluacion: 'info', aprobado: 'success', condicionado: 'warning', rechazado: 'danger', inactivo: 'secondary' };
+  var tabs = [['trabajadores', 'Trabajadores', r.sinInduccion, 'danger'], ['sgrl', 'Seguridad social', r.sinVerificacion, 'warning'], ['evaluaciones', 'Evaluaciones', 0, ''], ['datos', 'Datos', 0, '']];
+  var puedeOperar = c.estado === 'aprobado' || c.estado === 'condicionado';
+  var activos = trabajadores.filter(function (t) { return t.estado === 'activo'; });
+%>
+<div class="barra-acciones">
+  <a href="/contratistas" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Contratistas</a>
+  <span class="small">NIT <%= c.nit %> &middot; clase <strong><%= c.clase_riesgo %></strong> &middot; <span class="badge badge-<%= colorEstado[c.estado] %>"><%= c.estado.replace('_', ' ') %></span>
+    &middot; rotaci&oacute;n 12 meses: <%= r.ingresos12m %> ingresos / <%= r.retiros12m %> retiros</span>
+</div>
+<ul class="nav nav-tabs mb-3">
+  <% tabs.forEach(function (t) { %><li class="nav-item"><a class="nav-link<%= tab === t[0] ? ' active' : '' %>" href="?tab=<%= t[0] %>"><%= t[1] %><% if (t[2]) { %> <span class="badge badge-<%= t[3] %>"><%= t[2] %></span><% } %></a></li><% }) %>
+</ul>
+
+<% if (tab === 'trabajadores') { %>
+<% if (gestionar && puedeOperar) { %>
+<form method="post" action="/contratistas/<%= c.id %>/trabajadores" class="form-inline mb-3">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <select name="persona_id" class="form-control form-control-sm mr-2" required><option value="">Persona (vinculaci&oacute;n tipo contratista)</option><% personas.forEach(function (p) { %><option value="<%= p.id %>"><%= p.apellidos %> <%= p.nombres %></option><% }) %></select>
+  <input type="date" name="fecha_ingreso" class="form-control form-control-sm mr-2" value="<%= hoy %>" required>
+  <button class="btn btn-sm btn-primary"><i class="fas fa-user-plus mr-1"></i>Vincular</button>
+  <a href="/personas" class="small ml-2">Registrar persona</a>
+</form>
+<% } else if (!puedeOperar) { %><div class="callout callout-warning"><p class="mb-0">El contratista debe estar aprobado o condicionado para ingresar trabajadores.</p></div><% } %>
+<div class="card card-outline card-secondary"><div class="card-body p-0">
+  <table class="table table-bordered table-hover table-sm mb-0">
+    <thead><tr><th>Persona</th><th>Ingreso</th><th>Inducci&oacute;n</th><th>&Uacute;ltima verificaci&oacute;n SGRL</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+    <tbody>
+      <% trabajadores.forEach(function (t) { %><tr class="<%= t.estado !== 'activo' ? 'text-muted' : '' %>">
+        <td><a href="/personas/<%= t.persona_id %>"><%= t.apellidos %> <%= t.nombres %></a><br><small class="text-muted"><%= t.numero_documento %></small></td>
+        <td><%= t.fecha_ingreso %><%= t.fecha_retiro ? ' → ' + t.fecha_retiro : '' %></td>
+        <td><% if (t.induccion) { %><span class="badge badge-success"><%= t.induccion %></span><% } else { %><span class="badge badge-danger">Sin inducci&oacute;n</span><% } %></td>
+        <td><% if (t.periodo_sgrl) { %><%= t.periodo_sgrl %> <span class="badge badge-<%= t.ultimo_sgrl === 'conforme' ? 'success' : 'danger' %>"><%= t.ultimo_sgrl %></span><% } else { %><span class="text-muted small">Sin verificar</span><% } %></td>
+        <td><%= t.estado %></td>
+        <td class="text-center"><% if (gestionar && t.estado === 'activo') { %><form method="post" action="/contratistas/<%= c.id %>/trabajadores/<%= t.id %>/retirar" class="d-inline js-confirmar" data-confirmar="&iquest;Retirar al trabajador del contratista?"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-xs btn-default" data-toggle="tooltip" title="Retirar"><i class="fas fa-user-minus"></i></button></form><% } %></td>
+      </tr><% }) %>
+      <% if (!trabajadores.length) { %><tr><td colspan="6" class="text-muted">Sin trabajadores.</td></tr><% } %>
+    </tbody>
+  </table>
+</div></div>
+<% } %>
+
+<% if (tab === 'sgrl') { %>
+<% if (gestionar && activos.length) { %>
+<form method="post" action="/contratistas/<%= c.id %>/sgrl" class="card card-outline card-primary">
+  <div class="card-body pb-0"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="form-row">
+      <div class="form-group col-md-3"><label>Trabajador *</label><select name="persona_id" class="form-control form-control-sm" required><% activos.forEach(function (t) { %><option value="<%= t.persona_id %>"><%= t.apellidos %> <%= t.nombres %></option><% }) %></select></div>
+      <div class="form-group col-md-2"><label>Periodo *</label><input type="month" name="periodo" class="form-control form-control-sm" value="<%= r.periodoExigible %>" required></div>
+      <div class="form-group col-md-2"><label>Planilla PILA *</label><input type="text" name="planilla" class="form-control form-control-sm" maxlength="30" required></div>
+      <div class="form-group col-md-2"><label>ARL *</label><input type="text" name="arl" class="form-control form-control-sm" maxlength="100" required></div>
+      <div class="form-group col-md-2"><label>Fecha de pago *</label><input type="date" name="fecha_pago" class="form-control form-control-sm" max="<%= hoy %>" required></div>
+      <div class="form-group col-md-1"><label>Clase *</label><select name="clase_cotizada" class="form-control form-control-sm"><% clases.forEach(function (k) { %><option value="<%= k %>"<%= k === c.clase_riesgo ? ' selected' : '' %>><%= k %></option><% }) %></select></div>
+    </div>
+  </div>
+  <div class="card-footer text-right py-2"><button class="btn btn-sm btn-primary">Registrar verificaci&oacute;n</button></div>
+</form>
+<% } %>
+<div class="card card-outline card-secondary"><div class="card-body p-0">
+  <table class="table table-bordered table-sm mb-0">
+    <thead><tr><th>Periodo</th><th>Trabajador</th><th>Planilla</th><th>ARL</th><th>Pago</th><th class="text-center">Clase</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <% verificaciones.forEach(function (v) { %><tr><td><%= v.periodo %></td><td><%= v.apellidos %> <%= v.nombres %></td><td><%= v.planilla %></td><td><%= v.arl %></td><td><%= v.fecha_pago %></td><td class="text-center"><%= v.clase_cotizada %></td>
+        <td><span class="badge badge-<%= v.resultado === 'conforme' ? 'success' : 'danger' %>"><%= v.resultado %></span><% if (v.observacion) { %><br><small><%= v.observacion %></small><% } %></td></tr><% }) %>
+      <% if (!verificaciones.length) { %><tr><td colspan="7" class="text-muted">Sin verificaciones.</td></tr><% } %>
+    </tbody>
+  </table>
+</div></div>
+<% } %>
+
+<% if (tab === 'evaluaciones') { %>
+<% if (gestionar && c.estado !== 'inactivo') { %>
+<form method="post" action="/contratistas/<%= c.id %>/evaluar" class="card card-outline card-primary">
+  <div class="card-header"><h3 class="card-title">Nueva evaluaci&oacute;n</h3></div>
+  <div class="card-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="form-row">
+      <div class="form-group col-md-4"><label>Tipo *</label><select name="tipo" class="form-control"><option value="seleccion">Selecci&oacute;n</option><option value="desempeno">Desempe&ntilde;o</option></select></div>
+      <div class="form-group col-md-4"><label>Fecha *</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+    </div>
+    <% criterios.forEach(function (k, i) { %><div class="form-check"><input class="form-check-input" type="checkbox" name="cumple" value="<%= i %>" id="cr-<%= i %>"><label class="form-check-label" for="cr-<%= i %>"><%= k %></label></div><% }) %>
+    <div class="form-group mt-3 mb-0"><label>Observaci&oacute;n</label><textarea name="observacion" class="form-control" rows="2" maxlength="1000"></textarea></div>
+  </div>
+  <div class="card-footer text-right"><button class="btn btn-primary">Registrar evaluaci&oacute;n</button></div>
+</form>
+<% } %>
+<% evaluaciones.forEach(function (e) { %>
+<div class="card card-outline card-<%= colorEstado[e.resultado] %> collapsed-card">
+  <div class="card-header"><h3 class="card-title"><%= e.tipo === 'seleccion' ? 'Selección' : 'Desempeño' %> &middot; <%= e.fecha %></h3>
+    <div class="card-tools"><span class="badge badge-<%= colorEstado[e.resultado] %>"><%= e.puntaje %>% &middot; <%= e.resultado %></span>
+      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button></div></div>
+  <div class="card-body"><ul class="list-unstyled mb-0"><% e.respuestas.forEach(function (x) { %><li><i class="fas fa-<%= x.cumple ? 'check text-success' : 'times text-danger' %> mr-1"></i><%= x.criterio %></li><% }) %></ul>
+    <% if (e.observacion) { %><p class="small mt-2 mb-0"><%= e.observacion %></p><% } %></div>
+</div>
+<% }) %>
+<% if (!evaluaciones.length) { %><p class="text-muted">Sin evaluaciones.</p><% } %>
+<% } %>
+
+<% if (tab === 'datos') { %>
+<% if (gestionar) { %>
+<form method="post" action="/contratistas/<%= c.id %>/editar" class="card card-outline card-secondary">
+  <div class="card-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><%- include('_datos', { c: c, clases: clases }) %></div>
+  <div class="card-footer d-flex justify-content-between"><button class="btn btn-primary">Guardar</button></div>
+</form>
+<% if (c.estado !== 'inactivo') { %><form method="post" action="/contratistas/<%= c.id %>/inactivar" class="js-confirmar" data-confirmar="&iquest;Inactivar el contratista?"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-sm btn-outline-secondary">Inactivar contratista</button></form><% } %>
+<% } else { %>
+<div class="card card-outline card-secondary"><div class="card-body"><dl class="row mb-0">
+  <dt class="col-sm-3">Actividad</dt><dd class="col-sm-9"><%= c.actividad %></dd>
+  <dt class="col-sm-3">Contacto</dt><dd class="col-sm-9"><%= c.contacto_nombre || '' %> <%= c.contacto_email || '' %></dd>
+  <dt class="col-sm-3">Contrato</dt><dd class="col-sm-9"><%= c.fecha_inicio || '' %> &ndash; <%= c.fecha_fin || '' %></dd>
+</dl></div></div>
+<% } %>
+<% } %>
+<%- include('../partials/pie') %>

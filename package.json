@@ -1,0 +1,35 @@
+{
+  "name": "fenix-sst",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SG-SST SaaS multiempresa (TORRESOFT)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test test/",
+    "catalogos": "node scripts/cargar-catalogos.js",
+    "alta-tenant": "node scripts/alta-tenant.js",
+    "test:integracion": "node scripts/integracion.js",
+    "job": "node scripts/job-diario.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "admin-lte": "3.2.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-mysql-session": "^3.0.3",
+    "express-rate-limit": "^7.4.0",
+    "express-session": "^1.18.0",
+    "helmet": "^7.1.0",
+    "multer": "^2.4.0",
+    "mysql2": "^3.24.4",
+    "nodemailer": "^10.0.11"
+  },
+  "overrides": {
+    "mysql2": "$mysql2"
+  }
+}

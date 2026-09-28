@@ -1,0 +1,37 @@
+{
+  "_corte": "2026-08-31",
+  "_advertencia": "Verificar vigencias en el Gestor Normativo de Funcion Publica antes de usar con efectos juridicos.",
+  "_fuente": "Decreto Ley 1295 de 1994 art. 26; Decreto 1607 de 2002 (tabla de actividades economicas)",
+  "clases": [
+    {
+      "clase": "I",
+      "nivel": 1,
+      "descripcion": "Riesgo minimo",
+      "ejemplos": "Actividades financieras, trabajos de oficina, centros educativos"
+    },
+    {
+      "clase": "II",
+      "nivel": 2,
+      "descripcion": "Riesgo bajo",
+      "ejemplos": "Algunos procesos manufactureros, almacenes por departamento"
+    },
+    {
+      "clase": "III",
+      "nivel": 3,
+      "descripcion": "Riesgo medio",
+      "ejemplos": "Manufactura de alimentos, agencias de viaje, algunas obras civiles"
+    },
+    {
+      "clase": "IV",
+      "nivel": 4,
+      "descripcion": "Riesgo alto",
+      "ejemplos": "Procesos manufactureros con maquinaria pesada, transporte, construccion"
+    },
+    {
+      "clase": "V",
+      "nivel": 5,
+      "descripcion": "Riesgo maximo",
+      "ejemplos": "Areneras, mineria, manejo de asbesto, explosivos, construccion pesada"
+    }
+  ]
+}

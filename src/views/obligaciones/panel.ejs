@@ -1,0 +1,171 @@
+<%- include('../partials/cabecera') %>
+<%
+  var severidadClase = { critica: 'danger', alta: 'warning', media: 'info' };
+  var severidadTexto = { critica: 'Cr&iacute;tica', alta: 'Alta', media: 'Media' };
+  function textoDias(o) {
+    var r = o.restantes, u = r.habiles ? ' h&aacute;bil' : '';
+    var plural = Math.abs(r.dias) === 1 ? '' : (r.habiles ? 'es' : 's');
+    if (o.estado === 'cumplido') return o.tarde ? 'Cumplida tarde' : 'A tiempo';
+    if (r.dias < 0) return 'Vencida hace ' + Math.abs(r.dias) + ' d&iacute;a' + (Math.abs(r.dias) === 1 ? '' : 's') + (r.habiles ? ' h&aacute;bil' + plural : '');
+    if (r.dias === 0) return 'Vence hoy';
+    return r.dias + ' d&iacute;a' + (r.dias === 1 ? '' : 's') + u + plural;
+  }
+%>
+<div class="barra-acciones">
+  <form method="get" action="/obligaciones" class="form-inline" id="form-filtros">
+      <div class="form-group mr-3 mb-1">
+        <label for="f-empresa" class="small mr-1">Empresa</label>
+        <select id="f-empresa" name="empresa" class="form-control form-control-sm js-autoenvio">
+          <option value="">Todas mis empresas</option>
+          <% empresasFiltro.forEach(function (e) { %>
+          <option value="<%= e.empresa_id %>"<%= filtro.empresa === e.empresa_id ? ' selected' : '' %>><%= e.razon_social %> (NIT <%= e.nit %>)</option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="form-group mr-3 mb-1">
+        <label for="f-responsable" class="small mr-1">Responsable</label>
+        <select id="f-responsable" name="responsable" class="form-control form-control-sm js-autoenvio">
+          <option value="">Todos</option>
+          <option value="sin"<%= filtro.responsable === 'sin' ? ' selected' : '' %>>Sin asignar</option>
+          <% responsablesFiltro.forEach(function (u) { %>
+          <option value="<%= u.id %>"<%= filtro.responsable === u.id ? ' selected' : '' %>><%= u.nombre %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="form-group mr-3 mb-1">
+        <a href="/obligaciones" class="btn btn-sm btn-default">Limpiar</a>
+      </div>
+    </form>
+</div>
+
+<%
+  var activo = (grupos.find(function (g) { return g.estado !== 'cumplido' && g.filas.length; }) || grupos[0]).estado;
+%>
+<ul class="nav nav-tabs" role="tablist">
+  <% grupos.forEach(function (g) { %>
+  <li class="nav-item"><a class="nav-link<%= g.estado === activo ? ' active' : '' %>" data-toggle="tab" href="#tab-<%= g.estado %>" role="tab">
+    <i class="fas <%= g.icono %> mr-1 text-<%= g.color %>"></i><%- g.titulo %> <span class="badge badge-<%= g.filas.length ? g.color : 'light' %>"><%= g.filas.length %></span></a></li>
+  <% }) %>
+</ul>
+<div class="tab-content">
+<% grupos.forEach(function (g) { %>
+<div class="tab-pane fade<%= g.estado === activo ? ' show active' : '' %>" id="tab-<%= g.estado %>" role="tabpanel">
+<div class="card card-outline card-<%= g.color %> border-top-0">
+  <div class="card-body p-0">
+    <% if (!g.filas.length) { %>
+    <p class="text-muted p-3 mb-0">Sin obligaciones en este estado.</p>
+    <% } else { %>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead>
+          <tr>
+            <th>Severidad</th>
+            <th>Obligaci&oacute;n</th>
+            <th>Empresa</th>
+            <th>Origen</th>
+            <th>Disparo</th>
+            <th>L&iacute;mite</th>
+            <th>Plazo</th>
+            <th>Responsable</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% g.filas.forEach(function (o) { %>
+          <tr class="<%= o.severidad === 'critica' && o.estado !== 'cumplido' ? 'fila-critica' : '' %>">
+            <td><span class="badge badge-<%= severidadClase[o.severidad] %>"><%- severidadTexto[o.severidad] %></span></td>
+            <td>
+              <%= o.descripcion %>
+              <br><small class="text-muted"><%= o.norma_codigo %> &middot; <%= o.plazo_codigo %></small>
+              <% if (o.estado === 'cumplido' && o.observacion) { %><br><small><i class="fas fa-comment-alt mr-1"></i><%= o.observacion %></small><% } %>
+            </td>
+            <td><%= o.razon_social %></td>
+            <td><small><%= o.entidad_origen_tipo %> #<%= o.entidad_origen_id %></small></td>
+            <td class="text-nowrap"><%= o.fecha_disparo %></td>
+            <td class="text-nowrap"><strong><%= o.fecha_limite %></strong><% if (o.fecha_cumplimiento) { %><br><small>Cumplida <%= o.fecha_cumplimiento %></small><% } %></td>
+            <td class="text-nowrap"><%- textoDias(o) %><% if (o.escalado_en) { %><br><span class="badge badge-dark" data-toggle="tooltip" title="Escalada al representante legal">Escalada</span><% } %></td>
+            <td><%= o.responsable || '' %><% if (!o.responsable) { %><span class="text-muted">Sin asignar</span><% } %></td>
+            <td class="text-center text-nowrap">
+              <% if (o.gestionable && o.estado !== 'cumplido') { %>
+              <button type="button" class="btn btn-xs btn-success js-cumplir" data-toggle="tooltip" title="Registrar cumplimiento"
+                      data-id="<%= o.id %>" data-empresa="<%= o.empresa_id %>" data-descripcion="<%= o.descripcion %>"
+                      data-disparo="<%= o.fecha_disparo %>">
+                <i class="fas fa-check"></i>
+              </button>
+              <button type="button" class="btn btn-xs btn-default js-responsable" data-toggle="tooltip" title="Asignar responsable"
+                      data-id="<%= o.id %>" data-empresa="<%= o.empresa_id %>" data-descripcion="<%= o.descripcion %>"
+                      data-responsable="<%= o.responsable_id || '' %>">
+                <i class="fas fa-user-edit"></i>
+              </button>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>
+</div>
+</div>
+<% }) %>
+</div>
+
+<div class="modal fade" id="modal-cumplir" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-cumplir">
+      <div class="modal-header">
+        <h5 class="modal-title">Registrar cumplimiento</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="empresa_id" value="">
+        <input type="hidden" name="volver" value="<%= volver %>">
+        <p class="js-descripcion font-weight-bold"></p>
+        <div class="form-group">
+          <label for="c-fecha">Fecha de cumplimiento *</label>
+          <input type="date" id="c-fecha" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required>
+        </div>
+        <div class="form-group">
+          <label for="c-observacion">Observaci&oacute;n y soporte *</label>
+          <textarea id="c-observacion" name="observacion" class="form-control" rows="3" minlength="5" maxlength="500" required
+                    placeholder="Ej.: FURAT radicado en la ARL con n&uacute;mero ..."></textarea>
+        </div>
+        <p class="small text-muted mb-0">El registro queda en la auditor&iacute;a y no se puede modificar.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success"><i class="fas fa-check mr-1"></i>Registrar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-responsable" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-responsable">
+      <div class="modal-header">
+        <h5 class="modal-title">Asignar responsable</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="empresa_id" value="">
+        <input type="hidden" name="volver" value="<%= volver %>">
+        <p class="js-descripcion font-weight-bold"></p>
+        <div class="form-group">
+          <label for="r-responsable">Responsable</label>
+          <select id="r-responsable" name="responsable_id" class="form-control">
+            <option value="">Sin asignar</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<%- include('../partials/pie') %>

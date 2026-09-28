@@ -1,0 +1,54 @@
+<%- include('../partials/cabecera') %>
+<%
+  var textoTipo = { incidente: 'Incidente', accidente: 'Accidente de trabajo', enfermedad: 'Enfermedad laboral' };
+  var colorGravedad = { leve: 'info', grave: 'warning', mortal: 'danger' };
+  var colorEstado = { registrado: 'secondary', reportado: 'info', investigado: 'primary', cerrado: 'success', anulado: 'dark' };
+%>
+<%- include('../partials/franja', { items: [
+  { valor: est.incidentes, texto: 'incidentes' },
+  { valor: est.at, texto: 'accidentes de trabajo', color: est.at ? 'info' : '' },
+  { valor: est.at_grave, texto: 'AT graves', color: est.at_grave ? 'warning' : '' },
+  { valor: est.at_mortal, texto: 'AT mortales', color: est.at_mortal ? 'danger' : '' },
+  { valor: est.el, texto: 'enfermedades laborales', color: est.el ? 'primary' : '' },
+  { valor: est.dias_incapacidad, texto: 'd&iacute;as de incapacidad' }
+] }) %>
+
+<div class="barra-acciones">
+  <form method="get" action="/eventos" class="form-inline" id="form-filtros">
+    <label for="f-anio" class="small mr-1">A&ntilde;o</label>
+    <input type="number" id="f-anio" name="anio" class="form-control form-control-sm mr-3 js-autoenvio" value="<%= filtros.anio %>" min="2000" max="2100">
+    <label for="f-tipo" class="small mr-1">Tipo</label>
+    <select id="f-tipo" name="tipo" class="form-control form-control-sm js-autoenvio">
+      <option value="">Todos</option>
+      <% Object.keys(textoTipo).forEach(function (k) { %><option value="<%= k %>"<%= filtros.tipo === k ? ' selected' : '' %>><%= textoTipo[k] %></option><% }) %>
+    </select>
+  </form>
+  <% if (gestionar) { %><a href="/eventos/nuevo" class="btn btn-sm btn-danger"><i class="fas fa-plus mr-1"></i>Registrar evento</a><% } %>
+</div>
+
+<div class="card card-outline card-secondary">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead><tr><th>C&oacute;digo</th><th>Tipo</th><th>Fecha</th><th>Persona</th><th>Centro</th><th>Incapacidad</th><th>Pr&oacute;ximo plazo</th><th>Estado</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+        <tbody>
+          <% eventos.forEach(function (e) { %>
+          <tr class="<%= Number(e.vencidas) ? 'fila-critica' : '' %>">
+            <td class="text-nowrap"><strong><%= e.codigo %></strong></td>
+            <td><%= textoTipo[e.tipo] %><% if (e.gravedad) { %> <span class="badge badge-<%= colorGravedad[e.gravedad] %>"><%= e.gravedad %></span><% } %></td>
+            <td class="text-nowrap"><%= e.fecha_base %></td>
+            <td><%= e.nombres ? e.nombres + ' ' + e.apellidos : '-' %></td>
+            <td><%= e.centro || '' %></td>
+            <td><%= e.dias_incapacidad %></td>
+            <td class="text-nowrap<%= e.proximo_plazo && e.proximo_plazo < hoy ? ' text-danger font-weight-bold' : '' %>"><%= e.proximo_plazo || '' %><% if (Number(e.vencidas)) { %> <span class="badge badge-danger"><%= e.vencidas %> vencida(s)</span><% } %></td>
+            <td><span class="badge badge-<%= colorEstado[e.estado] %>"><%= e.estado %></span></td>
+            <td class="text-center"><a href="/eventos/<%= e.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Abrir"><i class="fas fa-folder-open"></i></a></td>
+          </tr>
+          <% }) %>
+          <% if (!eventos.length) { %><tr><td colspan="9" class="text-muted">Sin eventos registrados en <%= filtros.anio %>.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/pie') %>

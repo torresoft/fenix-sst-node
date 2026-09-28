@@ -1,0 +1,6 @@
+<%# Contadores en linea. items: [{ valor, texto, color?, ruta? }] %>
+<div class="card"><div class="card-body py-2"><div class="franja-estado">
+  <% items.forEach(function (i) { var tag = i.ruta ? 'a' : 'div'; %>
+  <<%= tag %> class="franja-item"<% if (i.ruta) { %> href="<%= i.ruta %>"<% } %>><span class="franja-valor<%= i.color ? ' text-' + i.color : '' %>"><%= i.valor %></span><span class="franja-texto"><%- i.texto %></span></<%= tag %>>
+  <% }) %>
+</div></div></div>

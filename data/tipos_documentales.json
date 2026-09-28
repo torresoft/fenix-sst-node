@@ -1,0 +1,558 @@
+{
+  "_corte": "2026-08-31",
+  "_advertencia": "Verificar vigencias en el Gestor Normativo de Funcion Publica antes de usar con efectos juridicos.",
+  "_nota": "retencion=20_anios_desde_retiro corresponde a los 5 tipos del art. 2.2.4.6.13. El resto sigue la tabla de retencion documental de la empresa (paragrafo del mismo articulo).",
+  "tipos": [
+    {
+      "codigo": "POLITICA_SST",
+      "nombre": "Politica de SST firmada y fechada",
+      "origen_articulo": "2.2.4.6.12 num.1",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "M03",
+      "vencimiento_codigo": "REVISION_POLITICA",
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "RESPONSABILIDADES",
+      "nombre": "Asignacion de responsabilidades",
+      "origen_articulo": "2.2.4.6.12 num.2",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "M06",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "MATRIZ_PELIGROS",
+      "nombre": "Identificacion anual de peligros y valoracion de riesgos",
+      "origen_articulo": "2.2.4.6.12 num.3",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "M05",
+      "vencimiento_codigo": "MATRIZ_PELIGROS",
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "COND_SALUD",
+      "nombre": "Informe de condiciones de salud y perfil sociodemografico",
+      "origen_articulo": "2.2.4.6.12 num.4",
+      "retencion": "20_anios_desde_retiro",
+      "requiere_firma": false,
+      "vigencia_meses": 12,
+      "modulo": "M09",
+      "vencimiento_codigo": "DIAGNOSTICO_SALUD",
+      "solo_referencia": false,
+      "modalidades_firma": []
+    },
+    {
+      "codigo": "PLAN_ANUAL",
+      "nombre": "Plan de trabajo anual firmado",
+      "origen_articulo": "2.2.4.6.12 num.5",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "M06",
+      "vencimiento_codigo": "PLAN_TRABAJO",
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "PROG_CAPACITACION",
+      "nombre": "Programa de capacitacion anual firmado",
+      "origen_articulo": "2.2.4.6.12 num.6",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "M07",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "PROCEDIMIENTO",
+      "nombre": "Procedimientos e instructivos internos",
+      "origen_articulo": "2.2.4.6.12 num.7",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": false,
+      "vigencia_meses": null,
+      "modulo": "M03",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": []
+    },
+    {
+      "codigo": "ENTREGA_EPP",
+      "nombre": "Registro de entrega de elementos de proteccion personal",
+      "origen_articulo": "2.2.4.6.12 num.8",
+      "retencion": "20_anios_desde_retiro",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M14",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "ENTREGA_PROTOCOLOS",
+      "nombre": "Registro de entrega de protocolos de seguridad",
+      "origen_articulo": "2.2.4.6.12 num.9",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M03",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "AMENAZAS_VULNERAB",
+      "nombre": "Identificacion de amenazas y evaluacion de vulnerabilidad",
+      "origen_articulo": "2.2.4.6.12 num.10",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": false,
+      "vigencia_meses": 12,
+      "modulo": "M13",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": []
+    },
+    {
+      "codigo": "PROG_VIGILANCIA",
+      "nombre": "Programa de vigilancia epidemiologica",
+      "origen_articulo": "2.2.4.6.12 num.11",
+      "retencion": "20_anios_desde_retiro",
+      "requiere_firma": false,
+      "vigencia_meses": 12,
+      "modulo": "M09",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": []
+    },
+    {
+      "codigo": "MEDICION_AMBIENTAL",
+      "nombre": "Resultados de mediciones y monitoreo de ambientes de trabajo",
+      "origen_articulo": "2.2.4.6.13 num.3",
+      "retencion": "20_anios_desde_retiro",
+      "requiere_firma": false,
+      "vigencia_meses": null,
+      "modulo": "M05",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": []
+    },
+    {
+      "codigo": "REG_INSPECCION",
+      "nombre": "Formatos de registros de inspecciones",
+      "origen_articulo": "2.2.4.6.12 num.12",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M14",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "MATRIZ_LEGAL",
+      "nombre": "Matriz legal actualizada",
+      "origen_articulo": "2.2.4.6.12 num.13",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": false,
+      "vigencia_meses": 12,
+      "modulo": "M04",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": []
+    },
+    {
+      "codigo": "ACTA_COPASST",
+      "nombre": "Evidencia de gestion del COPASST o Vigia",
+      "origen_articulo": "2.2.4.6.12 num.14",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M10",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "ACTA_CONVIVENCIA",
+      "nombre": "Evidencia de gestion del Comite de Convivencia",
+      "origen_articulo": "2.2.4.6.12 num.15",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M10",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "PLAN_EMERGENCIAS",
+      "nombre": "Plan de prevencion, preparacion y respuesta ante emergencias",
+      "origen_articulo": "2.2.4.6.12 num.16",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "M13",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "REG_CAPACITACION",
+      "nombre": "Registro de actividades de capacitacion, formacion y entrenamiento",
+      "origen_articulo": "2.2.4.6.13 num.4",
+      "retencion": "20_anios_desde_retiro",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M07",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "CONCEPTO_APTITUD",
+      "nombre": "Concepto de aptitud medica ocupacional",
+      "origen_articulo": "2.2.4.6.13 num.1",
+      "retencion": "20_anios_desde_retiro",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M09",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "digital_externa"
+      ]
+    },
+    {
+      "codigo": "EXAMEN_COMPLEMENT",
+      "nombre": "Resultados de examenes complementarios (referencia, no contenido)",
+      "origen_articulo": "2.2.4.6.13 num.2",
+      "retencion": "20_anios_desde_retiro",
+      "requiere_firma": false,
+      "vigencia_meses": null,
+      "modulo": "M09",
+      "vencimiento_codigo": null,
+      "solo_referencia": true,
+      "modalidades_firma": []
+    },
+    {
+      "codigo": "EVAL_INICIAL",
+      "nombre": "Evaluacion inicial del SG-SST",
+      "origen_articulo": "2.2.4.6.16",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M11",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "AUTOEVALUACION",
+      "nombre": "Autoevaluacion de estandares minimos",
+      "origen_articulo": "RES-0312-2019 art.26",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "M11",
+      "vencimiento_codigo": "AUTOEVALUACION",
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "PLAN_MEJORAMIENTO",
+      "nombre": "Plan de mejoramiento",
+      "origen_articulo": "RES-0312-2019 art.28",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "M11",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "INV_ACCIDENTE",
+      "nombre": "Informe de investigacion de incidente, AT o EL",
+      "origen_articulo": "RES-1401-2007",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M08",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "FURAT",
+      "nombre": "Formato Unico de Reporte de Accidente de Trabajo",
+      "origen_articulo": "RES-156-2005",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M08",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "FUREL",
+      "nombre": "Formato Unico de Reporte de Enfermedad Laboral",
+      "origen_articulo": "RES-156-2005",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M08",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "INFORME_AUDITORIA",
+      "nombre": "Informe de auditoria interna",
+      "origen_articulo": "2.2.4.6.29",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "transversal",
+      "vencimiento_codigo": "AUDITORIA_INTERNA",
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "ACTA_REVISION_DIR",
+      "nombre": "Acta de revision por la alta direccion",
+      "origen_articulo": "2.2.4.6.31",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "transversal",
+      "vencimiento_codigo": "REVISION_DIRECCION",
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "PERMISO_ALTURAS",
+      "nombre": "Permiso de trabajo en alturas",
+      "origen_articulo": "RES-4272-2021 art.15",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M15",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "PERMISO_CONFINADO",
+      "nombre": "Permiso de entrada a espacio confinado",
+      "origen_articulo": "RES-0491-2020",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M15",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "PROTOCOLO_ACOSO",
+      "nombre": "Politica y protocolo contra acoso, violencia y discriminacion",
+      "origen_articulo": "DEC-1040-2026",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "M17",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "AUTORIZACION_DATOS",
+      "nombre": "Autorizacion de tratamiento de datos personales",
+      "origen_articulo": "LEY-1581-2012",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "transversal",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "INFORME_PSICOSOCIAL",
+      "nombre": "Informe consolidado de riesgo psicosocial",
+      "origen_articulo": "RES-2764-2022",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": null,
+      "modulo": "M17",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "manuscrita",
+        "digital_externa"
+      ]
+    },
+    {
+      "codigo": "PROG_SALUD_MENTAL",
+      "nombre": "Programa de salud mental y prevencion del consumo de SPA",
+      "origen_articulo": "DEC-0728-2025",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "M17",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "INFORME_SIMULACRO",
+      "nombre": "Informe de simulacro con evaluacion",
+      "origen_articulo": "DEC-1072-2015",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": false,
+      "vigencia_meses": null,
+      "modulo": "M13",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "PESV",
+      "nombre": "Plan Estrategico de Seguridad Vial",
+      "origen_articulo": "RES-40595-2022",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": true,
+      "vigencia_meses": 12,
+      "modulo": "M18",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "EVIDENCIA_PESV",
+      "nombre": "Evidencia de paso del PESV",
+      "origen_articulo": "RES-40595-2022",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": false,
+      "vigencia_meses": null,
+      "modulo": "M18",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    },
+    {
+      "codigo": "FDS",
+      "nombre": "Ficha de datos de seguridad (16 secciones)",
+      "origen_articulo": "DEC-1496-2018",
+      "retencion": "segun_tabla_retencion_empresa",
+      "requiere_firma": false,
+      "vigencia_meses": 60,
+      "modulo": "M18",
+      "vencimiento_codigo": null,
+      "solo_referencia": false,
+      "modalidades_firma": [
+        "electronica",
+        "manuscrita"
+      ]
+    }
+  ],
+  "_nota_vencimiento": "vencimiento_codigo enlaza el tipo con vencimiento_recurrente: un documento vigente con fecha_vence genera la obligacion de renovarlo.",
+  "_nota_referencia": "solo_referencia=true: el sistema NO admite archivo (historia clinica, Res. 1843 de 2025). Solo se registra custodio y referencia.",
+  "_nota_firma": "modalidades_firma: electronica (flujo propio: clave + OTP + manifiesto, Ley 527 / D. 2364), manuscrita (documento fisico firmado y escaneado), digital_externa (firma digital certificada del emisor, p. ej. medico de la IPS)."
+}

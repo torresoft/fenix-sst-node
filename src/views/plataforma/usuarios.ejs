@@ -1,0 +1,33 @@
+<%- include('../partials/cabecera') %>
+<div class="barra-acciones">
+  <form method="get" action="/plataforma/usuarios" class="form-inline">
+    <input type="search" name="q" class="form-control form-control-sm mr-1" value="<%= q %>" placeholder="Correo, nombre o documento" maxlength="100">
+    <button type="submit" class="btn btn-sm btn-default"><i class="fas fa-search"></i></button>
+  </form>
+  <span class="small text-muted"><%= usuarios.length %> cuenta(s)<%= usuarios.length === 500 ? ' (primeras 500: refine la b&uacute;squeda)' : '' %></span>
+</div>
+<div class="card card-outline card-primary">
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Usuario</th><th>Documento</th><th class="text-center">Clientes</th><th>&Uacute;ltimo acceso</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+      <tbody>
+        <% usuarios.forEach(function (u) { %>
+        <tr class="<%= u.estado === 'activo' ? '' : 'text-muted' %>">
+          <td><%= u.nombres %> <%= u.apellidos %><% if (Number(u.es_superadmin)) { %> <span class="badge badge-dark">superadmin</span><% } %><br><small><%= u.email %></small></td>
+          <td><%= u.tipo_documento %> <%= u.numero_documento %></td>
+          <td class="text-center"><%= u.tenants %></td>
+          <td class="text-nowrap"><small><%= u.ultimo_acceso ? fh(u.ultimo_acceso) : 'Nunca' %></small></td>
+          <td>
+            <span class="badge badge-<%= u.estado === 'activo' ? 'success' : 'secondary' %>"><%= u.estado %></span>
+            <% if (Number(u.bloqueado)) { %><span class="badge badge-danger">bloqueada</span><% } %>
+            <% if (Number(u.debe_cambiar_password)) { %><span class="badge badge-light" data-toggle="tooltip" title="Tiene contrase&ntilde;a temporal">temporal</span><% } %>
+          </td>
+          <td class="text-center"><a href="/plataforma/usuarios/<%= u.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Ver cuenta"><i class="fas fa-user-cog"></i></a></td>
+        </tr>
+        <% }) %>
+        <% if (!usuarios.length) { %><tr><td colspan="6" class="text-muted">Sin resultados.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/pie') %>

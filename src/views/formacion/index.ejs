@@ -1,0 +1,152 @@
+<%- include('../partials/cabecera') %>
+<%
+  var icono = { vigente: 'fa-check-circle text-success', por_vencer: 'fa-clock text-warning', vencida: 'fa-times-circle text-danger', falta: 'fa-circle text-muted' };
+  var texto = { vigente: 'Vigente', por_vencer: 'Por vencer', vencida: 'Vencida', falta: 'Falta' };
+  var nombreTipo = {}; matriz.tipos.forEach(function (t) { nombreTipo[t.codigo] = t.nombre; });
+  var tabs = [['matriz', 'Matriz de competencias'], ['capacitaciones', 'Capacitaciones'], ['requisitos', 'Requisitos por cargo']];
+%>
+<ul class="nav nav-tabs mb-3">
+  <% tabs.forEach(function (t) { %><li class="nav-item"><a class="nav-link<%= tab === t[0] ? ' active' : '' %>" href="?tab=<%= t[0] %>"><%= t[1] %></a></li><% }) %>
+</ul>
+
+<% if (tab === 'matriz') { %>
+<div class="barra-acciones">
+  <div class="small">
+    <span class="mr-3"><i class="fas fa-check-circle text-success"></i> Vigentes: <%= matriz.resumen.vigente %></span>
+    <span class="mr-3"><i class="fas fa-clock text-warning"></i> Por vencer: <%= matriz.resumen.por_vencer %></span>
+    <span class="mr-3"><i class="fas fa-times-circle text-danger"></i> Vencidas: <%= matriz.resumen.vencida %></span>
+    <span><i class="fas fa-circle text-muted"></i> Faltan: <%= matriz.resumen.falta %></span>
+  </div>
+</div>
+<div class="card card-outline card-primary">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead><tr><th>Persona</th><th>Cargo</th><% matriz.columnas.forEach(function (c) { %><th class="text-center small"><%= nombreTipo[c] %></th><% }) %></tr></thead>
+        <tbody>
+          <% matriz.filas.forEach(function (f) { %>
+          <tr>
+            <td><a href="/personas/<%= f.persona.id %>"><%= f.persona.apellidos %> <%= f.persona.nombres %></a></td>
+            <td class="small"><%= f.persona.cargo || '-' %></td>
+            <% matriz.columnas.forEach(function (c) { var x = f.celdas[c]; %>
+            <td class="text-center">
+              <% if (!x) { %><span class="text-muted small">-</span><% } else { %>
+              <% if (gestionar) { %><button type="button" class="btn btn-link btn-sm p-0 js-competencia" data-persona="<%= f.persona.id %>" data-nombre="<%= f.persona.nombres %> <%= f.persona.apellidos %>" data-tipo="<%= c %>" data-toggle="tooltip" title="<%= texto[x.estado] %><%= x.competencia && x.competencia.fecha_vence ? ' hasta ' + x.competencia.fecha_vence : '' %> &middot; registrar"><% } %>
+              <i class="fas <%= icono[x.estado] %>"></i>
+              <% if (gestionar) { %></button><% } %>
+              <% } %>
+            </td>
+            <% }) %>
+          </tr>
+          <% }) %>
+          <% if (!matriz.filas.length) { %><tr><td colspan="<%= matriz.columnas.length + 2 %>" class="text-muted">Sin personas vinculadas.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<% } %>
+
+<% if (tab === 'capacitaciones') { %>
+<div class="barra-acciones">
+  <form method="get" class="form-inline"><input type="hidden" name="tab" value="capacitaciones"><label class="mr-2 small">A&ntilde;o</label><input type="number" name="anio" value="<%= anio %>" class="form-control form-control-sm js-autoenvio" min="2000" max="2100"></form>
+  <% if (gestionar) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-programar"><i class="fas fa-plus mr-1"></i>Programar</button><% } %>
+</div>
+<div class="card card-outline card-secondary">
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Fecha</th><th>Tema</th><th>Horas</th><th>Otorga</th><th>Asistentes</th><th>Estado</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+      <tbody>
+        <% caps.forEach(function (k) { %>
+        <tr class="<%= k.estado === 'anulada' ? 'text-muted' : '' %>">
+          <td class="text-nowrap"><%= k.fecha %></td><td><%= k.tema %></td><td><%= k.horas %></td>
+          <td class="small"><%= k.competencia ? nombreTipo[k.competencia] : '-' %></td><td><%= k.asistentes %></td>
+          <td><span class="badge badge-<%= k.estado === 'realizada' ? 'success' : (k.estado === 'anulada' ? 'dark' : (k.fecha < hoy ? 'danger' : 'info')) %>"><%= k.estado === 'programada' && k.fecha < hoy ? 'sin registrar' : k.estado %></span></td>
+          <td class="text-center"><a href="/formacion/capacitaciones/<%= k.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Abrir"><i class="fas fa-folder-open"></i></a></td>
+        </tr>
+        <% }) %>
+        <% if (!caps.length) { %><tr><td colspan="7" class="text-muted">Sin capacitaciones en <%= anio %>.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% } %>
+
+<% if (tab === 'requisitos') { var opcionales = matriz.tipos.filter(function (t) { return !Number(t.requerida_todos); }); %>
+<p class="small text-muted">A todas las personas se les exige <%= matriz.tipos.filter(function (t) { return Number(t.requerida_todos); }).map(function (t) { return t.nombre; }).join(' y ') %>.
+  Aqu&iacute; se definen las adicionales por cargo. <span class="badge badge-warning">sugerida</span> = sale de los peligros del cargo en la matriz vigente.</p>
+<div class="card card-outline card-secondary">
+  <div class="card-body p-0">
+    <table class="table table-bordered table-sm mb-0">
+      <thead><tr><th>Cargo</th><th>Competencias exigidas</th><th></th></tr></thead>
+      <tbody>
+        <% req.cargos.forEach(function (c) { var tiene = req.porCargo.get(c.id) || []; var sug = req.sugeridas.get(c.id) || []; %>
+        <tr>
+          <td class="text-nowrap"><strong><%= c.nombre %></strong></td>
+          <td>
+            <form method="post" action="/formacion/requisitos/<%= c.id %>" id="req-<%= c.id %>" class="d-flex flex-wrap">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <% opcionales.forEach(function (t) { %>
+              <div class="custom-control custom-checkbox mr-3">
+                <input type="checkbox" class="custom-control-input" id="r-<%= c.id %>-<%= t.codigo %>" name="competencias" value="<%= t.codigo %>" <%= tiene.indexOf(t.codigo) !== -1 ? 'checked' : '' %> <%= gestionar ? '' : 'disabled' %>>
+                <label class="custom-control-label font-weight-normal small" for="r-<%= c.id %>-<%= t.codigo %>"><%= t.nombre %><% if (sug.indexOf(t.codigo) !== -1 && tiene.indexOf(t.codigo) === -1) { %> <span class="badge badge-warning">sugerida</span><% } %></label>
+              </div>
+              <% }) %>
+            </form>
+          </td>
+          <td class="text-center"><% if (gestionar) { %><button type="submit" form="req-<%= c.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Guardar"><i class="fas fa-save"></i></button><% } %></td>
+        </tr>
+        <% }) %>
+        <% if (!req.cargos.length) { %><tr><td colspan="3" class="text-muted">Registre cargos en Personas.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% } %>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-competencia" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="/formacion/competencias" class="modal-content" id="form-competencia">
+      <div class="modal-header"><h5 class="modal-title">Registrar competencia</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="persona_id">
+        <p class="font-weight-bold js-nombre"></p>
+        <div class="form-group"><label>Competencia *</label><select name="tipo" class="form-control"><% matriz.tipos.forEach(function (t) { %><option value="<%= t.codigo %>"><%= t.nombre %><%= Number(t.requiere_certificado) ? ' (con certificado)' : '' %></option><% }) %></select></div>
+        <div class="form-row">
+          <div class="form-group col-6"><label>Obtenci&oacute;n *</label><input type="date" name="fecha_obtencion" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+          <div class="form-group col-6"><label>Vence</label><input type="date" name="fecha_vence" class="form-control"><small class="text-muted">Vac&iacute;o: se calcula por norma.</small></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-8"><label>Entidad</label><input type="text" name="entidad" class="form-control" maxlength="150"></div>
+          <div class="form-group col-4"><label>Horas</label><input type="number" name="horas" class="form-control" min="0" step="0.5"></div>
+        </div>
+        <div class="form-group mb-0"><label>Certificado (documento vigente)</label>
+          <select name="documento_id" class="form-control"><option value="">Sin certificado</option><% documentos.forEach(function (d) { %><option value="<%= d.id %>"><%= d.codigo %> v<%= d.version %> - <%= d.titulo %></option><% }) %></select></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-programar" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="/formacion/capacitaciones" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Programar capacitaci&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group"><label>Tema *</label><input type="text" name="tema" class="form-control" maxlength="255" required></div>
+        <div class="form-row">
+          <div class="form-group col-6"><label>Fecha *</label><input type="date" name="fecha" class="form-control" required></div>
+          <div class="form-group col-6"><label>Horas *</label><input type="number" name="horas" class="form-control" min="0.5" step="0.5" required></div>
+        </div>
+        <div class="form-group"><label>Instructor</label><input type="text" name="instructor" class="form-control" maxlength="150"></div>
+        <div class="form-group mb-0"><label>Acredita competencia</label><select name="competencia" class="form-control"><option value="">Ninguna</option><% matriz.tipos.forEach(function (t) { %><option value="<%= t.codigo %>"><%= t.nombre %></option><% }) %></select></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Programar</button></div>
+    </form>
+  </div>
+</div>
+<% } %>
+<%- include('../partials/pie') %>

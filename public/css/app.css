@@ -1,0 +1,30 @@
+/* Imagen corporativa: fondo del login y logo. */
+.login-fondo { background: #0b3d91 url(/img/bg2.jpg) center / cover no-repeat fixed; }
+.login-fondo .login-box .card { box-shadow: 0 .5rem 1.5rem rgba(0,0,0,.35); }
+.login-logo-img { max-width: 100%; height: auto; max-height: 110px; }
+.brand-link .brand-image { padding: 2px; }
+.fila-critica > td:first-child { border-left: 4px solid #dc3545; }
+@media print {
+  .main-sidebar, .main-header, .main-footer, .no-print, .card-tools { display: none !important; }
+  .content-wrapper { margin-left: 0 !important; }
+  .small-box .icon { display: none; }
+}
+.barra-acciones { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem; margin-bottom: 1rem; }
+.tabla-matriz td { vertical-align: top; }
+.pre-line{white-space:pre-line}
+.ancho-3{width:3rem}.ancho-10{width:10rem}
+/* Franja de estado del inicio: indicadores en linea, sin mosaicos. */
+.franja-estado { display: flex; flex-wrap: wrap; }
+.franja-item { flex: 1 1 9rem; display: flex; flex-direction: column; padding: .4rem 1rem; color: inherit; border-right: 1px solid #dee2e6; }
+.franja-item:last-child { border-right: 0; }
+.franja-item:hover { background: #f8f9fa; text-decoration: none; color: inherit; }
+.franja-ancha { flex-basis: 14rem; }
+.franja-valor { font-size: 1.6rem; font-weight: 600; line-height: 1.2; }
+.franja-texto { font-size: .8rem; color: #6c757d; }
+.grupo-atencion + .grupo-atencion { border-top: 1px solid #dee2e6; }
+.punto { font-size: .5rem; vertical-align: middle; }
+.content-header h1 { font-size: 1.5rem; }
+.columnas-2 { column-count: 2; column-gap: 2rem; } .columnas-2 > * { break-inside: avoid; } @media (max-width: 767px) { .columnas-2 { column-count: 1; } }
+/* Pestanas de detalle: la tarjeta se pega a la pestana. */
+.pestanas > .tab-pane > .card { border-top-left-radius: 0; border-top-right-radius: 0; }
+.nav-tabs + .tab-content { margin-bottom: 1rem; }

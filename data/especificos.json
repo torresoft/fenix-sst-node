@@ -1,0 +1,62 @@
+{
+  "_fuente": "Res. 40595 de 2022 (PESV); D. 1496 de 2018 y Res. 0773 de 2021 (SGA); Ley 769 de 2002 (licencias, SOAT, revision tecnico-mecanica)",
+  "_no_verificado": [
+    "Nombres de los 24 pasos del PESV: resumen de la Res. 40595/2022; contrastar con el anexo tecnico antes de produccion.",
+    "Aplicabilidad de pasos por nivel (basico, estandar, avanzado): se cargan todos para todos los niveles hasta transcribir la tabla del anexo.",
+    "Umbrales de nivel del PESV por vehiculos y conductores: transcribir del articulo correspondiente; aqui solo se usa el umbral de obligatoriedad del doc 01.",
+    "Items de inspeccion preoperacional: lista operativa de producto, cada empresa la ajusta por tipo de vehiculo."
+  ],
+  "pesv": {
+    "umbral_vehiculos": 10,
+    "umbral_conductores": 2,
+    "pasos": [
+      { "codigo": "P01", "fase": "planificacion", "nombre": "Lider del diseno e implementacion del PESV" },
+      { "codigo": "P02", "fase": "planificacion", "nombre": "Comite de seguridad vial" },
+      { "codigo": "P03", "fase": "planificacion", "nombre": "Politica de seguridad vial" },
+      { "codigo": "P04", "fase": "planificacion", "nombre": "Liderazgo, compromiso y corresponsabilidad del nivel directivo" },
+      { "codigo": "P05", "fase": "planificacion", "nombre": "Diagnostico" },
+      { "codigo": "P06", "fase": "planificacion", "nombre": "Caracterizacion, evaluacion y control de riesgos" },
+      { "codigo": "P07", "fase": "planificacion", "nombre": "Objetivos y metas del PESV" },
+      { "codigo": "P08", "fase": "planificacion", "nombre": "Programas de gestion de riesgos criticos y factores de desempeno" },
+      { "codigo": "P09", "fase": "planificacion", "nombre": "Plan anual de trabajo en seguridad vial" },
+      { "codigo": "P10", "fase": "planificacion", "nombre": "Presupuesto" },
+      { "codigo": "P11", "fase": "implementacion", "nombre": "Competencia y plan anual de formacion" },
+      { "codigo": "P12", "fase": "implementacion", "nombre": "Responsabilidad y comportamiento seguro" },
+      { "codigo": "P13", "fase": "implementacion", "nombre": "Plan de preparacion y respuesta ante emergencias viales" },
+      { "codigo": "P14", "fase": "implementacion", "nombre": "Investigacion interna de siniestros viales" },
+      { "codigo": "P15", "fase": "implementacion", "nombre": "Vias seguras administradas por la organizacion" },
+      { "codigo": "P16", "fase": "implementacion", "nombre": "Planificacion de desplazamientos laborales" },
+      { "codigo": "P17", "fase": "implementacion", "nombre": "Inspeccion de vehiculos y equipos" },
+      { "codigo": "P18", "fase": "implementacion", "nombre": "Mantenimiento y control de vehiculos seguros y equipos" },
+      { "codigo": "P19", "fase": "implementacion", "nombre": "Gestion del cambio y gestion de contratistas" },
+      { "codigo": "P20", "fase": "implementacion", "nombre": "Archivo y retencion documental" },
+      { "codigo": "P21", "fase": "seguimiento", "nombre": "Indicadores y reporte de autogestion" },
+      { "codigo": "P22", "fase": "seguimiento", "nombre": "Registro y analisis estadistico de siniestros viales" },
+      { "codigo": "P23", "fase": "seguimiento", "nombre": "Auditoria anual" },
+      { "codigo": "P24", "fase": "mejora", "nombre": "Mejora continua, acciones preventivas y correctivas" }
+    ]
+  },
+  "preoperacional": [
+    "Documentos del vehiculo y licencia del conductor",
+    "Luces delanteras, traseras, direccionales y de freno",
+    "Frenos de servicio y de emergencia",
+    "Llantas: presion, desgaste y repuesto",
+    "Niveles de aceite, refrigerante y liquido de frenos",
+    "Espejos, pito y limpiabrisas",
+    "Cinturones de seguridad",
+    "Equipo de carretera y botiquin",
+    "Extintor vigente",
+    "Sin fugas visibles"
+  ],
+  "pictogramas_sga": [
+    { "codigo": "GHS01", "nombre": "Explosivo" },
+    { "codigo": "GHS02", "nombre": "Inflamable" },
+    { "codigo": "GHS03", "nombre": "Comburente" },
+    { "codigo": "GHS04", "nombre": "Gas a presion" },
+    { "codigo": "GHS05", "nombre": "Corrosivo" },
+    { "codigo": "GHS06", "nombre": "Toxicidad aguda" },
+    { "codigo": "GHS07", "nombre": "Irritante / nocivo" },
+    { "codigo": "GHS08", "nombre": "Peligro para la salud" },
+    { "codigo": "GHS09", "nombre": "Peligro para el medio ambiente" }
+  ]
+}

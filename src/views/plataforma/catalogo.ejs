@@ -1,0 +1,51 @@
+<%- include('../partials/cabecera') %>
+<%
+  var k = d.clave.nombre;
+  var cols = d.def.lista.filter(function (x) { return x !== k; });
+  var ruta = '/plataforma/catalogos/' + d.def.tabla;
+%>
+<div class="barra-acciones">
+  <form method="get" action="<%= ruta %>" class="form-inline">
+    <a href="/plataforma/catalogos" class="btn btn-sm btn-default mr-2"><i class="fas fa-arrow-left mr-1"></i>Cat&aacute;logos</a>
+    <input type="search" name="q" class="form-control form-control-sm mr-1" value="<%= q %>" placeholder="Buscar" maxlength="100">
+    <button type="submit" class="btn btn-sm btn-default"><i class="fas fa-search"></i></button>
+  </form>
+  <a href="<%= ruta %>/editar" class="btn btn-sm btn-primary"><i class="fas fa-plus mr-1"></i>Nuevo</a>
+</div>
+<div class="card card-outline card-primary">
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th><%= k %></th><% cols.forEach(function (c) { %><th><%= c %></th><% }) %><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+      <tbody>
+        <% d.filas.forEach(function (f) { var activo = f.estado === 'activo'; %>
+        <tr class="<%= activo ? '' : 'text-muted' %>">
+          <td class="text-nowrap"><strong><%= f[k] %></strong></td>
+          <% cols.forEach(function (c) { var v = f[c] == null ? '' : String(f[c]); %><td><small><%= v.length > 160 ? v.slice(0, 160) + '…' : v %></small></td><% }) %>
+          <td>
+            <span class="badge badge-<%= activo ? 'success' : 'secondary' %>"><%= f.estado %></span>
+            <% if (Number(f.modificado_manual)) { %><span class="badge badge-warning" data-toggle="tooltip" title="Editado en la consola: la carga del seed no lo toca">manual</span><% } %>
+          </td>
+          <td class="text-center text-nowrap">
+            <a href="<%= ruta %>/editar?c=<%= encodeURIComponent(f[k]) %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Editar"><i class="fas fa-edit"></i></a>
+            <form method="post" action="<%= ruta %>/estado" class="d-inline<%= activo ? ' js-confirmar' : '' %>" data-confirmar="&iquest;Inactivar <%= f[k] %>? Deja de ofrecerse a todos los clientes.">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="c" value="<%= f[k] %>">
+              <input type="hidden" name="activo" value="<%= activo ? '0' : '1' %>">
+              <button type="submit" class="btn btn-xs btn-default" data-toggle="tooltip" title="<%= activo ? 'Inactivar' : 'Activar' %>"><i class="fas <%= activo ? 'fa-toggle-on' : 'fa-toggle-off' %>"></i></button>
+            </form>
+            <% if (Number(f.modificado_manual)) { %>
+            <form method="post" action="<%= ruta %>/restaurar" class="d-inline js-confirmar" data-confirmar="&iquest;Devolver <%= f[k] %> al seed? La pr&oacute;xima carga de cat&aacute;logos reemplaza sus valores (o lo inactiva si no existe en el JSON).">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="c" value="<%= f[k] %>">
+              <button type="submit" class="btn btn-xs btn-default" data-toggle="tooltip" title="Devolver al seed"><i class="fas fa-undo"></i></button>
+            </form>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+        <% if (!d.filas.length) { %><tr><td colspan="<%= cols.length + 3 %>" class="text-muted">Sin registros.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/pie') %>

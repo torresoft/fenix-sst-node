@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="es">
+<body style="font-family: Arial, sans-serif; color: #212529;">
+  <h2 style="margin-bottom: 4px;">Acceso a F&eacute;nix SST</h2>
+  <p>Hola <%= nombre %>, se le dio acceso al Sistema de Gesti&oacute;n de Seguridad y Salud en el Trabajo de una empresa.</p>
+  <p>Usuario: <strong><%= email %></strong></p>
+  <% if (temporal) { %><p>Contrase&ntilde;a temporal: <strong><%= temporal %></strong> (debe cambiarla al ingresar).</p><% } else { %><p>Ingrese con su contrase&ntilde;a actual.</p><% } %>
+  <p><a href="<%= appUrl %>/login">Ingresar</a></p>
+  <p style="font-size: 11px; color: #6c757d;">Mensaje autom&aacute;tico de F&eacute;nix SST. Su usuario es personal e intransferible.</p>
+</body>
+</html>

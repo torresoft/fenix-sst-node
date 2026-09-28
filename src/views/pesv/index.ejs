@@ -1,0 +1,143 @@
+<%- include('../partials/cabecera') %>
+<%
+  var textoFase = { planificacion: 'Planificaci&oacute;n', implementacion: 'Implementaci&oacute;n y ejecuci&oacute;n', seguimiento: 'Seguimiento', mejora: 'Mejora' };
+  var colorPaso = { no_iniciado: ['secondary', 'No iniciado'], en_proceso: ['warning', 'En proceso'], implementado: ['success', 'Implementado'], no_aplica: ['light', 'No aplica'] };
+  var vencidos = p.vehiculos.filter(function (v) { return v.documentosVencidos; }).length;
+  var licencias = p.conductores.filter(function (c) { return c.licenciaVencida; }).length;
+  var noAptos = p.vehiculos.filter(function (v) { return v.estado === 'activo' && v.ultimo_apto === 0; }).length;
+  var tabs = [['pasos', 'Pasos (' + p.avance.porcentaje + '%)', 0, ''], ['vehiculos', 'Veh&iacute;culos', vencidos, 'danger'], ['conductores', 'Conductores', licencias, 'danger'], ['preoperacional', 'Preoperacional', noAptos, 'warning']];
+  var activosV = p.vehiculos.filter(function (v) { return v.estado === 'activo'; });
+%>
+<% if (p.obligatorio && !declarado) { %><div class="callout callout-warning"><p class="mb-0">Con <%= activosV.length %> veh&iacute;culos y <%= p.conductores.length %> conductores la empresa est&aacute; obligada al PESV (Res. 40595 de 2022). Declare el &aacute;mbito PESV en <a href="/empresa">Empresa</a> para cargar la matriz legal correspondiente.</p></div><% } %>
+<ul class="nav nav-tabs mb-3">
+  <% tabs.forEach(function (t) { %><li class="nav-item"><a class="nav-link<%= tab === t[0] ? ' active' : '' %>" href="?tab=<%= t[0] %>"><%- t[1] %><% if (t[2]) { %> <span class="badge badge-<%= t[3] %>"><%= t[2] %></span><% } %></a></li><% }) %>
+</ul>
+
+<% if (tab === 'pasos') { %>
+<div class="progress mb-3 progress-sm"><div class="progress-bar bg-success js-barra" data-valor="<%= p.avance.porcentaje %>"></div></div>
+<% Object.keys(textoFase).forEach(function (fase) { var ps = p.avance.pasos.filter(function (x) { return x.fase === fase; }); %>
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title"><%- textoFase[fase] %></h3></div>
+  <div class="card-body p-0"><table class="table table-sm table-hover mb-0"><tbody>
+    <% ps.forEach(function (x) { var c = colorPaso[x.estado]; %><tr>
+      <td class="text-nowrap text-muted"><%= x.codigo %></td><td><%= x.nombre %><% if (x.avance && x.avance.observacion) { %><br><small class="text-muted"><%= x.avance.observacion %></small><% } %></td>
+      <td class="text-nowrap"><span class="badge badge-<%= c[0] %>"><%= c[1] %></span><% if (x.avance) { %> <small class="text-muted"><%= x.avance.fecha %></small><% } %></td>
+      <td class="text-nowrap"><% if (x.avance && x.avance.documento_id) { %><a href="/documentos/<%= x.avance.documento_id %>" data-toggle="tooltip" title="Evidencia"><i class="fas fa-paperclip"></i></a><% } %></td>
+      <td class="text-center"><% if (gestionar) { %><button type="button" class="btn btn-xs btn-default js-avance" data-paso="<%= x.codigo %>" data-nombre="<%= x.nombre %>" data-estado="<%= x.estado %>" data-toggle="tooltip" title="Registrar avance"><i class="fas fa-edit"></i></button><% } %></td>
+    </tr><% }) %>
+  </tbody></table></div>
+</div>
+<% }) %>
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-avance" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/pesv/avance" class="modal-content" id="form-avance">
+    <div class="modal-header"><h5 class="modal-title js-nombre"></h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="paso_codigo">
+      <div class="form-row"><div class="form-group col-6"><label>Estado *</label><select name="estado" class="form-control"><% estadosPaso.forEach(function (k) { %><option value="<%= k %>"><%= colorPaso[k][1] %></option><% }) %></select></div>
+      <div class="form-group col-6"><label>Fecha *</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div></div>
+      <div class="form-group"><label>Evidencia (obligatoria si est&aacute; implementado)</label><select name="documento_id" class="form-control"><option value="">&mdash;</option><% evidencias.forEach(function (d) { %><option value="<%= d.id %>"><%= d.codigo %> v<%= d.version %> &middot; <%= d.titulo %></option><% }) %></select>
+        <small><a href="/documentos/nuevo?tipo=EVIDENCIA_PESV">Subir evidencia</a></small></div>
+      <div class="form-group mb-0"><label>Observaci&oacute;n</label><textarea name="observacion" class="form-control" rows="2" maxlength="1000"></textarea></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+<% } %>
+<% } %>
+
+<% if (tab === 'vehiculos') { %>
+<div class="barra-acciones">
+  <span class="small text-muted"><%= activosV.length %> activos<% if (vencidos) { %> &middot; <span class="text-danger"><%= vencidos %> con SOAT o revisi&oacute;n vencidos</span><% } %></span>
+  <% if (gestionar) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-vehiculo"><i class="fas fa-plus mr-1"></i>Veh&iacute;culo</button><% } %>
+</div>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><div class="table-responsive"><table class="table table-bordered table-hover table-sm mb-0">
+  <thead><tr><th>Placa</th><th>Tipo</th><th>Propiedad</th><th>SOAT</th><th>Revisi&oacute;n</th><th>&Uacute;ltimo preoperacional</th><th class="text-center">Acciones</th></tr></thead>
+  <tbody><% p.vehiculos.forEach(function (v) { %><tr class="<%= v.estado !== 'activo' ? 'text-muted' : '' %>">
+    <td class="text-nowrap"><strong><%= v.placa %></strong><% if (v.marca_modelo) { %><br><small class="text-muted"><%= v.marca_modelo %></small><% } %></td>
+    <td><%= v.tipo %></td><td><%= v.propiedad %></td>
+    <td class="<%= v.estado === 'activo' && v.soat_vence < hoy ? 'text-danger font-weight-bold' : '' %>"><%= v.soat_vence %></td>
+    <td class="<%= v.estado === 'activo' && v.rtm_vence && v.rtm_vence < hoy ? 'text-danger font-weight-bold' : '' %>"><%= v.rtm_vence || 'No aplica' %></td>
+    <td><% if (v.ultimo_preoperacional) { %><%= v.ultimo_preoperacional %> <span class="badge badge-<%= v.ultimo_apto ? 'success' : 'danger' %>"><%= v.ultimo_apto ? 'Apto' : 'No apto' %></span><% } %></td>
+    <td class="text-center text-nowrap"><% if (gestionar && v.estado === 'activo') { %>
+      <button type="button" class="btn btn-xs btn-default js-renovar" data-id="<%= v.id %>" data-placa="<%= v.placa %>" data-toggle="tooltip" title="Renovar SOAT o revisi&oacute;n"><i class="fas fa-sync"></i></button>
+      <button type="button" class="btn btn-xs btn-default js-inactivar" data-id="<%= v.id %>" data-placa="<%= v.placa %>" data-toggle="tooltip" title="Inactivar"><i class="fas fa-archive"></i></button><% } %></td>
+  </tr><% }) %>
+  <% if (!p.vehiculos.length) { %><tr><td colspan="7" class="text-muted">Sin veh&iacute;culos.</td></tr><% } %></tbody>
+</table></div></div></div>
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-vehiculo" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/pesv/vehiculos" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Veh&iacute;culo</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row"><div class="form-group col-4"><label>Placa *</label><input type="text" name="placa" class="form-control text-uppercase" maxlength="10" required></div>
+      <div class="form-group col-4"><label>Tipo *</label><select name="tipo" class="form-control"><% tipos.forEach(function (k) { %><option value="<%= k %>"><%= k %></option><% }) %></select></div>
+      <div class="form-group col-4"><label>Propiedad *</label><select name="propiedad" class="form-control"><% propiedad.forEach(function (k) { %><option value="<%= k %>"><%= k %></option><% }) %></select></div></div>
+      <div class="form-group"><label>Marca y modelo</label><input type="text" name="marca_modelo" class="form-control" maxlength="100"></div>
+      <div class="form-row mb-0"><div class="form-group col-6 mb-0"><label>SOAT vence *</label><input type="date" name="soat_vence" class="form-control" required></div>
+      <div class="form-group col-6 mb-0"><label>Revisi&oacute;n vence</label><input type="date" name="rtm_vence" class="form-control"><small class="text-muted">Vac&iacute;o si a&uacute;n no la exige.</small></div></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+<div class="modal fade" id="modal-renovar" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" class="modal-content" id="form-renovar">
+    <div class="modal-header"><h5 class="modal-title">Renovar <span class="js-placa"></span></h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row mb-0"><div class="form-group col-6 mb-0"><label>Nuevo SOAT vence</label><input type="date" name="soat_vence" class="form-control"></div>
+      <div class="form-group col-6 mb-0"><label>Nueva revisi&oacute;n vence</label><input type="date" name="rtm_vence" class="form-control"></div></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+  </form></div></div>
+<div class="modal fade" id="modal-inactivar" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" class="modal-content" id="form-inactivar">
+    <div class="modal-header"><h5 class="modal-title">Inactivar <span class="js-placa"></span></h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><div class="form-group mb-0"><label>Motivo *</label><input type="text" name="motivo" class="form-control" minlength="10" maxlength="500" required></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger">Inactivar</button></div>
+  </form></div></div>
+<% } %>
+<% } %>
+
+<% if (tab === 'conductores') { %>
+<% if (gestionar) { %>
+<form method="post" action="/pesv/conductores" class="card card-outline card-primary">
+  <div class="card-body pb-0"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="form-row">
+      <div class="form-group col-md-4"><label>Persona *</label><select name="persona_id" class="form-control form-control-sm" required><option value="">Seleccione</option><% personas.forEach(function (x) { %><option value="<%= x.id %>"><%= x.apellidos %> <%= x.nombres %></option><% }) %></select></div>
+      <div class="form-group col-md-3"><label>Licencia *</label><input type="text" name="licencia_numero" class="form-control form-control-sm" maxlength="30" required></div>
+      <div class="form-group col-md-2"><label>Categor&iacute;a *</label><input type="text" name="licencia_categoria" class="form-control form-control-sm" maxlength="10" required placeholder="C2"></div>
+      <div class="form-group col-md-3"><label>Vence *</label><input type="date" name="licencia_vence" class="form-control form-control-sm" min="<%= hoy %>" required></div>
+    </div>
+  </div>
+  <div class="card-footer text-right py-2"><button class="btn btn-sm btn-primary">Registrar o renovar licencia</button></div>
+</form>
+<% } %>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><table class="table table-bordered table-hover table-sm mb-0">
+  <thead><tr><th>Conductor</th><th>Licencia</th><th>Categor&iacute;a</th><th>Vence</th><th class="text-center">Acciones</th></tr></thead>
+  <tbody><% p.conductores.forEach(function (c) { %><tr>
+    <td><%= c.apellidos %> <%= c.nombres %><br><small class="text-muted"><%= c.numero_documento %></small></td><td><%= c.licencia_numero %></td><td><%= c.licencia_categoria %></td>
+    <td class="<%= c.licenciaVencida ? 'text-danger font-weight-bold' : '' %>"><%= c.licencia_vence %></td>
+    <td class="text-center"><% if (gestionar) { %><form method="post" action="/pesv/conductores/<%= c.id %>/inactivar" class="d-inline js-confirmar" data-confirmar="&iquest;Inactivar el conductor?"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-xs btn-default" data-toggle="tooltip" title="Inactivar"><i class="fas fa-user-slash"></i></button></form><% } %></td>
+  </tr><% }) %>
+  <% if (!p.conductores.length) { %><tr><td colspan="5" class="text-muted">Sin conductores.</td></tr><% } %></tbody>
+</table></div></div>
+<% } %>
+
+<% if (tab === 'preoperacional') { %>
+<% if (gestionar && activosV.length && p.conductores.length) { %>
+<form method="post" action="/pesv/preoperacional" class="card card-outline card-primary">
+  <div class="card-header"><h3 class="card-title">Inspecci&oacute;n preoperacional</h3></div>
+  <div class="card-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="form-row">
+      <div class="form-group col-md-4"><label>Veh&iacute;culo *</label><select name="vehiculo_id" class="form-control" required><% activosV.forEach(function (v) { %><option value="<%= v.id %>"><%= v.placa %></option><% }) %></select></div>
+      <div class="form-group col-md-5"><label>Conductor *</label><select name="conductor_id" class="form-control" required><% p.conductores.forEach(function (c) { %><option value="<%= c.id %>"><%= c.apellidos %> <%= c.nombres %></option><% }) %></select></div>
+      <div class="form-group col-md-3"><label>Fecha *</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+    </div>
+    <div class="row"><% items.forEach(function (it, i) { %><div class="col-md-6"><div class="form-check"><input class="form-check-input" type="checkbox" name="ok" value="<%= i %>" id="it-<%= i %>" checked><label class="form-check-label" for="it-<%= i %>"><%= it %></label></div></div><% }) %></div>
+    <div class="form-group mt-2 mb-0"><label>Fallas u observaciones</label><input type="text" name="observacion" class="form-control" maxlength="600"></div>
+  </div>
+  <div class="card-footer text-right"><button class="btn btn-primary">Registrar</button></div>
+</form>
+<% } %>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><table class="table table-bordered table-sm mb-0">
+  <thead><tr><th>Fecha</th><th>Veh&iacute;culo</th><th>Conductor</th><th>Resultado</th><th>Observaci&oacute;n</th></tr></thead>
+  <tbody><% p.preoperacionales.forEach(function (x) { %><tr><td><%= x.fecha %></td><td><%= x.placa %></td><td><%= x.apellidos %> <%= x.nombres %></td>
+    <td><span class="badge badge-<%= x.apto ? 'success' : 'danger' %>"><%= x.apto ? 'Apto' : 'No apto' %></span></td><td class="small"><%= x.observacion || '' %></td></tr><% }) %>
+  <% if (!p.preoperacionales.length) { %><tr><td colspan="5" class="text-muted">Sin inspecciones.</td></tr><% } %></tbody>
+</table></div></div>
+<% } %>
+<%- include('../partials/pie') %>

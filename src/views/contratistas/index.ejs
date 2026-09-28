@@ -1,0 +1,30 @@
+<%- include('../partials/cabecera') %>
+<% var colorEstado = { en_evaluacion: 'info', aprobado: 'success', condicionado: 'warning', rechazado: 'danger', inactivo: 'secondary' }; %>
+<div class="barra-acciones">
+  <span class="small text-muted">Criterios SST de selecci&oacute;n, verificaci&oacute;n de afiliaci&oacute;n y pago al SGRL en la clase de riesgo correcta, e inducci&oacute;n antes de iniciar (arts. 2.2.4.6.27 y .28, D. 1072).</span>
+  <% if (gestionar) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-contratista"><i class="fas fa-plus mr-1"></i>Contratista</button><% } %>
+</div>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><div class="table-responsive">
+  <table class="table table-bordered table-hover table-sm mb-0">
+    <thead><tr><th>Contratista</th><th>Actividad</th><th class="text-center">Clase</th><th class="text-center">Trabajadores</th><th>&Uacute;ltima evaluaci&oacute;n</th><th>SGRL</th><th>Estado</th><th class="text-center">Ver</th></tr></thead>
+    <tbody>
+      <% filas.forEach(function (c) { %><tr class="<%= c.estado === 'inactivo' ? 'text-muted' : '' %>">
+        <td><%= c.razon_social %><br><small class="text-muted">NIT <%= c.nit %></small></td><td class="small"><%= c.actividad %></td><td class="text-center"><%= c.clase_riesgo %></td>
+        <td class="text-center"><%= c.trabajadores %></td><td><%= c.ultima_evaluacion || '' %></td>
+        <td><% if (c.ultimo_periodo) { %><%= c.ultimo_periodo %><% if (Number(c.inconsistencias)) { %> <span class="badge badge-danger"><%= c.inconsistencias %> inconsistente(s)</span><% } %><% } else { %><span class="text-muted small">Sin verificar</span><% } %></td>
+        <td><span class="badge badge-<%= colorEstado[c.estado] %>"><%= c.estado.replace('_', ' ') %></span></td>
+        <td class="text-center"><a href="/contratistas/<%= c.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Ver"><i class="fas fa-eye"></i></a></td>
+      </tr><% }) %>
+      <% if (!filas.length) { %><tr><td colspan="8" class="text-muted">Sin contratistas.</td></tr><% } %>
+    </tbody>
+  </table>
+</div></div></div>
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-contratista" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog modal-lg" role="document">
+  <form method="post" action="/contratistas" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Nuevo contratista</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><%- include('_datos', { c: {}, clases: clases }) %></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+<% } %>
+<%- include('../partials/pie') %>

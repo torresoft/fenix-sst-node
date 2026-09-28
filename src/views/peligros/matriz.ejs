@@ -1,0 +1,176 @@
+<%- include('../partials/cabecera') %>
+<%
+  var m = d.m, borrador = m.estado === 'borrador';
+  var colorNivel = { I: 'danger', II: 'warning', III: 'info', IV: 'success' };
+  var colorEstado = { borrador: 'secondary', vigente: 'success', reemplazada: 'light', anulada: 'dark' };
+  var nombreClase = {}; d.clases.forEach(function (c) { nombreClase[c.codigo] = c.nombre; });
+  var nombreJer = {}; d.jerarquia.forEach(function (j) { nombreJer[j.codigo] = j.nivel + '. ' + j.nombre; });
+  var items = filtroNivel ? d.items.filter(function (i) { return i.nivel_riesgo === filtroNivel; }) : d.items;
+  var procesos = []; items.forEach(function (i) { if (procesos.indexOf(i.proceso) === -1) procesos.push(i.proceso); });
+  var avisoDe = {}; d.avisos.forEach(function (a) { avisoDe[a.item] = a.texto; });
+%>
+<div class="barra-acciones">
+  <div>
+    <select class="form-control form-control-sm d-inline-block w-auto js-version">
+      <% versiones.forEach(function (v) { %><option value="<%= v.id %>"<%= v.id === m.id ? ' selected' : '' %>>Versi&oacute;n <%= v.version %> &middot; <%= v.estado %></option><% }) %>
+    </select>
+    <span class="badge badge-<%= colorEstado[m.estado] %> ml-1"><%= m.estado %></span>
+    <span class="text-muted small ml-2"><%= d.met.nombre %> &middot; motivo: <%= m.motivo %> &middot; elaborada <%= m.fecha_elaboracion %><%= m.publicada_en ? ' · publicada ' + m.publicada_en : '' %></span>
+  </div>
+  <div>
+    <a href="/peligros/<%= m.id %>/csv" class="btn btn-sm btn-default"><i class="fas fa-file-csv mr-1"></i>CSV</a>
+    <% if (gestionar && borrador) { %>
+    <a href="/peligros/<%= m.id %>/sugerir" class="btn btn-sm btn-default"><i class="fas fa-magic mr-1"></i>Sugerir por cargo</a>
+    <a href="/peligros/<%= m.id %>/items/nuevo" class="btn btn-sm btn-primary"><i class="fas fa-plus mr-1"></i>Peligro</a>
+    <% } else if (gestionar && m.estado === 'vigente') { %>
+    <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modal-version"><i class="fas fa-code-branch mr-1"></i>Nueva versi&oacute;n</button>
+    <% } %>
+  </div>
+</div>
+
+<div class="mb-3">
+  <a href="?" class="badge badge-pill badge-light p-2 mr-1<%= !filtroNivel ? ' border border-dark' : '' %>">Todos (<%= d.items.length %>)</a>
+  <% Object.keys(d.conteo).forEach(function (n) { %>
+  <a href="?nivel=<%= n %>" class="badge badge-pill badge-<%= colorNivel[n] %> p-2 mr-1<%= filtroNivel === n ? ' border border-dark' : '' %>">Riesgo <%= n %>: <%= d.conteo[n] %></a>
+  <% }) %>
+</div>
+
+<% if (borrador) { %>
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title">Para publicar esta versi&oacute;n</h3></div>
+  <div class="card-body">
+    <% if (d.impedimentos.length) { %><ul class="small text-muted mb-3 pl-3"><% d.impedimentos.forEach(function (x) { %><li><%= x %></li><% }) %></ul><% } %>
+    <% if (gestionar) { %>
+    <form method="post" action="/peligros/<%= m.id %>/datos">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row">
+        <div class="form-group col-md-7"><label class="small">Participaci&oacute;n de trabajadores / COPASST *</label><input type="text" name="participantes" class="form-control form-control-sm" value="<%= m.participantes || '' %>" maxlength="1000" placeholder="Qui&eacute;nes participaron y c&oacute;mo"></div>
+        <div class="form-group col-md-5"><label class="small">Matriz firmada (MATRIZ_PELIGROS)</label>
+          <select name="documento_id" class="form-control form-control-sm"><option value="">Sin asociar</option><% documentos.forEach(function (x) { %><option value="<%= x.id %>"<%= m.documento_id === x.id ? ' selected' : '' %>><%= x.codigo %> v<%= x.version %> (<%= x.estado %>)</option><% }) %></select>
+          <small class="text-muted">Exporte el CSV, f&iacute;rmelo y s&uacute;balo en <a href="/documentos/nuevo?tipo=MATRIZ_PELIGROS">Documentos</a>.</small></div>
+      </div>
+      <button type="submit" class="btn btn-sm btn-default"><i class="fas fa-save mr-1"></i>Guardar</button>
+    </form>
+    <div class="mt-2">
+      <form method="post" action="/peligros/<%= m.id %>/publicar" class="d-inline">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="btn btn-sm btn-success" <%= d.impedimentos.length ? 'disabled' : '' %>><i class="fas fa-check mr-1"></i>Publicar versi&oacute;n <%= m.version %></button>
+      </form>
+      <form method="post" action="/peligros/<%= m.id %>/anular" class="d-inline">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="btn btn-sm btn-link text-danger">Descartar borrador</button>
+      </form>
+    </div>
+    <% } %>
+  </div>
+</div>
+<% } %>
+
+<% if (d.avisos.length) { %>
+<div class="alert alert-warning small"><strong>Jerarqu&iacute;a de controles (art. 2.2.4.6.24):</strong> <%= d.avisos.length %> riesgo(s) cr&iacute;tico(s) sin medidas suficientes. Revise los marcados abajo.</div>
+<% } %>
+
+<% procesos.forEach(function (p) { %>
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title"><%= p %></h3></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-sm mb-0 tabla-matriz">
+        <thead><tr><th>Actividad / tarea</th><th>Peligro</th><th class="text-center">ND</th><th class="text-center">NE</th><th class="text-center">NC</th><th class="text-center">NR</th><th>Nivel</th><th>Medidas</th><th class="text-center">Acciones</th></tr></thead>
+        <tbody>
+          <% items.filter(function (i) { return i.proceso === p; }).forEach(function (i) { %>
+          <tr id="item-<%= i.id %>" class="<%= avisoDe[i.id] ? 'fila-critica' : '' %>">
+            <td><%= i.actividad %><% if (i.tarea) { %><br><small class="text-muted"><%= i.tarea %></small><% } %><br><small><%= i.rutinaria ? 'Rutinaria' : 'No rutinaria' %><%= i.centro ? ' · ' + i.centro : '' %></small></td>
+            <td><small class="text-muted"><%= nombreClase[i.clase_peligro] %></small><% if (Number(i.sugerido)) { %> <span class="badge badge-warning" data-toggle="tooltip" title="Generado desde el perfil del cargo: revise y guarde la valoraci&oacute;n">Sugerido</span><% } %><br><%= i.peligro %><% if (i.cargos.length) { %><br><small><i class="fas fa-id-badge mr-1"></i><%= i.cargos.map(function (c) { return c.nombre; }).join(', ') %></small><% } %></td>
+            <td class="text-center"><%= i.nd %></td>
+            <td class="text-center"><%= i.ne %></td>
+            <td class="text-center"><%= i.nc %></td>
+            <td class="text-center"><strong><%= i.nr %></strong></td>
+            <td><span class="badge badge-<%= colorNivel[i.nivel_riesgo] %>"><%= i.nivel_riesgo %></span><br><small><%= i.aceptabilidad %></small></td>
+            <td class="small">
+              <% i.controles.forEach(function (c) { %>
+              <div class="<%= c.estado === 'descartado' ? 'text-muted' : '' %>">
+                <span class="badge badge-light"><%= nombreJer[c.jerarquia_codigo] %></span> <%= c.descripcion %>
+                <% if (c.estado === 'implementado') { %><i class="fas fa-check text-success" data-toggle="tooltip" title="Implementado <%= c.fecha_implementacion %>"></i><% } %>
+                <% if (c.estado === 'propuesto' && gestionar) { %><button type="button" class="btn btn-xs btn-link p-0 js-cerrar-control" data-id="<%= c.id %>" data-descripcion="<%= c.descripcion %>">cerrar</button><% } %>
+              </div>
+              <% }) %>
+              <% if (avisoDe[i.id]) { %><div class="text-danger"><i class="fas fa-exclamation-triangle mr-1"></i><%= avisoDe[i.id] %></div><% } %>
+            </td>
+            <td class="text-center text-nowrap">
+              <% if (gestionar && ['borrador', 'vigente'].indexOf(m.estado) !== -1) { %>
+              <button type="button" class="btn btn-xs btn-default js-control" data-toggle="tooltip" title="Agregar medida" data-id="<%= i.id %>" data-peligro="<%= i.peligro %>"><i class="fas fa-shield-alt"></i></button>
+              <% } %>
+              <% if (gestionar && borrador) { %>
+              <a href="/peligros/<%= m.id %>/items/<%= i.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Editar valoraci&oacute;n"><i class="fas fa-edit"></i></a>
+              <form method="post" action="/peligros/<%= m.id %>/items/<%= i.id %>/retirar" class="d-inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn-xs btn-default" data-toggle="tooltip" title="Retirar"><i class="fas fa-times"></i></button>
+              </form>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<% }) %>
+<% if (!items.length) { %><p class="text-muted">No hay peligros <%= filtroNivel ? 'de nivel ' + filtroNivel : 'registrados' %>.</p><% } %>
+
+<div class="modal fade" id="modal-control" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-control">
+      <div class="modal-header"><h5 class="modal-title">Medida de intervenci&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="small js-titulo"></p>
+        <div class="form-group"><label>Nivel de la jerarqu&iacute;a *</label>
+          <select name="jerarquia_codigo" class="form-control"><% d.jerarquia.forEach(function (j) { %><option value="<%= j.codigo %>"><%= j.nivel %>. <%= j.nombre %></option><% }) %></select>
+          <small class="text-muted">Priorice eliminaci&oacute;n, sustituci&oacute;n e ingenier&iacute;a antes que controles administrativos y EPP.</small></div>
+        <div class="form-group"><label>Medida *</label><textarea name="descripcion" class="form-control" rows="2" maxlength="1000" required></textarea></div>
+        <div class="form-row">
+          <div class="form-group col-7"><label>Responsable</label><input type="text" name="responsable" class="form-control" maxlength="150"></div>
+          <div class="form-group col-5"><label>Fecha l&iacute;mite</label><input type="date" name="fecha_limite" class="form-control" min="<%= hoy %>"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-cerrar-control" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-cerrar-control">
+      <div class="modal-header"><h5 class="modal-title">Cerrar medida</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="small js-titulo"></p>
+        <div class="form-row">
+          <div class="form-group col-6"><label>Resultado</label><select name="estado" class="form-control"><option value="implementado">Implementada</option><option value="descartado">Descartada</option></select></div>
+          <div class="form-group col-6"><label>Fecha</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>"></div>
+        </div>
+        <div class="form-group mb-0"><label>Observaci&oacute;n *</label><textarea name="observacion" class="form-control" rows="2" required></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success">Guardar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-version" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="/peligros" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Nueva versi&oacute;n de la matriz</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="metodologia_codigo" value="<%= m.metodologia_codigo %>">
+        <label>Motivo *</label>
+        <select name="motivo" class="form-control"><option value="anual">Actualizaci&oacute;n anual</option><option value="at_mortal">Accidente mortal o evento catastr&oacute;fico</option><option value="cambio">Gesti&oacute;n del cambio</option></select>
+        <small class="text-muted">Se copian los peligros de la versi&oacute;n vigente para actualizarlos.</small>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Crear</button></div>
+    </form>
+  </div>
+</div>
+<%- include('../partials/pie') %>

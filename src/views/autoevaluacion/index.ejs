@@ -1,0 +1,121 @@
+<%- include('../partials/cabecera') %>
+<%
+  var colorValoracion = { CRITICO: 'danger', MODERADAMENTE_ACEPTABLE: 'warning', ACEPTABLE: 'success' };
+  var colorEstado = { borrador: 'secondary', cerrada: 'primary', reemplazada: 'light', anulada: 'dark' };
+%>
+<% if (c.pendiente) { %>
+<div class="alert alert-warning">
+  <form method="post" action="/autoevaluacion/clasificacion/<%= c.pendiente.id %>/revisar" class="float-right ml-3">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <% if (gestionar) { %><button type="submit" class="btn btn-sm btn-dark"><i class="fas fa-check mr-1"></i>Entendido</button><% } %>
+  </form>
+  <h5 class="mb-1"><i class="fas fa-exclamation-triangle mr-1"></i>La empresa fue reclasificada</h5>
+  Pas&oacute; de <strong><%= c.pendiente.conjunto_anterior %></strong> a <strong><%= c.pendiente.conjunto_codigo %></strong>
+  (<%= c.pendiente.trabajadores %> trabajadores, riesgo nivel <%= c.pendiente.nivel_riesgo %>). El SG-SST completo debe
+  ajustarse al nuevo conjunto de est&aacute;ndares y al perfil del responsable.
+</div>
+<% } %>
+
+
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-historial" role="tab">Autoevaluaciones</a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-clasificacion" role="tab">Clasificaci&oacute;n de la empresa</a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-centros" role="tab">Centros de trabajo</a></li>
+<% if (c.conjunto && c.requisitos.length && !Number(c.conjunto.evalua_tabla_completa)) { %>  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-requisitos" role="tab">Requisitos del conjunto</a></li><% } %>
+</ul>
+<div class="tab-content pestanas">
+<div class="tab-pane fade show active" id="tab-historial" role="tabpanel">
+<div class="card card-outline card-primary">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Vigencia</th><th>Versi&oacute;n</th><th>Conjunto</th><th>Corte</th><th>Calificaci&oacute;n</th><th>Estado</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+          <tbody>
+            <% historial.forEach(function (h) { %>
+            <tr>
+              <td><%= h.vigencia_anio %></td>
+              <td><%= h.version %></td>
+              <td><%= h.conjunto_codigo %></td>
+              <td><%= h.fecha_corte %></td>
+              <td><% if (h.puntaje != null) { %><strong><%= h.puntaje %></strong> <span class="badge badge-<%= colorValoracion[h.valoracion] || 'light' %>"><%= h.valoracion %></span><% } %></td>
+              <td><span class="badge badge-<%= colorEstado[h.estado] %>"><%= h.estado %></span></td>
+              <td class="text-center"><a href="/autoevaluacion/<%= h.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Abrir"><i class="fas fa-folder-open"></i></a></td>
+            </tr>
+            <% }) %>
+            <% if (!historial.length) { %><tr><td colspan="7" class="text-muted">A&uacute;n no hay autoevaluaciones.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+      <% if (gestionar && c.conjunto) { %>
+      <div class="card-footer">
+        <form method="post" action="/autoevaluacion/iniciar" class="form-row align-items-end">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group col-4 mb-0">
+            <label for="i-vig" class="small">Vigencia *</label>
+            <input type="number" id="i-vig" name="vigencia" class="form-control form-control-sm" value="<%= vigenciaSugerida %>" min="2019" required>
+          </div>
+          <div class="form-group col-5 mb-0">
+            <label for="i-corte" class="small">Fecha de corte *</label>
+            <input type="date" id="i-corte" name="fecha_corte" class="form-control form-control-sm" value="<%= corteSugerido %>" required>
+          </div>
+          <div class="form-group col-3 mb-0">
+            <button type="submit" class="btn btn-sm btn-primary btn-block"><i class="fas fa-play mr-1"></i>Iniciar</button>
+          </div>
+        </form>
+        <small class="text-muted">La norma prev&eacute; aplicarla en diciembre y cargarla en el aplicativo del Ministerio en la fecha que fije la circular del a&ntilde;o.</small>
+      </div>
+      <% } %>
+    </div>
+</div>
+<div class="tab-pane fade" id="tab-clasificacion" role="tabpanel">
+<div class="card card-outline card-primary">
+      <div class="card-body">
+        <% if (c.conjunto) { %>
+        <h4 class="mb-1"><%= c.conjunto.cantidad_estandares %> est&aacute;ndares <small class="text-muted">(art. <%= c.conjunto.articulo %>)</small></h4>
+        <p class="mb-2"><%= c.conjunto.criterio %></p>
+        <p class="small mb-0"><strong>Perfil para dise&ntilde;ar el SG-SST:</strong> <%= c.conjunto.perfil_responsable || 'No definido por la norma' %></p>
+        <% } else { %>
+        <div class="alert alert-light mb-0"><i class="fas fa-info-circle mr-1"></i><%= c.error %></div>
+        <% } %>
+        <hr>
+        <dl class="row mb-0 small">
+          <dt class="col-7">Trabajadores declarados</dt><dd class="col-5"><%= c.empresa.numero_trabajadores %></dd>
+          <dt class="col-7">Vinculaciones activas registradas</dt><dd class="col-5"><%= c.vinculacionesActivas %></dd>
+          <dt class="col-7">Nivel de riesgo (m&aacute;ximo de los centros)</dt><dd class="col-5"><%= c.nivelRiesgo || '-' %></dd>
+        </dl>
+      </div>
+      <div class="card-footer text-right">
+        <a href="/empresa" class="btn btn-sm btn-default"><i class="fas fa-building mr-1"></i>Editar datos y centros en Empresa</a>
+      </div>
+    </div>
+</div>
+<div class="tab-pane fade" id="tab-centros" role="tabpanel">
+<div class="card card-outline card-secondary">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Centro</th><th>Clase de riesgo</th><th>Trabajadores</th></tr></thead>
+          <tbody>
+            <% c.centros.forEach(function (ct) { %>
+            <tr><td><%= ct.nombre %></td><td><%= ct.clase_riesgo %></td><td><%= ct.numero_trabajadores %></td></tr>
+            <% }) %>
+            <% if (!c.centros.length) { %><tr><td colspan="3" class="text-muted">Sin centros de trabajo registrados.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+<% if (c.conjunto && c.requisitos.length && !Number(c.conjunto.evalua_tabla_completa)) { %><div class="tab-pane fade" id="tab-requisitos" role="tabpanel">
+<div class="card card-outline card-light">
+      <div class="card-header">
+        <h3 class="card-title">Requisitos del art. <%= c.conjunto.articulo %></h3>
+        
+      </div>
+      <div class="card-body small">
+        <ol class="pl-3 mb-0">
+          <% c.requisitos.forEach(function (r) { %><li><%= r.nombre %><% if (!Number(r.mapeo_verificado) && c.conjunto.codigo !== 'AGRO_3') { %> <span class="badge badge-light" data-toggle="tooltip" title="El mapeo a numerales de la tabla de valores no est&aacute; en el texto oficial">mapeo no verificado</span><% } %></li><% }) %>
+        </ol>
+      </div>
+    </div>
+</div><% } %>
+</div>
+<%- include('../partials/pie') %>

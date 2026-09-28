@@ -1,0 +1,231 @@
+<%- include('../partials/cabecera') %>
+<%
+  var fmt = function (v) { return Number(v || 0).toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); };
+  var colorAct = { programada: 'info', ejecutada: 'success', cancelada: 'dark' };
+  var colorCambio = { en_evaluacion: 'warning', aprobado: 'info', implementado: 'success', rechazado: 'dark' };
+%>
+<ul class="nav nav-tabs mb-3">
+  <li class="nav-item"><a class="nav-link<%= tab === 'plan' ? ' active' : '' %>" href="?tab=plan<%= d ? '&plan=' + d.p.id : '' %>">Plan de trabajo anual</a></li>
+  <li class="nav-item"><a class="nav-link<%= tab === 'cambios' ? ' active' : '' %>" href="?tab=cambios">Gesti&oacute;n del cambio</a></li>
+</ul>
+
+<% if (tab === 'plan') { %>
+<div class="barra-acciones">
+  <div>
+    <% if (planes.length) { %>
+    <select class="form-control form-control-sm d-inline-block w-auto js-plan">
+      <% planes.forEach(function (x) { %><option value="<%= x.id %>"<%= d && d.p.id === x.id ? ' selected' : '' %>>Vigencia <%= x.vigencia_anio %> &middot; <%= x.estado %></option><% }) %>
+    </select>
+    <% } %>
+  </div>
+  <div>
+    <% if (gestionar && d && d.p.estado !== 'cerrado') { %>
+    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-actividad"><i class="fas fa-plus mr-1"></i>Actividad</button>
+    <% if (d.capaPendientes.length) { %>
+    <form method="post" action="/planeacion/planes/<%= d.p.id %>/importar-capa" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-sm btn-default" data-toggle="tooltip" title="Acciones abiertas de autoevaluaci&oacute;n, investigaciones y auditor&iacute;as"><i class="fas fa-file-import mr-1"></i>Traer <%= d.capaPendientes.length %> acci&oacute;n(es) de mejora</button></form>
+    <% } %>
+    <% } %>
+    <% if (gestionar) { %><button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modal-plan"><i class="fas fa-calendar-plus mr-1"></i>Nuevo plan</button><% } %>
+  </div>
+</div>
+
+<% if (!d) { %>
+<div class="card card-outline card-primary"><div class="card-body text-muted">No hay plan de trabajo. El plan anual se formula en diciembre para la vigencia siguiente y lo firma el representante legal.</div></div>
+<% } else { var a = d.avance; %>
+<div class="card card-outline card-primary">
+  <div class="card-body">
+    <div class="row text-center">
+      <div class="col-6 col-md-3 border-right"><div class="h4 mb-0"><%= a.cumplimiento_corte === null ? '-' : a.cumplimiento_corte + '%' %></div><small class="text-muted">Cumplimiento al corte (<%= a.ejecutadas_al_corte %>/<%= a.programadas_al_corte %>)</small></div>
+      <div class="col-6 col-md-3 border-right"><div class="h4 mb-0"><%= a.avance_total === null ? '-' : a.avance_total + '%' %></div><small class="text-muted">Avance del a&ntilde;o (<%= a.ejecutadas %>/<%= a.total %>)</small></div>
+      <div class="col-6 col-md-3 border-right"><div class="h4 mb-0 <%= a.vencidas ? 'text-danger' : '' %>"><%= a.vencidas %></div><small class="text-muted">Actividades vencidas</small></div>
+      <div class="col-6 col-md-3"><div class="h5 mb-0">$<%= fmt(a.presupuesto_ejecutado) %></div><small class="text-muted">ejecutado de $<%= fmt(d.p.presupuesto_total) %></small></div>
+    </div>
+  </div>
+</div>
+
+<% if (d.p.estado === 'borrador') { %>
+<div class="card card-outline card-warning">
+  <div class="card-header"><h3 class="card-title">Aprobaci&oacute;n del plan</h3></div>
+  <div class="card-body">
+    <% if (d.impedimentos.length) { %><ul class="small text-muted pl-3"><% d.impedimentos.forEach(function (x) { %><li><%= x %></li><% }) %></ul><% } %>
+    <% if (gestionar) { %>
+    <div class="row">
+      <form method="post" action="/planeacion/planes/<%= d.p.id %>/presupuesto" class="col-md-5 form-inline mb-2">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <label class="small mr-2">Presupuesto SST $</label><input type="number" name="presupuesto_total" class="form-control form-control-sm mr-2" value="<%= d.p.presupuesto_total %>" min="0" step="0.01">
+        <button type="submit" class="btn btn-sm btn-default">Guardar</button>
+      </form>
+      <form method="post" action="/planeacion/planes/<%= d.p.id %>/aprobar" class="col-md-7 form-inline mb-2">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <select name="documento_id" class="form-control form-control-sm mr-2"><option value="">Plan firmado (PLAN_ANUAL)</option>
+          <% documentos.filter(function (x) { return x.tipo_documental === 'PLAN_ANUAL'; }).forEach(function (x) { %><option value="<%= x.id %>"><%= x.codigo %> v<%= x.version %> (<%= x.estado %>)</option><% }) %></select>
+        <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check mr-1"></i>Aprobar</button>
+      </form>
+    </div>
+    <% } %>
+  </div>
+</div>
+<% } else if (d.documento) { %>
+<p class="small text-muted">Aprobado el <%= d.p.aprobado_en %> con <a href="/documentos/<%= d.documento.id %>"><%= d.documento.codigo %> v<%= d.documento.version %></a>.
+  <% if (gestionar && d.p.estado === 'aprobado') { %><form method="post" action="/planeacion/planes/<%= d.p.id %>/cerrar" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button type="submit" class="btn btn-link btn-sm p-0">Cerrar la vigencia</button></form><% } %></p>
+<% } %>
+
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title">Objetivos y metas</h3>
+    <% if (gestionar && d.p.estado === 'borrador') { %><div class="card-tools"><button type="button" class="btn btn-tool" data-toggle="modal" data-target="#modal-objetivo" title="Agregar"><i class="fas fa-plus"></i></button></div><% } %></div>
+  <div class="card-body p-0"><table class="table table-sm mb-0"><tbody>
+    <% d.objetivos.forEach(function (o) { var ind = d.indicadores.filter(function (i) { return i.codigo === o.indicador_codigo; })[0]; %>
+    <tr><td><%= o.descripcion %></td><td><strong><%= o.meta %></strong></td><td class="small text-muted"><%= ind ? ind.nombre : '' %></td></tr>
+    <% }) %>
+    <% if (!d.objetivos.length) { %><tr><td class="text-muted">Sin objetivos.</td></tr><% } %>
+  </tbody></table></div>
+</div>
+
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title">Cronograma</h3></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead><tr><th>Actividad</th><th>PHVA</th><th>Responsable</th><th>Fechas</th><th class="text-right">Presupuesto</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+        <tbody>
+          <% d.actividades.forEach(function (x) { %>
+          <tr class="<%= x.vencida ? 'fila-critica' : (x.estado === 'cancelada' ? 'text-muted' : '') %>">
+            <td><%= x.descripcion %><% if (x.observacion) { %><br><small><i class="fas fa-comment-alt mr-1"></i><%= x.observacion %></small><% } %></td>
+            <td class="small"><%= x.ciclo %></td>
+            <td class="small"><%= x.responsable || '-' %></td>
+            <td class="text-nowrap small"><%= x.fecha_inicio %><br><%= x.fecha_fin %></td>
+            <td class="text-right">$<%= fmt(x.presupuesto) %></td>
+            <td><span class="badge badge-<%= x.vencida ? 'danger' : colorAct[x.estado] %>"><%= x.vencida ? 'vencida' : x.estado %></span><% if (x.fecha_ejecucion) { %><br><small><%= x.fecha_ejecucion %></small><% } %></td>
+            <td class="text-center text-nowrap">
+              <% if (gestionar && x.estado === 'programada' && d.p.estado !== 'cerrado') { %>
+              <button type="button" class="btn btn-xs btn-success js-cerrar" data-id="<%= x.id %>" data-descripcion="<%= x.descripcion %>" data-toggle="tooltip" title="Ejecutar o cancelar"><i class="fas fa-check"></i></button>
+              <button type="button" class="btn btn-xs btn-default js-reprogramar" data-id="<%= x.id %>" data-fin="<%= x.fecha_fin %>" data-toggle="tooltip" title="Reprogramar"><i class="fas fa-calendar-alt"></i></button>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+          <% if (!d.actividades.length) { %><tr><td colspan="7" class="text-muted">Sin actividades.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<% } %>
+<% } %>
+
+<% if (tab === 'cambios') { %>
+<div class="barra-acciones">
+  <span class="small text-muted">Todo cambio que pueda afectar la SST se eval&uacute;a antes de implementarse (art. 2.2.4.6.26 del D. 1072).</span>
+  <% if (gestionar) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-cambio"><i class="fas fa-plus mr-1"></i>Registrar cambio</button><% } %>
+</div>
+<div class="card card-outline card-secondary">
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Cambio</th><th>Tipo</th><th>Fecha prevista</th><th>Impacto en SST</th><th>Estado</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+      <tbody>
+        <% cambios.forEach(function (c) { %>
+        <tr>
+          <td><%= c.descripcion %><% if (c.responsable_texto) { %><br><small><%= c.responsable_texto %></small><% } %></td>
+          <td class="small"><%= c.tipo %></td>
+          <td class="text-nowrap"><%= c.fecha_prevista %></td>
+          <td class="small"><%= c.impacto_sst || '-' %><% if (Number(c.actualiza_peligros)) { %><br><span class="badge badge-warning">Actualizar matriz de peligros</span><% } %><% if (Number(c.requiere_capacitacion)) { %> <span class="badge badge-info">Requiere capacitaci&oacute;n</span><% } %></td>
+          <td><span class="badge badge-<%= colorCambio[c.estado] %>"><%= c.estado.replace('_', ' ') %></span></td>
+          <td class="text-center"><% if (gestionar && ['en_evaluacion', 'aprobado'].indexOf(c.estado) !== -1) { %><button type="button" class="btn btn-xs btn-default js-cambio" data-id="<%= c.id %>" data-estado="<%= c.estado %>" data-impacto="<%= c.impacto_sst || '' %>" data-descripcion="<%= c.descripcion %>"><i class="fas fa-arrow-right"></i></button><% } %></td>
+        </tr>
+        <% }) %>
+        <% if (!cambios.length) { %><tr><td colspan="6" class="text-muted">Sin cambios registrados.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% } %>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-plan" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/planeacion/planes" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Nuevo plan de trabajo</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row"><div class="form-group col-6"><label>Vigencia *</label><input type="number" name="vigencia_anio" class="form-control" value="<%= Number(hoy.slice(0, 4)) + (Number(hoy.slice(5, 7)) >= 11 ? 1 : 0) %>" required></div>
+      <div class="form-group col-6"><label>Presupuesto SST $</label><input type="number" name="presupuesto_total" class="form-control" min="0" step="0.01" value="0"></div></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Crear</button></div>
+  </form></div></div>
+
+<% if (d) { %>
+<div class="modal fade" id="modal-objetivo" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/planeacion/planes/<%= d.p.id %>/objetivos" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Objetivo</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Objetivo *</label><textarea name="descripcion" class="form-control" rows="2" maxlength="500" required></textarea></div>
+      <div class="form-group"><label>Meta *</label><input type="text" name="meta" class="form-control" maxlength="255" required placeholder="Ej.: frecuencia de accidentalidad &lt; 2%"></div>
+      <div class="form-group mb-0"><label>Indicador</label><select name="indicador_codigo" class="form-control"><option value="">Ninguno</option><% d.indicadores.forEach(function (i) { %><option value="<%= i.codigo %>"><%= i.nombre %> (<%= i.tipo %>)</option><% }) %></select></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Agregar</button></div>
+  </form></div></div>
+
+<div class="modal fade" id="modal-actividad" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog modal-lg" role="document">
+  <form method="post" action="/planeacion/planes/<%= d.p.id %>/actividades" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Actividad del cronograma</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Actividad *</label><input type="text" name="descripcion" class="form-control" maxlength="500" required></div>
+      <div class="form-row">
+        <div class="form-group col-md-3"><label>PHVA *</label><select name="ciclo" class="form-control"><option>PLANEAR</option><option selected>HACER</option><option>VERIFICAR</option><option>ACTUAR</option></select></div>
+        <div class="form-group col-md-5"><label>Objetivo</label><select name="objetivo_id" class="form-control"><option value="">Ninguno</option><% d.objetivos.forEach(function (o) { %><option value="<%= o.id %>"><%= o.descripcion.slice(0, 60) %></option><% }) %></select></div>
+        <div class="form-group col-md-4"><label>Presupuesto $</label><input type="number" name="presupuesto" class="form-control" min="0" step="0.01" value="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-4"><label>Responsable</label><select name="responsable_id" class="form-control"><option value="">Externo / otro</option><% usuarios.forEach(function (u) { %><option value="<%= u.id %>"><%= u.nombre %></option><% }) %></select></div>
+        <div class="form-group col-md-4"><label>o nombre</label><input type="text" name="responsable_texto" class="form-control" maxlength="150"></div>
+        <div class="form-group col-md-2"><label>Inicio *</label><input type="date" name="fecha_inicio" class="form-control" required></div>
+        <div class="form-group col-md-2"><label>Fin *</label><input type="date" name="fecha_fin" class="form-control" required></div>
+      </div>
+      <div class="form-group mb-0"><label>Recursos</label><input type="text" name="recursos" class="form-control" maxlength="500"></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Programar</button></div>
+  </form></div></div>
+
+<div class="modal fade" id="modal-cerrar" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" class="modal-content" id="form-cerrar">
+    <div class="modal-header"><h5 class="modal-title">Cerrar actividad</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><p class="small js-titulo"></p>
+      <div class="form-row"><div class="form-group col-6"><label>Resultado</label><select name="accion" class="form-control"><option value="ejecutar">Ejecutada</option><option value="cancelar">Cancelada</option></select></div>
+      <div class="form-group col-6"><label>Fecha</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>"></div></div>
+      <div class="form-group"><label>Evidencia</label><select name="evidencia_documento_id" class="form-control"><option value="">Sin documento</option><% documentos.forEach(function (x) { %><option value="<%= x.id %>"><%= x.codigo %> v<%= x.version %></option><% }) %></select></div>
+      <div class="form-group mb-0"><label>Observaci&oacute;n *</label><textarea name="observacion" class="form-control" rows="2" required></textarea></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success">Guardar</button></div>
+  </form></div></div>
+
+<div class="modal fade" id="modal-reprogramar" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" class="modal-content" id="form-reprogramar">
+    <div class="modal-header"><h5 class="modal-title">Reprogramar</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Nueva fecha de fin *</label><input type="date" name="fecha_fin" class="form-control" required></div>
+      <div class="form-group mb-0"><label>Motivo *</label><input type="text" name="motivo" class="form-control" maxlength="500" required></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+  </form></div></div>
+<% } %>
+
+<div class="modal fade" id="modal-cambio" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/planeacion/cambios" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Registrar cambio</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row"><div class="form-group col-6"><label>Tipo *</label><select name="tipo" class="form-control"><option value="proceso">Proceso</option><option value="instalacion">Instalaci&oacute;n</option><option value="maquinaria">Maquinaria o equipos</option><option value="organizacional">Organizacional</option><option value="legal">Legal</option><option value="otro">Otro</option></select></div>
+      <div class="form-group col-6"><label>Fecha prevista *</label><input type="date" name="fecha_prevista" class="form-control" required></div></div>
+      <div class="form-group"><label>Cambio *</label><textarea name="descripcion" class="form-control" rows="3" required></textarea></div>
+      <div class="form-group mb-0"><label>Responsable</label><input type="text" name="responsable_texto" class="form-control" maxlength="150"></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+
+<div class="modal fade" id="modal-avance-cambio" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" class="modal-content" id="form-avance-cambio">
+    <div class="modal-header"><h5 class="modal-title">Gestionar cambio</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><p class="small js-titulo"></p>
+      <div class="js-evaluacion">
+        <div class="form-group"><label>Evaluaci&oacute;n del impacto en SST *</label><textarea name="impacto_sst" class="form-control" rows="3"></textarea></div>
+        <div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="gc-pel" name="actualiza_peligros" value="1"><label class="custom-control-label" for="gc-pel">Requiere actualizar la matriz de peligros</label></div>
+        <div class="custom-control custom-checkbox mb-2"><input type="checkbox" class="custom-control-input" id="gc-cap" name="requiere_capacitacion" value="1"><label class="custom-control-label" for="gc-cap">Requiere capacitar a los afectados</label></div>
+      </div>
+      <div class="form-group"><label>Acci&oacute;n</label><select name="accion" class="form-control js-accion-cambio"></select></div>
+      <div class="form-group mb-0"><label>Observaci&oacute;n</label><input type="text" name="observacion" class="form-control" maxlength="1000"></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+  </form></div></div>
+<% } %>
+<%- include('../partials/pie') %>

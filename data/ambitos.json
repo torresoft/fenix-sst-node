@@ -1,0 +1,93 @@
+{
+  "_corte": "2026-08-31",
+  "_fuente": "docs/01-marco-normativo.md (bloque de riesgos especificos) y docs/06-modulos.md (reglas de activacion)",
+  "_nota": "es_general: aplica a toda empresa. declarable: la empresa lo marca en su perfil. regla_activacion: se activa sola si se cumple CUALQUIERA de las condiciones sobre campos de empresa.",
+  "_no_verificado": [
+    "PESV: umbral de >10 vehiculos o >=2 conductores tomado de docs/06; confirmar la redaccion de la Ley 2050 de 2020 y la Res. 40595 de 2022 sobre \"personal de conductores\"."
+  ],
+  "ambitos": [
+    {
+      "codigo": "general",
+      "nombre": "General",
+      "descripcion": "Toda empresa o contratante",
+      "es_general": true,
+      "declarable": false,
+      "regla_activacion": null,
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "alturas",
+      "nombre": "Trabajo en alturas",
+      "descripcion": "Tareas con riesgo de caida de mas de 2,00 m",
+      "es_general": false,
+      "declarable": true,
+      "regla_activacion": null,
+      "norma_codigo": "RES-4272-2021"
+    },
+    {
+      "codigo": "espacios_confinados",
+      "nombre": "Espacios confinados",
+      "descripcion": "Espacios confinados tipo 1 y 2",
+      "es_general": false,
+      "declarable": true,
+      "regla_activacion": null,
+      "norma_codigo": "RES-0491-2020"
+    },
+    {
+      "codigo": "riesgo_electrico",
+      "nombre": "Riesgo eléctrico",
+      "descripcion": "Sector electrico y trabajo cerca de redes energizadas",
+      "es_general": false,
+      "declarable": true,
+      "regla_activacion": null,
+      "norma_codigo": "RES-5018-2019"
+    },
+    {
+      "codigo": "quimicos",
+      "nombre": "Productos químicos",
+      "descripcion": "Manejo de productos quimicos (SGA)",
+      "es_general": false,
+      "declarable": true,
+      "regla_activacion": null,
+      "norma_codigo": "RES-0773-2021"
+    },
+    {
+      "codigo": "pesv",
+      "nombre": "Seguridad vial (PESV)",
+      "descripcion": "Mas de 10 vehiculos o 2 o mas conductores",
+      "es_general": false,
+      "declarable": true,
+      "regla_activacion": [
+        {
+          "campo": "numero_vehiculos",
+          "operador": ">",
+          "valor": 10
+        },
+        {
+          "campo": "numero_conductores",
+          "operador": ">=",
+          "valor": 2
+        }
+      ],
+      "norma_codigo": "RES-40595-2022"
+    },
+    {
+      "codigo": "calderas",
+      "nombre": "Calderas",
+      "descripcion": "Operacion de calderas",
+      "es_general": false,
+      "declarable": true,
+      "regla_activacion": null,
+      "norma_codigo": "RES-1857-2024"
+    },
+    {
+      "codigo": "accidentes_mayores",
+      "nombre": "Accidentes mayores",
+      "descripcion": "Instalaciones con riesgo de accidentes mayores (SGSPAM)",
+      "es_general": false,
+      "declarable": true,
+      "regla_activacion": null,
+      "norma_codigo": "RES-5492-2024"
+    }
+  ]
+}

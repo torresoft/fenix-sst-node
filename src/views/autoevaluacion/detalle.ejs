@@ -1,0 +1,317 @@
+<%- include('../partials/cabecera') %>
+<%
+  var a = d.autoevaluacion, r = d.resultado, borrador = a.estado === 'borrador';
+  var colorValoracion = { CRITICO: 'danger', MODERADAMENTE_ACEPTABLE: 'warning', ACEPTABLE: 'success' };
+  var textoValoracion = { CRITICO: 'Cr&iacute;tico', MODERADAMENTE_ACEPTABLE: 'Moderadamente aceptable', ACEPTABLE: 'Aceptable' };
+  var badgeResultado = { cumple: 'success', no_cumple: 'danger', no_aplica: 'secondary', pendiente: 'light' };
+  var textoResultado = { cumple: 'Cumple', no_cumple: 'No cumple', no_aplica: 'No aplica', pendiente: 'Pendiente' };
+  var textoMotivo = {
+    cumple: 'Con evidencia vigente', sin_evidencia: 'Sin documento soporte', sin_firma: 'Documento sin firma',
+    vencido: 'Documento vencido al corte', posterior_al_corte: 'Documento posterior al corte',
+    no_vigente: 'Documento no vigente', justificado: 'No aplica justificado', fuera_del_conjunto: 'Fuera del conjunto (art. 27)'
+  };
+  var pct = function (obtenido, peso) { return Number(peso) ? Math.round(Number(obtenido) / Number(peso) * 100) : 0; };
+  var enConjunto = r.items.filter(function (i) { return i.aplica_conjunto; });
+  var fuera = r.items.filter(function (i) { return !i.aplica_conjunto; });
+  var ciclos = ['PLANEAR', 'HACER', 'VERIFICAR', 'ACTUAR'];
+  var colorV = colorValoracion[r.valoracion] || 'secondary';
+%>
+<div class="mb-3">
+  <a href="/autoevaluacion" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Volver</a>
+  <a href="/autoevaluacion/<%= a.id %>/csv" class="btn btn-sm btn-success"><i class="fas fa-file-csv mr-1"></i>Exportar tabla de valores</a>
+  <% if (gestionar && borrador) { %>
+  <button type="button" class="btn btn-sm btn-primary float-right" data-toggle="modal" data-target="#modal-cerrar"><i class="fas fa-lock mr-1"></i>Cerrar autoevaluaci&oacute;n</button>
+  <% } else if (gestionar && a.estado === 'cerrada') { %>
+  <form method="post" action="/autoevaluacion/<%= a.id %>/version" class="float-right">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button type="submit" class="btn btn-sm btn-default" data-toggle="tooltip" title="Corregir: crea una versi&oacute;n nueva y conserva esta"><i class="fas fa-code-branch mr-1"></i>Nueva versi&oacute;n</button>
+  </form>
+  <% } %>
+</div>
+
+<div class="row">
+  <div class="col-lg-4">
+    <div class="card card-outline card-<%= colorV %>">
+      <div class="card-body text-center">
+        <p class="text-muted mb-1">Vigencia <%= a.vigencia_anio %> &middot; versi&oacute;n <%= a.version %> &middot; <%= a.estado %></p>
+        <div class="display-4 font-weight-bold text-<%= colorV %>"><%= r.puntaje %><small class="text-muted">%</small></div>
+        <span class="badge badge-<%= colorV %> p-2"><%- textoValoracion[r.valoracion] || r.valoracion %></span>
+        <% if (borrador) { %><p class="small text-muted mt-2 mb-0">C&aacute;lculo en vivo desde el expediente documental</p><% } %>
+      </div>
+      <div class="card-footer small">
+        <strong><%= d.conjunto ? d.conjunto.cantidad_estandares : '' %> est&aacute;ndares</strong> (art. <%= d.conjunto ? d.conjunto.articulo : '' %>) &middot;
+        <%= a.trabajadores %> trabajadores &middot; riesgo nivel <%= a.nivel_riesgo %> &middot; corte <%= a.fecha_corte %><br>
+        Evaluados: <%= r.conteo.evaluados %> &middot; cumplen: <%= r.conteo.cumple %> &middot; no cumplen: <%= r.conteo.no_cumple %> &middot; no aplica: <%= r.conteo.no_aplica %>
+        <% if (a.hash_resultado) { %><br><span class="text-monospace text-break" data-toggle="tooltip" title="SHA-256 del resultado congelado">SHA-256 <%= a.hash_resultado %></span><% } %>
+      </div>
+    </div>
+    <% if (d.acciones_valoracion.length) { %>
+    <div class="card card-outline card-<%= colorV %>">
+      <div class="card-header"><h3 class="card-title">Acciones exigidas (art. 28)</h3></div>
+      <div class="card-body small"><ul class="pl-3 mb-0"><% d.acciones_valoracion.forEach(function (x) { %><li><%= x %></li><% }) %></ul></div>
+    </div>
+    <% } %>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card card-outline card-secondary">
+      <div class="card-header"><h3 class="card-title">Desglose PHVA</h3></div>
+      <div class="card-body p-0">
+        <table class="table table-bordered table-sm mb-0">
+          <thead><tr><th>Ciclo / componente</th><th class="text-right">Obtenido</th><th class="text-right">Peso</th><th class="w-50">Avance</th></tr></thead>
+          <tbody>
+            <% r.desglose.forEach(function (c) { %>
+            <tr class="table-active">
+              <td><strong><%= c.ciclo %></strong></td>
+              <td class="text-right"><strong><%= c.obtenido %></strong></td>
+              <td class="text-right"><%= c.peso %></td>
+              <td><div class="progress progress-sm"><div class="progress-bar bg-primary js-barra" data-valor="<%= pct(c.obtenido, c.peso) %>"></div></div></td>
+            </tr>
+            <% c.componentes.forEach(function (p) { %>
+            <tr>
+              <td class="pl-4"><%= p.componente %></td>
+              <td class="text-right"><%= p.obtenido %></td>
+              <td class="text-right"><%= p.peso %></td>
+              <td><div class="progress progress-xs"><div class="progress-bar bg-info js-barra" data-valor="<%= pct(p.obtenido, p.peso) %>"></div></div></td>
+            </tr>
+            <% }) %>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%
+  var primerCiclo = ciclos.findIndex(function (ciclo) { return enConjunto.some(function (i) { return i.ciclo === ciclo; }); });
+%>
+<ul class="nav nav-tabs" role="tablist">
+  <% ciclos.forEach(function (ciclo, ci) { var n = enConjunto.filter(function (i) { return i.ciclo === ciclo; }).length; if (!n) return; %>
+  <li class="nav-item"><a class="nav-link<%= ci === primerCiclo ? ' active' : '' %>" data-toggle="tab" href="#tab-ciclo-<%= ci %>" role="tab"><%= ciclo %> <span class="badge badge-light"><%= n %></span></a></li>
+  <% }) %>
+  <% if (fuera.length) { %><li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-fuera" role="tab">Fuera del conjunto <span class="badge badge-light"><%= fuera.length %></span></a></li><% } %>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-brechas" role="tab">Brechas <span class="badge badge-warning"><%= d.brechas.length %></span></a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-plan" role="tab">Plan de mejoramiento <span class="badge badge-info"><%= acciones.length %></span></a></li>
+</ul>
+<div class="tab-content pestanas">
+<% ciclos.forEach(function (ciclo, ci) {
+     var filas = enConjunto.filter(function (i) { return i.ciclo === ciclo; });
+     if (!filas.length) return; %>
+<div class="tab-pane fade<%= ci === primerCiclo ? ' show active' : '' %>" id="tab-ciclo-<%= ci %>" role="tabpanel">
+<div class="card card-outline card-primary">
+  <div class="card-header">
+    <h3 class="card-title"><%= ciclo %> <span class="badge badge-primary ml-1"><%= filas.length %></span></h3>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead><tr><th>Numeral</th><th>&Iacute;tem</th><th class="text-right">Valor</th><th>Resultado</th><th>Evidencia</th><th class="text-center">Acciones</th></tr></thead>
+        <tbody>
+          <% filas.forEach(function (i) { %>
+          <tr id="n-<%= i.numeral %>">
+            <td class="text-nowrap"><strong><%= i.numeral %></strong><% if (i.requisitos.length) { %><br><small class="text-muted">req. <%= i.requisitos.join(', ') %></small><% } %></td>
+            <td><%= i.nombre %><br><small class="text-muted"><%= i.componente %></small>
+              <% if (i.justificacion) { %><br><small><i class="fas fa-comment-alt mr-1"></i><%= i.justificacion %></small><% } %></td>
+            <td class="text-right"><%= i.puntaje %> / <%= i.peso %></td>
+            <td><span class="badge badge-<%= badgeResultado[i.resultado] %>"><%= textoResultado[i.resultado] %></span><br><small><%= textoMotivo[i.motivo] || i.motivo || '' %></small></td>
+            <td>
+              <% i.documentos.forEach(function (doc) { var valido = (i.evidencias || []).indexOf(doc.id) !== -1; %>
+              <small class="d-block<%= valido ? '' : ' text-danger' %>"><i class="fas <%= valido ? 'fa-check-circle text-success' : 'fa-times-circle' %> mr-1"></i><%= doc.codigo %> v<%= doc.version %><%= doc.firmado ? '' : ' (sin firma)' %></small>
+              <% }) %>
+            </td>
+            <td class="text-center text-nowrap">
+              <% if (gestionar && borrador) { %>
+              <button type="button" class="btn btn-xs btn-default js-evidencia" data-toggle="tooltip" title="Vincular evidencia"
+                      data-numeral="<%= i.numeral %>" data-nombre="<%= i.nombre %>" data-docs="<%= i.documentos.map(function (x) { return x.id; }).join(',') %>">
+                <i class="fas fa-paperclip"></i>
+              </button>
+              <button type="button" class="btn btn-xs btn-default js-noaplica" data-toggle="tooltip" title="No aplica (justificar)"
+                      data-numeral="<%= i.numeral %>" data-nombre="<%= i.nombre %>" data-justificacion="<%= i.justificacion || '' %>">
+                <i class="fas fa-ban"></i>
+              </button>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+<% }) %>
+<% if (fuera.length) { %>
+<div class="tab-pane fade" id="tab-fuera" role="tabpanel">
+<div class="card card-outline card-light">
+  <div class="card-header">
+    <h3 class="card-title"><%= fuera.length %> numerales fuera del conjunto: puntaje m&aacute;ximo (art. 27)</h3>
+    
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-sm mb-0">
+      <thead><tr><th>Numeral</th><th>&Iacute;tem</th><th class="text-right">Valor</th></tr></thead>
+      <tbody><% fuera.forEach(function (i) { %><tr><td><%= i.numeral %></td><td><%= i.nombre %></td><td class="text-right"><%= i.peso %></td></tr><% }) %></tbody>
+    </table>
+  </div>
+</div>
+</div>
+<% } %>
+<div class="tab-pane fade" id="tab-brechas" role="tabpanel">
+<div class="card card-outline card-warning">
+  <div class="card-header"><h3 class="card-title">Brechas priorizadas <span class="badge badge-warning ml-1"><%= d.brechas.length %></span></h3></div>
+  <div class="card-body p-0">
+    <% if (!d.brechas.length) { %>
+    <p class="text-muted p-3 mb-0">Sin brechas en los est&aacute;ndares evaluados.</p>
+    <% } else { %>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead><tr><th>Numeral</th><th>&Iacute;tem</th><th class="text-right">Aporta</th><th>Qu&eacute; se requiere</th><th class="text-right">Puntaje al cerrar</th><th>Valoraci&oacute;n</th></tr></thead>
+        <tbody>
+          <% d.brechas.forEach(function (b) { %>
+          <tr>
+            <td><a href="#n-<%= b.numeral %>"><%= b.numeral %></a></td>
+            <td><%= b.nombre %><br><small class="text-danger"><%= textoMotivo[b.motivo] || b.motivo %></small></td>
+            <td class="text-right">+<%= b.peso %></td>
+            <td><small><%= b.modo_verificacion || '' %></small></td>
+            <td class="text-right"><%= b.puntaje_proyectado %></td>
+            <td><span class="badge badge-<%= colorValoracion[b.valoracion_proyectada] %>"><%- textoValoracion[b.valoracion_proyectada] %></span></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>
+</div>
+</div>
+<div class="tab-pane fade" id="tab-plan" role="tabpanel">
+<div class="card card-outline card-info" id="plan">
+  <div class="card-header"><h3 class="card-title">Plan de mejoramiento</h3></div>
+  <div class="card-body p-0">
+    <% if (acciones.length) { %>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead><tr><th>Numeral</th><th>Acci&oacute;n</th><th>Responsable</th><th>Fecha l&iacute;mite</th><th>Estado</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+        <tbody>
+          <% acciones.forEach(function (x) { var vencida = x.estado === 'abierta' && x.fecha_limite < hoy; %>
+          <tr>
+            <td><%= x.referencia %></td>
+            <td><%= x.descripcion %><% if (x.observacion_cierre) { %><br><small><i class="fas fa-comment-alt mr-1"></i><%= x.observacion_cierre %></small><% } %></td>
+            <td><%= x.responsable %></td>
+            <td class="text-nowrap<%= vencida ? ' text-danger font-weight-bold' : '' %>"><%= x.fecha_limite %></td>
+            <td><span class="badge badge-<%= x.estado === 'cerrada' ? 'success' : (vencida ? 'danger' : 'info') %>"><%= vencida ? 'vencida' : x.estado %></span><% if (x.fecha_cierre) { %><br><small><%= x.fecha_cierre %></small><% } %></td>
+            <td class="text-center">
+              <% if (gestionar && x.estado === 'abierta') { %>
+              <button type="button" class="btn btn-xs btn-success js-cerrar-accion" data-toggle="tooltip" title="Cerrar acci&oacute;n"
+                      data-id="<%= x.id %>" data-descripcion="<%= x.descripcion %>"><i class="fas fa-check"></i></button>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } else { %>
+    <p class="text-muted p-3 mb-0"><%= a.estado === 'cerrada' ? 'Genere el plan a partir de las brechas.' : 'El plan se genera al cerrar la autoevaluación.' %></p>
+    <% } %>
+  </div>
+  <% if (gestionar && a.estado === 'cerrada' && d.brechas.length) { %>
+  <div class="card-footer">
+    <form method="post" action="/autoevaluacion/<%= a.id %>/plan" class="form-row align-items-end">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group col-md-5 mb-0">
+        <label for="p-resp" class="small">Responsable *</label>
+        <select id="p-resp" name="responsable_id" class="form-control form-control-sm" required>
+          <option value="">Seleccione</option>
+          <% responsables.forEach(function (u) { %><option value="<%= u.id %>"><%= u.nombre %></option><% }) %>
+        </select>
+      </div>
+      <div class="form-group col-md-4 mb-0">
+        <label for="p-fecha" class="small">Fecha l&iacute;mite *</label>
+        <input type="date" id="p-fecha" name="fecha_limite" class="form-control form-control-sm" min="<%= hoy %>" required>
+      </div>
+      <div class="form-group col-md-3 mb-0">
+        <button type="submit" class="btn btn-sm btn-info btn-block"><i class="fas fa-list-ol mr-1"></i>Generar plan</button>
+      </div>
+    </form>
+  </div>
+  <% } %>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="modal-evidencia" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <form method="post" action="/autoevaluacion/<%= a.id %>/evidencia" class="modal-content" id="form-evidencia">
+      <div class="modal-header"><h5 class="modal-title">Vincular evidencia</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="numeral" value="">
+        <p class="font-weight-bold js-titulo"></p>
+        <div class="form-group">
+          <label for="ev-docs">Documentos vigentes que soportan el numeral</label>
+          <select id="ev-docs" name="documentos" class="form-control" multiple size="8"></select>
+          <small class="form-text text-muted">Cuenta como cumplido solo si el documento est&aacute; vigente al corte y firmado cuando su tipo lo exige. Ctrl + clic para varios.</small>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-noaplica" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="/autoevaluacion/<%= a.id %>/no-aplica" class="modal-content" id="form-noaplica">
+      <div class="modal-header"><h5 class="modal-title">No aplica</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="numeral" value="">
+        <p class="font-weight-bold js-titulo"></p>
+        <div class="form-group">
+          <label for="na-just">Justificaci&oacute;n</label>
+          <textarea id="na-just" name="justificacion" class="form-control" rows="3" maxlength="1000"></textarea>
+          <small class="form-text text-muted">Obligatoria para marcar no aplica (se califica con el m&aacute;ximo, art. 27). D&eacute;jela vac&iacute;a para quitar el no aplica.</small>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-cerrar" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="/autoevaluacion/<%= a.id %>/cerrar" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Cerrar autoevaluaci&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p>Se congela la calificaci&oacute;n <strong><%= r.puntaje %></strong> (<%- textoValoracion[r.valoracion] || r.valoracion %>) con su huella SHA-256.
+        Despu&eacute;s no se puede modificar: una correcci&oacute;n crea una versi&oacute;n nueva.</p>
+        <p class="small text-muted mb-0">Se generan las obligaciones de reporte a la ARL seg&uacute;n la valoraci&oacute;n, la pr&oacute;xima autoevaluaci&oacute;n y el cargue en el aplicativo del Ministerio.</p>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-lock mr-1"></i>Cerrar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-accion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-accion">
+      <div class="modal-header"><h5 class="modal-title">Cerrar acci&oacute;n de mejora</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="small js-titulo"></p>
+        <div class="form-group">
+          <label for="ac-fecha">Fecha de cierre *</label>
+          <input type="date" id="ac-fecha" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required>
+        </div>
+        <div class="form-group">
+          <label for="ac-obs">&iquest;C&oacute;mo se cerr&oacute;? *</label>
+          <textarea id="ac-obs" name="observacion" class="form-control" rows="3" minlength="5" maxlength="1000" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success"><i class="fas fa-check mr-1"></i>Cerrar acci&oacute;n</button></div>
+    </form>
+  </div>
+</div>
+<%- include('../partials/pie') %>

@@ -1,0 +1,71 @@
+<%- include('../partials/cabecera') %>
+<%
+  var textoCanal = { electronico: 'Electr&oacute;nico', fisico: 'F&iacute;sico', verbal: 'Verbal' };
+  var textoConducta = { acoso_laboral: 'Acoso laboral', acoso_sexual: 'Acoso sexual', violencia: 'Violencia', discriminacion: 'Discriminaci&oacute;n', otra: 'Otra' };
+  var textoActuacion = { citacion: 'Citaci&oacute;n', reunion: 'Reuni&oacute;n', audiencia: 'Audiencia', acuerdo: 'Acuerdo', medida_proteccion: 'Medida de protecci&oacute;n', seguimiento: 'Seguimiento', remision: 'Remisi&oacute;n', cierre: 'Cierre', anotacion: 'Anotaci&oacute;n' };
+  var textoResultado = { acuerdo_conciliatorio: 'Acuerdo conciliatorio', sin_acuerdo_remitida: 'Sin acuerdo: remitida', desistimiento: 'Desistimiento', no_competencia: 'No es competencia del comit&eacute;' };
+  var q = queja;
+  var abierta = q.estado === 'radicada' || q.estado === 'en_tramite';
+%>
+<div class="barra-acciones">
+  <a href="/convivencia" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Quejas</a>
+  <div>
+    <% if (abierta && proteccion && !q.solicita_proteccion) { %><button type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#modal-solicitud"><i class="fas fa-shield-alt mr-1"></i>Solicitud de protecci&oacute;n</button><% } %>
+    <% if (proteccion && q.solicita_proteccion && q.estado !== 'anulada') { %><button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal-medida"><i class="fas fa-shield-alt mr-1"></i>Medida de protecci&oacute;n</button><% } %>
+    <% if (abierta && reserva) { %>
+    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-actuacion"><i class="fas fa-plus mr-1"></i>Actuaci&oacute;n</button>
+    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-cierre"><i class="fas fa-check mr-1"></i>Cerrar</button>
+    <% } %>
+  </div>
+</div>
+
+<div class="card card-outline card-primary">
+  <div class="card-body">
+    <dl class="row mb-0">
+      <dt class="col-sm-3">Radicado</dt><dd class="col-sm-9"><%= q.radicado %> &middot; <%= q.fecha_radicacion %> &middot; canal <%- textoCanal[q.canal] %></dd>
+      <dt class="col-sm-3">Estado</dt><dd class="col-sm-9"><%= q.estado %><% if (q.resultado) { %> &middot; <%- textoResultado[q.resultado] %> (<%= q.fecha_cierre %>)<% } %><% if (q.motivo_estado) { %> &middot; <%= q.motivo_estado %><% } %></dd>
+      <dt class="col-sm-3">Protecci&oacute;n</dt><dd class="col-sm-9"><%= q.solicita_proteccion ? 'Solicitada el ' + q.fecha_solicitud_proteccion : 'No solicitada' %></dd>
+      <% if (reserva) { %>
+      <dt class="col-sm-3">Conducta</dt><dd class="col-sm-9"><%- textoConducta[q.tipo_conducta] %></dd>
+      <dt class="col-sm-3">Presenta</dt><dd class="col-sm-9"><%= q.quejoso || q.quejoso_nombre %></dd>
+      <dt class="col-sm-3">Implicados</dt><dd class="col-sm-9"><%= q.implicados %></dd>
+      <dt class="col-sm-3">Hechos</dt><dd class="col-sm-9 pre-line"><%= q.hechos %></dd>
+      <% } else { %>
+      <dt class="col-sm-3">Reserva</dt><dd class="col-sm-9 text-muted">Hechos, partes y actuaciones solo los ve el Comit&eacute; de Convivencia.</dd>
+      <% } %>
+    </dl>
+  </div>
+</div>
+
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title"><%= reserva ? 'Actuaciones' : 'Medidas de protección' %></h3></div>
+  <div class="card-body p-0"><table class="table table-sm mb-0"><tbody>
+    <% actuaciones.forEach(function (a) { %><tr><td class="text-nowrap"><%= a.fecha %></td><td class="text-nowrap"><%- textoActuacion[a.tipo] %></td><td class="pre-line"><%= a.descripcion %></td></tr><% }) %>
+    <% if (!actuaciones.length) { %><tr><td class="text-muted">Sin registros.</td></tr><% } %>
+  </tbody></table></div>
+</div>
+
+<% if (reserva && abierta) { %>
+<form method="post" action="/convivencia/quejas/<%= q.id %>/anular" class="form-inline js-confirmar" data-confirmar="&iquest;Anular la queja?">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="text" name="motivo" class="form-control form-control-sm mr-2" placeholder="Motivo (radicaci&oacute;n err&oacute;nea, duplicada...)" minlength="10" required>
+  <button class="btn btn-sm btn-outline-secondary">Anular</button></form>
+<% } %>
+
+<% function modal(id, titulo, accion, cuerpo, boton) { %>
+<div class="modal fade" id="<%= id %>" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/convivencia/quejas/<%= q.id %>/<%= accion %>" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title"><%- titulo %></h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Fecha *</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+      <%- cuerpo %></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><%- boton %></button></div>
+  </form></div></div>
+<% } %>
+<% var desc = '<div class="form-group mb-0"><label>Descripci&oacute;n *</label><textarea name="descripcion" class="form-control" rows="4" minlength="10" required></textarea></div>'; %>
+<% modal('modal-solicitud', 'Solicitud de protecci&oacute;n', 'proteccion', '<p class="small text-muted mb-0">Desde esta fecha corren 5 d&iacute;as h&aacute;biles para adoptar medidas.</p>', 'Registrar'); %>
+<% modal('modal-medida', 'Medida de protecci&oacute;n adoptada', 'medida', desc, 'Registrar'); %>
+<% if (reserva) { %>
+<% modal('modal-actuacion', 'Actuaci&oacute;n', 'actuacion', '<div class="form-group"><label>Tipo *</label><select name="tipo" class="form-control">' + r.ACTUACIONES.map(function (k) { return '<option value="' + k + '">' + textoActuacion[k] + '</option>'; }).join('') + '</select></div>' + desc, 'Registrar'); %>
+<% modal('modal-cierre', 'Cerrar procedimiento', 'cerrar', '<div class="form-group"><label>Resultado *</label><select name="resultado" class="form-control">' + r.RESULTADOS.map(function (k) { return '<option value="' + k + '">' + textoResultado[k] + '</option>'; }).join('') + '</select></div>' + desc, 'Cerrar'); %>
+<% } %>
+<%- include('../partials/pie') %>

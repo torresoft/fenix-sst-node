@@ -1,0 +1,167 @@
+<%- include('../partials/cabecera') %>
+<%
+  var p = d.persona;
+  var colorVinculo = { activa: 'success', retirada: 'secondary', anulada: 'dark' };
+  var sexo = { F: 'Femenino', M: 'Masculino', NB: 'No binario' };
+  var activaAqui = d.vinculaciones.some(function (v) { return v.deEstaEmpresa && v.estado === 'activa'; });
+%>
+<div class="mb-3">
+  <a href="/personas" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Personas</a>
+  <% if (gestionar) { %>
+  <a href="/personas/<%= p.id %>/editar" class="btn btn-sm btn-default"><i class="fas fa-edit mr-1"></i>Editar datos</a>
+  <% if (!activaAqui) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-vincular"><i class="fas fa-link mr-1"></i>Vincular</button><% } %>
+  <a href="/documentos/nuevo" class="btn btn-sm btn-default float-right" data-toggle="tooltip" title="Para EPP, capacitaci&oacute;n u otros registros individuales, elija esta persona en el documento"><i class="fas fa-file-medical mr-1"></i>Registro individual</a>
+  <% } %>
+</div>
+<div class="card card-outline card-primary">
+      <div class="card-body small">
+        <h5 class="mb-1"><%= p.nombres %> <%= p.apellidos %></h5>
+        <p class="text-muted"><%= p.tipo_documento %> <%= p.numero_documento %></p>
+        <dl class="row mb-0">
+          <dt class="col-5">Sexo</dt><dd class="col-7"><%= sexo[p.sexo] || '-' %></dd>
+          <dt class="col-5">Nacimiento</dt><dd class="col-7"><%= p.fecha_nacimiento || '-' %></dd>
+          <dt class="col-5">Correo</dt><dd class="col-7 text-break"><%= p.email || '-' %></dd>
+          <dt class="col-5">Tel&eacute;fono</dt><dd class="col-7"><%= p.telefono || '-' %></dd>
+          <dt class="col-5">EPS / AFP</dt><dd class="col-7"><%= p.eps || '-' %> / <%= p.afp || '-' %></dd>
+        </dl>
+      </div>
+    </div>
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-vinculaciones" role="tab">Vinculaciones</a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-registros" role="tab">Registros individuales <span class="badge badge-light"><%= d.documentos.length %></span></a></li>
+<% if (d.obligaciones.length) { %>  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-obligaciones" role="tab">Obligaciones <span class="badge badge-warning"><%= d.obligaciones.length %></span></a></li><% } %>
+</ul>
+<div class="tab-content pestanas">
+<div class="tab-pane fade show active" id="tab-vinculaciones" role="tabpanel">
+<div class="card card-outline card-secondary">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Empresa</th><th>Tipo</th><th>Cargo / centro</th><th>Ingreso</th><th>Retiro</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+          <tbody>
+            <% d.vinculaciones.forEach(function (v) { %>
+            <tr>
+              <td><%= v.razon_social %></td>
+              <td><%= tiposVinculacion[v.tipo] || v.tipo %></td>
+              <td><%= v.cargo || '-' %><br><small><%= v.centro || '' %></small></td>
+              <td class="text-nowrap"><%= v.fecha_ingreso %></td>
+              <td class="text-nowrap"><%= v.fecha_retiro || '' %><% if (v.motivo_retiro) { %><br><small><%= v.motivo_retiro %></small><% } %></td>
+              <td><span class="badge badge-<%= colorVinculo[v.estado] %>"><%= v.estado %></span><% if (v.observacion) { %><br><small><%= v.observacion %></small><% } %></td>
+              <td class="text-center text-nowrap">
+                <% if (gestionar && v.deEstaEmpresa && v.estado === 'activa') { %>
+                <button type="button" class="btn btn-xs btn-default js-reasignar" data-toggle="tooltip" title="Cambiar cargo o centro" data-id="<%= v.id %>" data-cargo="<%= v.cargo_id || '' %>" data-centro="<%= v.centro_trabajo_id || '' %>"><i class="fas fa-exchange-alt"></i></button>
+                <button type="button" class="btn btn-xs btn-warning js-retiro" data-toggle="tooltip" title="Registrar retiro" data-id="<%= v.id %>" data-ingreso="<%= v.fecha_ingreso %>"><i class="fas fa-sign-out-alt"></i></button>
+                <button type="button" class="btn btn-xs btn-outline-danger js-anular" data-toggle="tooltip" title="Anular (registro por error)" data-id="<%= v.id %>"><i class="fas fa-ban"></i></button>
+                <% } %>
+              </td>
+            </tr>
+            <% }) %>
+            <% if (!d.vinculaciones.length) { %><tr><td colspan="7" class="text-muted">Sin vinculaciones.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+<div class="tab-pane fade" id="tab-registros" role="tabpanel">
+<div class="card card-outline card-secondary">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Documento</th><th>Tipo</th><th>Fecha</th><th>Estado</th><th>Retenci&oacute;n</th></tr></thead>
+          <tbody>
+            <% d.documentos.forEach(function (doc) { %>
+            <tr>
+              <td><a href="/documentos/<%= doc.id %>"><%= doc.codigo %> v<%= doc.version %></a><br><small><%= doc.titulo %></small></td>
+              <td><small><%= doc.tipo %></small></td>
+              <td class="text-nowrap"><%= doc.fecha_documento %></td>
+              <td><%= doc.estado %></td>
+              <td class="text-nowrap"><%= doc.retencion_hasta || (doc.retencion === '20_anios_desde_retiro' ? '20 años desde el retiro' : '-') %></td>
+            </tr>
+            <% }) %>
+            <% if (!d.documentos.length) { %><tr><td colspan="5" class="text-muted">Sin registros individuales (EPP, capacitaci&oacute;n, conceptos de aptitud...).</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+<% if (d.obligaciones.length) { %><div class="tab-pane fade" id="tab-obligaciones" role="tabpanel">
+<div class="card card-outline card-warning">
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          <% d.obligaciones.forEach(function (o) { %><tr><td><%= o.descripcion %><br><small><%= o.fecha_limite %> &middot; <%= o.estado %></small></td></tr><% }) %>
+        </tbody></table>
+      </div>
+    </div>
+</div><% } %>
+</div>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-vincular" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="/personas/<%= p.id %>/vinculaciones" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Vincular a <%= empresaActiva.razonSocial %></h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-row">
+          <div class="form-group col-6"><label for="v-tipo">Tipo *</label>
+            <select id="v-tipo" name="tipo" class="form-control" required><% Object.keys(tiposVinculacion).forEach(function (k) { %><option value="<%= k %>"><%= tiposVinculacion[k] %></option><% }) %></select></div>
+          <div class="form-group col-6"><label for="v-ing">Ingreso *</label><input type="date" id="v-ing" name="fecha_ingreso" class="form-control" value="<%= hoy %>" required></div>
+        </div>
+        <div class="form-group"><label for="v-cargo">Cargo</label>
+          <select id="v-cargo" name="cargo_id" class="form-control"><option value="">Sin cargo</option><% cargos.forEach(function (c) { %><option value="<%= c.id %>"><%= c.nombre %></option><% }) %></select></div>
+        <div class="form-group mb-0"><label for="v-centro">Centro de trabajo</label>
+          <select id="v-centro" name="centro_trabajo_id" class="form-control"><option value="">Sin centro</option><% centros.forEach(function (c) { %><option value="<%= c.id %>"><%= c.nombre %></option><% }) %></select></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Vincular</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-reasignar" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-reasignar">
+      <div class="modal-header"><h5 class="modal-title">Cambiar cargo o centro</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="persona_id" value="<%= p.id %>">
+        <div class="form-group"><label for="r-cargo">Cargo</label>
+          <select id="r-cargo" name="cargo_id" class="form-control"><option value="">Sin cargo</option><% cargos.forEach(function (c) { %><option value="<%= c.id %>"><%= c.nombre %></option><% }) %></select></div>
+        <div class="form-group mb-0"><label for="r-centro">Centro de trabajo</label>
+          <select id="r-centro" name="centro_trabajo_id" class="form-control"><option value="">Sin centro</option><% centros.forEach(function (c) { %><option value="<%= c.id %>"><%= c.nombre %></option><% }) %></select></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-retiro" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-retiro">
+      <div class="modal-header"><h5 class="modal-title">Registrar retiro</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="persona_id" value="<%= p.id %>">
+        <div class="form-group"><label for="re-fecha">Fecha de retiro *</label><input type="date" id="re-fecha" name="fecha_retiro" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+        <div class="form-group"><label for="re-motivo">Motivo *</label><input type="text" id="re-motivo" name="motivo_retiro" class="form-control" maxlength="255" required></div>
+        <p class="small text-muted mb-0">Genera la obligaci&oacute;n de examen m&eacute;dico de egreso (5 d&iacute;as) y fija en 20 a&ntilde;os la conservaci&oacute;n de sus registros de EPP, capacitaci&oacute;n y salud.</p>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-warning">Registrar retiro</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-anular" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-anular">
+      <div class="modal-header"><h5 class="modal-title">Anular vinculaci&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="persona_id" value="<%= p.id %>">
+        <p class="small">Solo para una vinculaci&oacute;n registrada por error. Un retiro real se registra como retiro.</p>
+        <div class="form-group mb-0"><label for="an-obs">Motivo *</label><textarea id="an-obs" name="observacion" class="form-control" rows="2" minlength="10" maxlength="500" required></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger">Anular</button></div>
+    </form>
+  </div>
+</div>
+<% } %>
+<%- include('../partials/pie') %>

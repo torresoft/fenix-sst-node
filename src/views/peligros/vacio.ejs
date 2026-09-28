@@ -1,0 +1,17 @@
+<%- include('../partials/cabecera') %>
+<div class="card card-outline card-primary">
+  <div class="card-body">
+    <h5>La empresa a&uacute;n no tiene matriz de peligros</h5>
+    <p class="text-muted">La identificaci&oacute;n de peligros y valoraci&oacute;n de riesgos se actualiza como m&iacute;nimo una vez al a&ntilde;o y
+      cada vez que ocurra un accidente mortal o un evento catastr&oacute;fico (art. 2.2.4.6.15 del D. 1072 de 2015).</p>
+    <% if (gestionar) { %>
+    <form method="post" action="/peligros" class="form-inline">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="motivo" value="inicial">
+      <input type="hidden" name="metodologia_codigo" value="GTC45">
+      <button type="submit" class="btn btn-primary"><i class="fas fa-plus mr-1"></i>Elaborar la matriz (GTC 45)</button>
+    </form>
+    <% } %>
+  </div>
+</div>
+<%- include('../partials/pie') %>

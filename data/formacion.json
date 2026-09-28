@@ -1,0 +1,82 @@
+{
+  "_corte": "2026-08-31",
+  "_fuente": "D. 1072 de 2015 art. 2.2.4.6.11 y 2.2.4.6.35; Res. 908 de 2025 (licencia); Circular 047 de 2025 (curso 20 h); Res. 4272 de 2021 (alturas); Res. 0491 de 2020 (confinados); Res. 5018 de 2019 (electrico); Res. 0773 de 2021 (SGA)",
+  "_no_verificado": [
+    "Alturas: la Res. 4272 de 2021 fija reentrenamiento por evento, no por aniversario; sin vencimiento automatico hasta confirmar el art. 27."
+  ],
+  "_nota": "vencimiento_codigo enlaza con vencimiento_recurrente: al registrar la competencia nace la obligacion de renovarla. requerida_todos: aplica a toda persona vinculada.",
+  "tipos": [
+    {
+      "codigo": "INDUCCION",
+      "nombre": "Induccion en SST",
+      "norma_codigo": "DEC-1072-2015",
+      "vencimiento_codigo": null,
+      "requerida_todos": true,
+      "requiere_certificado": false
+    },
+    {
+      "codigo": "REINDUCCION",
+      "nombre": "Reinduccion anual en SST",
+      "norma_codigo": "DEC-1072-2015",
+      "vencimiento_codigo": "INDUCCION_ANUAL",
+      "requerida_todos": true,
+      "requiere_certificado": false
+    },
+    {
+      "codigo": "CURSO_50H",
+      "nombre": "Curso virtual de 50 horas del SG-SST",
+      "norma_codigo": "DEC-1072-2015",
+      "vencimiento_codigo": null,
+      "requerida_todos": false,
+      "requiere_certificado": true
+    },
+    {
+      "codigo": "CURSO_20H",
+      "nombre": "Actualizacion de 20 horas del SG-SST",
+      "norma_codigo": "CIR-047-2025",
+      "vencimiento_codigo": "CURSO_20H",
+      "requerida_todos": false,
+      "requiere_certificado": true
+    },
+    {
+      "codigo": "LICENCIA_SST",
+      "nombre": "Licencia en Seguridad y Salud en el Trabajo",
+      "norma_codigo": "RES-908-2025",
+      "vencimiento_codigo": "LICENCIA_SST",
+      "requerida_todos": false,
+      "requiere_certificado": true
+    },
+    {
+      "codigo": "ALTURAS",
+      "nombre": "Certificacion de trabajo en alturas",
+      "norma_codigo": "RES-4272-2021",
+      "vencimiento_codigo": null,
+      "requerida_todos": false,
+      "requiere_certificado": true
+    },
+    {
+      "codigo": "CONFINADOS",
+      "nombre": "Espacios confinados",
+      "norma_codigo": "RES-0491-2020",
+      "vencimiento_codigo": "REENTREN_CONFINADOS",
+      "requerida_todos": false,
+      "requiere_certificado": true
+    },
+    {
+      "codigo": "ELECTRICO",
+      "nombre": "Habilitacion para riesgo electrico",
+      "norma_codigo": "RES-5018-2019",
+      "vencimiento_codigo": "HABILITACION_ELECTRICO",
+      "requerida_todos": false,
+      "requiere_certificado": true
+    },
+    {
+      "codigo": "SGA",
+      "nombre": "Capacitacion en SGA (productos quimicos)",
+      "norma_codigo": "RES-0773-2021",
+      "vencimiento_codigo": "CAPACITACION_SGA",
+      "requerida_todos": false,
+      "requiere_certificado": false
+    }
+  ]
+}

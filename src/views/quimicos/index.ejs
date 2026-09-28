@@ -1,0 +1,63 @@
+<%- include('../partials/cabecera') %>
+<%
+  var r = inv.resumen;
+  var nombrePict = {}; pictogramas.forEach(function (p) { nombrePict[p.codigo] = p.nombre; });
+  var colorFds = { en_termino: 'success', por_vencer: 'warning', vencido: 'danger' };
+%>
+<% if (!declarado && r.activos) { %><div class="callout callout-warning"><p class="mb-0">La empresa maneja productos qu&iacute;micos: declare el &aacute;mbito en <a href="/empresa">Empresa</a> para cargar el D. 1496 de 2018 y la Res. 0773 de 2021 en la matriz legal.</p></div><% } %>
+<div class="barra-acciones">
+  <span class="small"><span class="badge badge-light"><%= r.activos %></span> productos
+    <% if (r.sinFds) { %>&middot; <span class="badge badge-danger"><%= r.sinFds %></span> sin FDS<% } %>
+    <% if (r.fdsVencida) { %>&middot; <span class="badge badge-danger"><%= r.fdsVencida %></span> FDS por actualizar<% } %>
+    <% if (r.sinEtiqueta) { %>&middot; <span class="badge badge-warning"><%= r.sinEtiqueta %></span> sin etiqueta SGA<% } %></span>
+  <% if (gestionar) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-producto"><i class="fas fa-plus mr-1"></i>Producto</button><% } %>
+</div>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><div class="table-responsive"><table class="table table-bordered table-hover table-sm mb-0">
+  <thead><tr><th>Producto</th><th>Uso</th><th>Ubicaci&oacute;n</th><th>Peligros (SGA)</th><th>FDS</th><th class="text-center">Etiqueta</th><th class="text-center">Acciones</th></tr></thead>
+  <tbody><% inv.productos.forEach(function (q) { %><tr class="<%= q.estado !== 'activo' ? 'text-muted' : '' %>">
+    <td><%= q.nombre %><% if (q.fabricante) { %><br><small class="text-muted"><%= q.fabricante %></small><% } %></td>
+    <td class="small"><%= q.uso %></td><td><%= q.ubicacion %><% if (q.centro) { %><br><small class="text-muted"><%= q.centro %></small><% } %><% if (q.cantidad) { %><br><small><%= q.cantidad %></small><% } %></td>
+    <td><% q.pictogramas.forEach(function (c) { %><span class="badge badge-danger mr-1" data-toggle="tooltip" title="<%= nombrePict[c] %>"><%= c %></span><% }) %></td>
+    <td class="text-nowrap"><% if (q.fds_documento_id) { %><a href="/documentos/<%= q.fds_documento_id %>"><%= q.fds_codigo %></a> <small class="text-muted"><%= q.fds_fecha %></small><% if (q.fds_limite) { %><br><span class="badge badge-<%= colorFds[q.fds_estado] %>">Actualizar antes de <%= q.fds_limite %></span><% } %><% } else { %><span class="badge badge-danger">Sin FDS</span><% } %></td>
+    <td class="text-center"><i class="fas fa-<%= q.etiquetado_sga ? 'check text-success' : 'times text-danger' %>"></i></td>
+    <td class="text-center text-nowrap"><% if (gestionar && q.estado === 'activo') { %>
+      <button type="button" class="btn btn-xs btn-default js-fds" data-id="<%= q.id %>" data-nombre="<%= q.nombre %>" data-toggle="tooltip" title="Actualizar FDS"><i class="fas fa-file-medical"></i></button>
+      <button type="button" class="btn btn-xs btn-default js-retirar" data-id="<%= q.id %>" data-nombre="<%= q.nombre %>" data-toggle="tooltip" title="Retirar del inventario"><i class="fas fa-archive"></i></button><% } %></td>
+  </tr><% }) %>
+  <% if (!inv.productos.length) { %><tr><td colspan="7" class="text-muted">Sin productos registrados.</td></tr><% } %></tbody>
+</table></div></div></div>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-producto" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog modal-lg" role="document">
+  <form method="post" action="/quimicos" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Producto qu&iacute;mico</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row"><div class="form-group col-md-6"><label>Nombre comercial *</label><input type="text" name="nombre" class="form-control" maxlength="150" required></div>
+      <div class="form-group col-md-6"><label>Fabricante</label><input type="text" name="fabricante" class="form-control" maxlength="150"></div></div>
+      <div class="form-group"><label>Uso *</label><input type="text" name="uso" class="form-control" maxlength="300" required></div>
+      <div class="form-row"><div class="form-group col-md-5"><label>Ubicaci&oacute;n *</label><input type="text" name="ubicacion" class="form-control" maxlength="150" required></div>
+      <div class="form-group col-md-4"><label>Centro</label><select name="centro_trabajo_id" class="form-control"><option value="">&mdash;</option><% centros.forEach(function (c) { %><option value="<%= c.id %>"><%= c.nombre %></option><% }) %></select></div>
+      <div class="form-group col-md-3"><label>Cantidad</label><input type="text" name="cantidad" class="form-control" maxlength="60" placeholder="4 gal"></div></div>
+      <label>Pictogramas SGA</label>
+      <div class="row mb-2"><% pictogramas.forEach(function (p) { %><div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" name="pictograma" value="<%= p.codigo %>" id="pic-<%= p.codigo %>"><label class="form-check-label" for="pic-<%= p.codigo %>"><%= p.codigo %> <%= p.nombre %></label></div></div><% }) %></div>
+      <div class="form-row mb-0"><div class="form-group col-md-8 mb-0"><label>FDS (16 secciones, en espa&ntilde;ol)</label><select name="fds_documento_id" class="form-control"><option value="">&mdash;</option><% fds.forEach(function (d) { %><option value="<%= d.id %>"><%= d.titulo %> (<%= d.fecha_documento %>)</option><% }) %></select>
+        <small><a href="/documentos/nuevo?tipo=FDS">Subir FDS</a></small></div>
+      <div class="form-group col-md-4 mb-0 pt-4"><div class="form-check"><input class="form-check-input" type="checkbox" name="etiquetado_sga" value="1" id="etiq"><label class="form-check-label" for="etiq">Etiquetado SGA</label></div></div></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+<div class="modal fade" id="modal-fds" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" class="modal-content" id="form-fds">
+    <div class="modal-header"><h5 class="modal-title">FDS de <span class="js-nombre"></span></h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>FDS vigente *</label><select name="fds_documento_id" class="form-control" required><option value="">Seleccione</option><% fds.forEach(function (d) { %><option value="<%= d.id %>"><%= d.titulo %> (<%= d.fecha_documento %>)</option><% }) %></select></div>
+      <div class="form-check"><input class="form-check-input" type="checkbox" name="etiquetado_sga" value="1" id="etiq2"><label class="form-check-label" for="etiq2">Etiquetado SGA verificado</label></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+  </form></div></div>
+<div class="modal fade" id="modal-retirar" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" class="modal-content" id="form-retirar">
+    <div class="modal-header"><h5 class="modal-title">Retirar <span class="js-nombre"></span></h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><div class="form-group mb-0"><label>Motivo *</label><input type="text" name="motivo" class="form-control" minlength="10" maxlength="500" required></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger">Retirar</button></div>
+  </form></div></div>
+<% } %>
+<%- include('../partials/pie') %>

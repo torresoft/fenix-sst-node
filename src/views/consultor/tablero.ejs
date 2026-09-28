@@ -1,0 +1,85 @@
+<%- include('../partials/cabecera') %>
+<%
+  var t = c.totales;
+  var color = { rojo: 'danger', amarillo: 'warning', verde: 'success' };
+  var colorAuto = function (a) { return !a ? 'secondary' : (a.estado === 'cerrada' ? 'primary' : 'light'); };
+%>
+<%- include('../partials/franja', { items: [
+  { valor: t.empresas, texto: 'Empresas', ruta: '/mis-empresas' },
+  { valor: t.rojo, texto: 'Requieren acci&oacute;n', color: t.rojo ? 'danger' : '', ruta: '?nivel=rojo' },
+  { valor: t.amarillo, texto: 'Con pendientes', color: t.amarillo ? 'warning' : '', ruta: '?nivel=amarillo' },
+  { valor: t.verde, texto: 'Al d&iacute;a', color: 'success', ruta: '?nivel=verde' },
+  { valor: t.vencidas, texto: 'Obligaciones vencidas', color: t.vencidas ? 'danger' : '', ruta: '/obligaciones' },
+  { valor: t.puntajePromedio == null ? '-' : t.puntajePromedio + '%', texto: 'Puntaje 0312 promedio' },
+  { valor: t.trabajadores, texto: 'Trabajadores' },
+] }) %>
+
+<div class="barra-acciones">
+  <form method="get" action="/mis-empresas" class="form-inline">
+    <input type="search" name="q" class="form-control form-control-sm mr-1" value="<%= q %>" placeholder="Empresa o NIT" maxlength="100">
+    <select name="nivel" class="form-control form-control-sm mr-1 js-autoenvio">
+      <option value="">Todos los estados</option>
+      <option value="rojo"<%= nivel === 'rojo' ? ' selected' : '' %>>Requieren acci&oacute;n</option>
+      <option value="amarillo"<%= nivel === 'amarillo' ? ' selected' : '' %>>Con pendientes</option>
+      <option value="verde"<%= nivel === 'verde' ? ' selected' : '' %>>Al d&iacute;a</option>
+    </select>
+    <button type="submit" class="btn btn-sm btn-default"><i class="fas fa-search"></i></button>
+  </form>
+  <a href="/mis-empresas.csv" class="btn btn-sm btn-default"><i class="fas fa-file-csv mr-1"></i>CSV</a>
+</div>
+
+<div class="card card-outline card-primary">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0 tabla-matriz">
+        <thead><tr>
+          <th>Empresa</th><th>Autoevaluaci&oacute;n 0312</th><th class="text-center">Obligaciones</th><th class="text-center">Acciones</th>
+          <th class="text-center">Eventos</th><th class="text-center">Documentos</th><th>Matriz / plan</th><th>Por qu&eacute;</th><th class="text-center">Entrar</th>
+        </tr></thead>
+        <tbody>
+          <% filas.forEach(function (f) { var a = f.autoevaluacion; %>
+          <tr>
+            <td>
+              <i class="fas fa-circle punto text-<%= color[f.semaforo.nivel] %> mr-1"></i><strong><%= f.razon_social %></strong>
+              <br><small class="text-muted">NIT <%= f.nit %><%= f.dv ? '-' + f.dv : '' %> &middot; <%= f.trabajadores %> trab.<%= f.estandares ? ' · ' + f.estandares + ' estándares' : '' %></small>
+            </td>
+            <td>
+              <% if (a) { %><span class="badge badge-<%= colorAuto(a) %>"><%= a.vigencia_anio %> &middot; <%= a.estado %></span>
+              <% if (a.puntaje != null) { %><br><strong><%= a.puntaje %>%</strong> <small><%= a.valoracion || '' %></small><% } %>
+              <% } else { %><small class="text-muted">Sin autoevaluaci&oacute;n</small><% } %>
+            </td>
+            <td class="text-center">
+              <% if (f.obligaciones.vencidas) { %><a href="/obligaciones?empresa=<%= f.empresa_id %>" class="badge badge-danger" data-toggle="tooltip" title="Vencidas"><%= f.obligaciones.vencidas %></a><% } %>
+              <% if (f.obligaciones.porVencer) { %><a href="/obligaciones?empresa=<%= f.empresa_id %>" class="badge badge-warning" data-toggle="tooltip" title="Por vencer"><%= f.obligaciones.porVencer %></a><% } %>
+              <% if (!f.obligaciones.vencidas && !f.obligaciones.porVencer) { %><small class="text-muted">0</small><% } %>
+            </td>
+            <td class="text-center"><small><%= f.acciones.abiertas %> abiertas</small><% if (f.acciones.vencidas) { %><br><span class="badge badge-danger"><%= f.acciones.vencidas %> vencidas</span><% } %></td>
+            <td class="text-center"><% if (f.eventos.abiertos) { %><span class="badge badge-<%= f.eventos.graves ? 'danger' : 'warning' %>" data-toggle="tooltip" title="Sin investigar"><%= f.eventos.abiertos %></span><% } else { %><small class="text-muted">0</small><% } %></td>
+            <td class="text-center">
+              <% if (f.documentos.vencidos) { %><span class="badge badge-danger" data-toggle="tooltip" title="Vencidos"><%= f.documentos.vencidos %></span><% } %>
+              <% if (f.documentos.porVencer) { %><span class="badge badge-warning" data-toggle="tooltip" title="Vencen en <%= c.diasDocumentos %> d&iacute;as"><%= f.documentos.porVencer %></span><% } %>
+              <% if (!f.documentos.vencidos && !f.documentos.porVencer) { %><small class="text-muted">0</small><% } %>
+            </td>
+            <td class="text-nowrap"><small>
+              Matriz: <%= f.matriz ? 'v' + f.matriz.version + ' ' + f.matriz.estado : 'no tiene' %><br>
+              Plan <%= c.anio %>: <%= f.plan ? f.plan.estado : 'no tiene' %>
+            </small></td>
+            <td><small><% f.semaforo.motivos.slice(0, 3).forEach(function (m) { %><div><%= m %></div><% }) %><% if (f.semaforo.motivos.length > 3) { %><div class="text-muted" data-toggle="tooltip" title="<%= f.semaforo.motivos.slice(3).join(' · ') %>">y <%= f.semaforo.motivos.length - 3 %> m&aacute;s</div><% } %></small></td>
+            <td class="text-center text-nowrap">
+              <form method="post" action="/empresa-activa">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="empresa_id" value="<%= f.empresa_id %>">
+                <button type="submit" name="destino" value="/" class="btn btn-xs btn-primary" data-toggle="tooltip" title="Trabajar con esta empresa"><i class="fas fa-sign-in-alt"></i></button>
+                <button type="submit" name="destino" value="/autoevaluacion" class="btn btn-xs btn-default" data-toggle="tooltip" title="Autoevaluaci&oacute;n"><i class="fas fa-tasks"></i></button>
+                <button type="submit" name="destino" value="/peligros" class="btn btn-xs btn-default" data-toggle="tooltip" title="Matriz de peligros"><i class="fas fa-exclamation-triangle"></i></button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+          <% if (!filas.length) { %><tr><td colspan="9" class="text-muted">Ninguna empresa cumple el filtro.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/pie') %>

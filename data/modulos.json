@@ -1,0 +1,25 @@
+{
+  "_fuente": "docs/06-modulos.md (reglas de activacion por perfil)",
+  "_nota": "activacion: siempre | ambitos (basta uno activo en el perfil) | regla (campos de empresa, basta una condicion). Los ambitos ya incluyen las reglas automaticas de ambito_normativo (p. ej. PESV por vehiculos o conductores).",
+  "_no_verificado": ["M15: el doc 06 incluye trabajo en caliente, que no existe como ambito en el catalogo normativo; se activa con alturas, espacios confinados o riesgo electrico."],
+  "modulos": [
+    { "codigo": "M01", "nombre": "Empresa y centros de trabajo", "activacion": "siempre" },
+    { "codigo": "M02", "nombre": "Personas", "activacion": "siempre" },
+    { "codigo": "M03", "nombre": "Gestor documental", "activacion": "siempre" },
+    { "codigo": "M04", "nombre": "Matriz legal", "activacion": "siempre" },
+    { "codigo": "M05", "nombre": "Peligros y riesgos", "activacion": "siempre" },
+    { "codigo": "M06", "nombre": "Planeacion y cronograma", "activacion": "siempre" },
+    { "codigo": "M07", "nombre": "Formacion y competencias", "activacion": "siempre" },
+    { "codigo": "M08", "nombre": "Eventos: incidentes, AT y EL", "activacion": "siempre" },
+    { "codigo": "M09", "nombre": "Salud ocupacional", "activacion": "siempre" },
+    { "codigo": "M10", "nombre": "Comites", "activacion": "siempre" },
+    { "codigo": "M11", "nombre": "Autoevaluacion y planes de mejora", "activacion": "siempre" },
+    { "codigo": "M12", "nombre": "Indicadores y tablero", "activacion": "siempre" },
+    { "codigo": "M13", "nombre": "Emergencias", "activacion": "siempre" },
+    { "codigo": "M14", "nombre": "Inspecciones y EPP", "activacion": "siempre" },
+    { "codigo": "M15", "nombre": "Permisos de alto riesgo", "activacion": "ambitos", "ambitos": ["alturas", "espacios_confinados", "riesgo_electrico"] },
+    { "codigo": "M16", "nombre": "Contratistas", "activacion": "regla", "regla": [{ "campo": "contrata_terceros", "operador": "=", "valor": 1 }] },
+    { "codigo": "M17", "nombre": "Convivencia, acoso y salud mental", "activacion": "siempre" },
+    { "codigo": "M18", "nombre": "PESV, quimicos y especificos", "activacion": "ambitos", "ambitos": ["pesv", "quimicos", "calderas", "accidentes_mayores"] }
+  ]
+}

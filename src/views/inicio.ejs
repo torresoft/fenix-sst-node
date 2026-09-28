@@ -1,0 +1,68 @@
+<%- include('partials/cabecera') %>
+<%
+  var r = t.resumen;
+  var a = r.autoevaluacion;
+  var colorVal = { CRITICO: 'danger', MODERADAMENTE_ACEPTABLE: 'warning', ACEPTABLE: 'success' };
+%>
+<% if (suscripcion && ['por_vencer', 'vencida'].indexOf(suscripcion.situacion.nivel) !== -1) { %>
+<div class="alert alert-<%= suscripcion.situacion.nivel === 'vencida' ? 'danger' : 'warning' %> small"><i class="fas fa-calendar-times mr-1"></i><strong>Suscripci&oacute;n:</strong> <%= suscripcion.situacion.texto %> (cubre hasta <%= suscripcion.s.fecha_fin %>). Comun&iacute;quese con TORRESOFT para renovarla; sus registros se conservan en todo caso.</div>
+<% } %>
+<% if (plan && plan.alertas.length) { %>
+<div class="alert alert-warning small"><i class="fas fa-info-circle mr-1"></i><strong>Su plan <%= plan.plan.nombre %> ya no se ajusta:</strong> <%= plan.alertas.join('; ') %>. Todo sigue funcionando; contacte a TORRESOFT para ajustar el plan.</div>
+<% } %>
+<div class="card">
+  <div class="card-body py-2">
+    <div class="franja-estado">
+      <a href="/obligaciones" class="franja-item"><span class="franja-valor <%= r.vencidas ? 'text-danger' : 'text-success' %>"><%= r.vencidas %></span><span class="franja-texto">obligaciones vencidas</span></a>
+      <a href="/obligaciones" class="franja-item"><span class="franja-valor <%= r.porVencer ? 'text-warning' : '' %>"><%= r.porVencer %></span><span class="franja-texto">por vencer</span></a>
+      <a href="/acciones" class="franja-item"><span class="franja-valor <%= r.accionesVencidas ? 'text-danger' : '' %>"><%= r.accionesAbiertas %></span><span class="franja-texto">acciones abiertas<% if (r.accionesVencidas) { %> &middot; <span class="text-danger"><%= r.accionesVencidas %> vencidas</span><% } %></span></a>
+      <a href="/firmas" class="franja-item"><span class="franja-valor <%= r.firmas ? 'text-primary' : '' %>"><%= r.firmas %></span><span class="franja-texto">firmas pendientes</span></a>
+      <a href="<%= a ? '/autoevaluacion/' + a.id : '/autoevaluacion' %>" class="franja-item franja-ancha">
+        <% if (a && a.puntaje != null) { %>
+        <span class="franja-valor"><%= Number(a.puntaje).toFixed(1) %>%</span>
+        <span class="franja-texto">autoevaluaci&oacute;n <%= a.vigencia_anio %> <span class="badge badge-<%= colorVal[a.valoracion] || 'secondary' %>"><%= (a.valoracion || a.estado).replace(/_/g, ' ').toLowerCase() %></span></span>
+        <% } else { %>
+        <span class="franja-valor text-muted">&mdash;</span><span class="franja-texto"><%= a ? 'autoevaluación ' + a.vigencia_anio + ' en curso' : 'sin autoevaluación' %></span>
+        <% } %>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card card-outline card-<%= r.vencidas ? 'danger' : 'warning' %>">
+      <div class="card-header"><h3 class="card-title"><i class="fas fa-bell mr-1"></i>Requiere atenci&oacute;n</h3></div>
+      <div class="card-body p-0">
+        <% if (!t.atencion.length) { %><p class="text-muted p-3 mb-0"><i class="fas fa-check-circle text-success mr-1"></i>Nada vencido ni por vencer. Buen trabajo.</p><% } %>
+        <% t.atencion.forEach(function (g) { %>
+        <div class="grupo-atencion">
+          <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+            <a href="<%= g.ruta %>" class="font-weight-bold"><%= g.nombre %></a>
+            <span><% if (g.vencidas) { %><span class="badge badge-danger"><%= g.vencidas %> vencida(s)</span><% } %> <% if (g.porVencer) { %><span class="badge badge-warning"><%= g.porVencer %> por vencer</span><% } %></span>
+          </div>
+          <ul class="list-unstyled small px-3 pb-2 mb-0">
+            <% g.items.slice(0, 4).forEach(function (o) { %>
+            <li class="d-flex justify-content-between border-bottom py-1"><a href="<%= o.ruta %>" class="text-body"><i class="fas fa-circle mr-1 text-<%= o.estado === 'vencido' ? 'danger' : 'warning' %> punto"></i><%= o.descripcion %></a><span class="text-nowrap ml-2 <%= o.estado === 'vencido' ? 'text-danger' : '' %>"><%= o.fecha_limite %></span></li>
+            <% }) %>
+            <% if (g.items.length > 4) { %><li class="pt-1"><a href="/obligaciones">y <%= g.items.length - 4 %> m&aacute;s&hellip;</a></li><% } %>
+          </ul>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card card-outline card-secondary">
+      <div class="card-header"><h3 class="card-title"><i class="fas fa-calendar-check mr-1"></i>Pr&oacute;ximos vencimientos</h3></div>
+      <div class="card-body p-0">
+        <ul class="list-unstyled small mb-0">
+          <% t.proximos.forEach(function (o) { %><li class="d-flex justify-content-between border-bottom px-3 py-2"><a href="<%= o.ruta %>" class="text-body"><%= o.descripcion %></a><span class="text-nowrap ml-2 text-muted"><%= o.fecha_limite %></span></li><% }) %>
+          <% if (!t.proximos.length) { %><li class="text-muted px-3 py-2">Sin vencimientos en t&eacute;rmino.</li><% } %>
+        </ul>
+      </div>
+      <div class="card-footer py-2 text-right small"><a href="/obligaciones">Ver todas las obligaciones</a></div>
+    </div>
+  </div>
+</div>
+<%- include('partials/pie') %>

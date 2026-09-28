@@ -1,0 +1,200 @@
+<%- include('../partials/cabecera') %>
+<%
+  var e = r.empresa, c = r.clasificacion;
+  var dis = gestionar ? '' : 'disabled';
+  var tabs = [['datos', 'Datos del empleador'], ['centros', 'Centros de trabajo'], ['perfil', 'Perfil y m&oacute;dulos'], ['clasificacion', 'Clasificaci&oacute;n 0312']];
+  var origenAmbito = { general: 'General', declarado: 'Declarado', automatico: 'Autom&aacute;tico' };
+%>
+<div class="barra-acciones">
+  <span class="small">
+    Clasificaci&oacute;n 0312: <strong><%= c.conjunto ? c.conjunto.cantidad_estandares + ' estándares (art. ' + c.conjunto.articulo + ')' : 'sin definir' %></strong>
+    &middot; <%= e.numero_trabajadores %> trabajadores declarados &middot; <%= r.vinculaciones.total %> vinculaciones activas (<%= r.vinculaciones.dependientes %> dependientes)
+    <% if (gestionar && r.vinculaciones.total && r.vinculaciones.total !== Number(e.numero_trabajadores)) { %>
+    <form method="post" action="/empresa/sincronizar-trabajadores" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button type="submit" class="btn btn-xs btn-default ml-1" data-toggle="tooltip" title="Actualizar el n&uacute;mero de trabajadores declarados"><i class="fas fa-sync mr-1"></i>Usar las <%= r.vinculaciones.total %></button></form>
+    <% } %>
+  </span>
+  <% if (administrar) { %><span>
+    <a href="/empresa/usuarios" class="btn btn-sm btn-outline-primary"><i class="fas fa-user-cog mr-1"></i>Usuarios</a>
+    <% if (plan.puedeEmpresa) { %><button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#modal-empresa"><i class="fas fa-plus mr-1"></i>Otra empresa</button>
+    <% } else { %><span class="d-inline-block" data-toggle="tooltip" title="El plan <%= plan.plan.nombre %> permite <%= plan.plan.max_empresas %> empresa(s)"><button type="button" class="btn btn-sm btn-outline-secondary" disabled><i class="fas fa-plus mr-1"></i>Otra empresa</button></span><% } %>
+  </span><% } %>
+</div>
+<% if (c.pendiente) { %><div class="alert alert-warning small">Reclasificada de <%= c.pendiente.conjunto_anterior %> a <%= c.pendiente.conjunto_codigo %>: rev&iacute;sela en <a href="/autoevaluacion">Autoevaluaci&oacute;n</a>.</div><% } %>
+<div class="card card-primary card-outline card-tabs">
+  <div class="card-header p-0 pt-1 border-bottom-0">
+    <ul class="nav nav-tabs" role="tablist">
+      <% tabs.forEach(function (t) { %>
+      <li class="nav-item"><a class="nav-link<%= tab === t[0] ? ' active' : '' %>" data-toggle="pill" href="#tab-<%= t[0] %>" role="tab"><%- t[1] %></a></li>
+      <% }) %>
+    </ul>
+  </div>
+  <div class="card-body">
+    <div class="tab-content">
+      <div class="tab-pane fade<%= tab === 'datos' ? ' show active' : '' %>" id="tab-datos" role="tabpanel">
+        <form method="post" action="/empresa/datos">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-row">
+            <div class="form-group col-md-6"><label for="e-razon">Raz&oacute;n social *</label><input type="text" id="e-razon" name="razon_social" class="form-control" value="<%= e.razon_social %>" maxlength="200" required <%= dis %>></div>
+            <div class="form-group col-md-4"><label for="e-nit">NIT *</label><input type="text" id="e-nit" name="nit" class="form-control" value="<%= e.nit %>" maxlength="15" required <%= dis %>></div>
+            <div class="form-group col-md-2"><label for="e-dv">DV</label><input type="text" id="e-dv" name="digito_verificacion" class="form-control" value="<%= e.digito_verificacion || '' %>" maxlength="1" <%= dis %>></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-3"><label for="e-ciiu">CIIU</label><input type="text" id="e-ciiu" name="ciiu_codigo" class="form-control" value="<%= e.ciiu_codigo || '' %>" maxlength="4" pattern="\d{4}" <%= dis %>></div>
+            <div class="form-group col-md-9"><label for="e-act">Actividad econ&oacute;mica</label><input type="text" id="e-act" name="actividad_economica" class="form-control" value="<%= e.actividad_economica || '' %>" maxlength="255" <%= dis %>></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4"><label for="e-arl">ARL</label><input type="text" id="e-arl" name="arl" class="form-control" value="<%= e.arl || '' %>" maxlength="100" <%= dis %>></div>
+            <div class="form-group col-md-5"><label for="e-dir">Direcci&oacute;n</label><input type="text" id="e-dir" name="direccion" class="form-control" value="<%= e.direccion || '' %>" maxlength="200" <%= dis %>></div>
+            <div class="form-group col-md-3"><label for="e-mun">Municipio (DIVIPOLA)</label><input type="text" id="e-mun" name="municipio_divipola" class="form-control" value="<%= e.municipio_divipola || '' %>" maxlength="5" pattern="\d{5}" placeholder="66001" <%= dis %>></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4"><label for="e-tel">Tel&eacute;fono</label><input type="text" id="e-tel" name="telefono" class="form-control" value="<%= e.telefono || '' %>" maxlength="30" <%= dis %>></div>
+            <div class="form-group col-md-8"><label for="e-email">Correo</label><input type="email" id="e-email" name="email" class="form-control" value="<%= e.email || '' %>" maxlength="190" <%= dis %>></div>
+          </div>
+          <h6 class="text-muted mt-2">Representante legal</h6>
+          <div class="form-row">
+            <div class="form-group col-md-5"><label for="e-rln">Nombre</label><input type="text" id="e-rln" name="representante_legal_nombre" class="form-control" value="<%= e.representante_legal_nombre || '' %>" maxlength="150" <%= dis %>></div>
+            <div class="form-group col-md-3"><label for="e-rld">Documento</label><input type="text" id="e-rld" name="representante_legal_documento" class="form-control" value="<%= e.representante_legal_documento || '' %>" maxlength="30" <%= dis %>></div>
+            <div class="form-group col-md-4"><label for="e-rle">Correo</label><input type="email" id="e-rle" name="representante_legal_email" class="form-control" value="<%= e.representante_legal_email || '' %>" maxlength="190" <%= dis %>></div>
+          </div>
+          <small class="text-muted d-block mb-2">El correo del representante legal recibe el escalamiento de obligaciones vencidas.</small>
+          <h6 class="text-muted mt-2">Tama&ntilde;o y perfil</h6>
+          <div class="form-row">
+            <div class="form-group col-md-3"><label for="e-trab">Trabajadores *</label><input type="number" id="e-trab" name="numero_trabajadores" class="form-control" value="<%= e.numero_trabajadores || '' %>" min="1" required <%= dis %>></div>
+            <div class="form-group col-md-3"><label for="e-veh">Veh&iacute;culos</label><input type="number" id="e-veh" name="numero_vehiculos" class="form-control" value="<%= e.numero_vehiculos %>" min="0" <%= dis %>></div>
+            <div class="form-group col-md-3"><label for="e-cond">Conductores</label><input type="number" id="e-cond" name="numero_conductores" class="form-control" value="<%= e.numero_conductores %>" min="0" <%= dis %>></div>
+            <div class="form-group col-md-3 pt-md-4">
+              <div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="e-agro" name="es_agropecuaria" value="1" <%= Number(e.es_agropecuaria) ? 'checked' : '' %> <%= dis %>><label class="custom-control-label" for="e-agro">Agropecuaria</label></div>
+              <div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="e-terc" name="contrata_terceros" value="1" <%= Number(e.contrata_terceros) ? 'checked' : '' %> <%= dis %>><label class="custom-control-label" for="e-terc">Contrata terceros</label></div>
+            </div>
+          </div>
+          <% if (gestionar) { %><button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button><% } %>
+        </form>
+      </div>
+
+      <div class="tab-pane fade<%= tab === 'centros' ? ' show active' : '' %>" id="tab-centros" role="tabpanel">
+        <table class="table table-bordered table-hover table-sm">
+          <thead><tr><th>Centro</th><th>Clase</th><th>Municipio</th><th>Trabajadores</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+          <tbody>
+            <% r.centros.forEach(function (ct) { %>
+            <tr class="<%= ct.estado === 'inactivo' ? 'text-muted' : '' %>">
+              <td><%= ct.nombre %><% if (ct.direccion) { %><br><small><%= ct.direccion %></small><% } %></td>
+              <td><%= ct.clase_riesgo %></td>
+              <td><%= ct.municipio_divipola || '' %></td>
+              <td><%= ct.numero_trabajadores %></td>
+              <td><span class="badge badge-<%= ct.estado === 'activo' ? 'success' : 'secondary' %>"><%= ct.estado %></span></td>
+              <td class="text-center text-nowrap">
+                <% if (gestionar) { %>
+                <button type="button" class="btn btn-xs btn-default js-editar-centro" data-toggle="tooltip" title="Editar"
+                        data-id="<%= ct.id %>" data-nombre="<%= ct.nombre %>" data-clase="<%= ct.clase_riesgo %>" data-direccion="<%= ct.direccion || '' %>"
+                        data-municipio="<%= ct.municipio_divipola || '' %>" data-trabajadores="<%= ct.numero_trabajadores %>"><i class="fas fa-edit"></i></button>
+                <form method="post" action="/empresa/centros/<%= ct.id %>/estado" class="d-inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="activo" value="<%= ct.estado === 'activo' ? '0' : '1' %>">
+                  <button type="submit" class="btn btn-xs btn-default" data-toggle="tooltip" title="<%= ct.estado === 'activo' ? 'Inactivar' : 'Activar' %>"><i class="fas <%= ct.estado === 'activo' ? 'fa-toggle-on' : 'fa-toggle-off' %>"></i></button>
+                </form>
+                <% } %>
+              </td>
+            </tr>
+            <% }) %>
+            <% if (!r.centros.length) { %><tr><td colspan="6" class="text-muted">Registre al menos un centro de trabajo con su clase de riesgo.</td></tr><% } %>
+          </tbody>
+        </table>
+        <% if (gestionar) { %>
+        <button type="button" class="btn btn-sm btn-primary js-nuevo-centro"><i class="fas fa-plus mr-1"></i>Agregar centro</button>
+        <% } %>
+        <div class="small text-muted mt-2">
+          <% r.clases.forEach(function (cl) { %><strong>Clase <%= cl.clase %></strong>: <%= cl.descripcion %> (<%= cl.ejemplos %>). <% }) %>
+        </div>
+      </div>
+
+      <div class="tab-pane fade<%= tab === 'perfil' ? ' show active' : '' %>" id="tab-perfil" role="tabpanel">
+        <div class="row">
+          <div class="col-md-6">
+            <h6>&Aacute;mbitos de aplicabilidad</h6>
+            <form method="post" action="/empresa/perfil">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <% r.perfil.ambitos.forEach(function (a) { var origen = r.perfil.activos.get(a.codigo); var auto = origen === 'general' || origen === 'automatico'; %>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="amb-<%= a.codigo %>" name="ambitos" value="<%= a.codigo %>" <%= origen ? 'checked' : '' %> <%= (auto || !Number(a.declarable) || !gestionar) ? 'disabled' : '' %>>
+                <label class="custom-control-label font-weight-normal" for="amb-<%= a.codigo %>"><%= a.nombre %>
+                  <% if (origen && origen !== 'declarado') { %><span class="badge badge-light"><%- origenAmbito[origen] %></span><% } %>
+                  <br><small class="text-muted"><%= a.descripcion || '' %></small></label>
+              </div>
+              <% }) %>
+              <% if (gestionar) { %><button type="submit" class="btn btn-sm btn-primary mt-2"><i class="fas fa-save mr-1"></i>Guardar perfil</button><% } %>
+            </form>
+          </div>
+          <div class="col-md-6">
+            <h6>M&oacute;dulos que aplican</h6>
+            <table class="table table-sm table-bordered">
+              <tbody>
+                <% r.modulos.forEach(function (m) { %>
+                <tr class="<%= m.activo ? '' : 'text-muted' %>">
+                  <td class="text-nowrap"><i class="fas <%= m.activo ? 'fa-check-circle text-success' : 'fa-minus-circle' %> mr-1"></i><%= m.codigo %></td>
+                  <td><%= m.nombre %><br><small><%= m.motivo %></small></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade<%= tab === 'clasificacion' ? ' show active' : '' %>" id="tab-clasificacion" role="tabpanel">
+    <% if (c.conjunto) { %>
+    <h4 class="mb-1"><%= c.conjunto.cantidad_estandares %> est&aacute;ndares <small class="text-muted">(art. <%= c.conjunto.articulo %>)</small></h4>
+    <p class="small mb-2"><%= c.conjunto.criterio %></p>
+    <p class="small mb-0"><strong>Perfil del responsable:</strong> <%= c.conjunto.perfil_responsable || 'No definido por la norma' %></p>
+    <% } else { %>
+    <p class="mb-0"><i class="fas fa-info-circle mr-1"></i><%= c.error %></p>
+    <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-centro" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="/empresa/centros" class="modal-content" id="form-centro">
+      <div class="modal-header"><h5 class="modal-title js-titulo">Centro de trabajo</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group"><label for="c-nombre">Nombre *</label><input type="text" id="c-nombre" name="nombre" class="form-control" maxlength="150" required></div>
+        <div class="form-row">
+          <div class="form-group col-6"><label for="c-clase">Clase de riesgo *</label>
+            <select id="c-clase" name="clase_riesgo" class="form-control" required><% r.clases.forEach(function (cl) { %><option value="<%= cl.clase %>"><%= cl.clase %> - <%= cl.descripcion %></option><% }) %></select></div>
+          <div class="form-group col-6"><label for="c-trab">Trabajadores</label><input type="number" id="c-trab" name="numero_trabajadores" class="form-control" min="0"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-8"><label for="c-dir">Direcci&oacute;n</label><input type="text" id="c-dir" name="direccion" class="form-control" maxlength="200"></div>
+          <div class="form-group col-4"><label for="c-mun">DIVIPOLA</label><input type="text" id="c-mun" name="municipio_divipola" class="form-control" maxlength="5" pattern="\d{5}"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button></div>
+    </form>
+  </div>
+</div>
+<% } %>
+
+<% if (administrar) { %>
+<div class="modal fade" id="modal-empresa" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="/empresa/nueva" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Otra empresa en esta cuenta</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="small text-muted">Para empresas del mismo grupo. Un cliente distinto (con sus propios datos y responsable) debe ser una cuenta aparte.</p>
+        <div class="form-group"><label for="n-razon">Raz&oacute;n social *</label><input type="text" id="n-razon" name="razon_social" class="form-control" maxlength="200" required></div>
+        <div class="form-row">
+          <div class="form-group col-8"><label for="n-nit">NIT *</label><input type="text" id="n-nit" name="nit" class="form-control" maxlength="15" required></div>
+          <div class="form-group col-4"><label for="n-trab">Trabajadores *</label><input type="number" id="n-trab" name="numero_trabajadores" class="form-control" min="1" required></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Crear</button></div>
+    </form>
+  </div>
+</div>
+<% } %>
+<%- include('../partials/pie') %>

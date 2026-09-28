@@ -1,0 +1,302 @@
+<%- include('../partials/cabecera') %>
+<%
+  var t = d.t;
+  var colorEstado = { activo: 'success', suspendido: 'warning', retirado: 'secondary' };
+  var accion = '/plataforma/clientes/' + t.id;
+%>
+<div class="barra-acciones">
+  <div><a href="/plataforma/clientes" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Clientes</a></div>
+  <div>
+    <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modal-editar"><i class="fas fa-edit mr-1"></i>Editar</button>
+    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-admin"><i class="fas fa-user-shield mr-1"></i>Asignar administrador</button>
+    <% if (t.estado === 'activo') { %>
+    <form method="post" action="<%= accion %>/estado" class="d-inline js-confirmar" data-confirmar="&iquest;Suspender el cliente? Sus usuarios pierden el acceso de inmediato.">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="estado" value="suspendido">
+      <button type="submit" class="btn btn-sm btn-outline-warning"><i class="fas fa-pause mr-1"></i>Suspender</button>
+    </form>
+    <% } else { %>
+    <form method="post" action="<%= accion %>/estado" class="d-inline">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="estado" value="activo">
+      <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-play mr-1"></i>Reactivar</button>
+    </form>
+    <% } %>
+    <% if (t.estado !== 'retirado') { %>
+    <button type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#modal-retirar"><i class="fas fa-door-open mr-1"></i>Retirar</button>
+    <% } %>
+  </div>
+</div>
+
+<% if (d.plan.alertas.length) { %><div class="alert alert-warning small"><strong>Fuera de plan:</strong><ul class="mb-0 pl-3"><% d.plan.alertas.forEach(function (x) { %><li><%= x %></li><% }) %></ul>Nada se bloquea salvo nuevas empresas o usuarios; considere cambiar el plan.</div><% } %>
+<% if (!d.admins) { %><div class="alert alert-danger small"><i class="fas fa-exclamation-triangle mr-1"></i>El cliente no tiene administrador activo: nadie puede gestionar sus usuarios. Asigne uno.</div><% } %>
+
+<div class="card card-outline card-primary">
+  <div class="card-body small">
+    <dl class="row mb-0">
+      <dt class="col-sm-2">Estado</dt><dd class="col-sm-4"><span class="badge badge-<%= colorEstado[t.estado] %>"><%= t.estado %></span></dd>
+      <dt class="col-sm-2">Plan</dt><dd class="col-sm-4"><% var pe = d.plan; %><% if (pe.plan) { %><%= pe.plan.nombre %><br><span class="text-muted">Empresas <%= pe.uso.empresas %>/<%= limite(pe.plan.max_empresas) %> &middot; usuarios <%= pe.uso.usuarios %>/<%= limite(pe.plan.max_usuarios) %></span><% } else { %>Sin plan (sin l&iacute;mites)<% } %></dd>
+      <dt class="col-sm-2">Regi&oacute;n de datos</dt><dd class="col-sm-4"><%= t.region_datos %></dd>
+      <dt class="col-sm-2">Alta</dt><dd class="col-sm-4"><%= fh(t.creado_en) %></dd>
+    </dl>
+  </div>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-usuarios" role="tab">Usuarios <span class="badge badge-light"><%= d.usuarios.length %></span></a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-empresas" role="tab">Empresas <span class="badge badge-light"><%= d.empresas.length %></span></a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-suscripcion" role="tab">Suscripci&oacute;n <span class="badge badge-<%= { al_dia: 'success', por_vencer: 'warning', vencida: 'danger' }[sus.situacion.nivel] || 'light' %>"><%= sus.situacion.nivel === 'sin' ? '-' : sus.situacion.nivel.replace('_', ' ') %></span></a></li>
+</ul>
+<div class="tab-content pestanas">
+  <div class="tab-pane fade show active" id="tab-usuarios" role="tabpanel">
+    <div class="card card-outline card-secondary">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Usuario</th><th>Roles</th><th>&Uacute;ltimo acceso</th><th>Cuenta</th><th class="text-center">Acciones</th></tr></thead>
+          <tbody>
+            <% d.usuarios.forEach(function (u) { var admin = u.roles.indexOf('admin_tenant') !== -1; %>
+            <tr class="<%= u.roles.length ? '' : 'text-muted' %>">
+              <td><%= u.nombres %> <%= u.apellidos %><br><small><%= u.email %></small></td>
+              <td><% if (u.roles.length) { u.roles.forEach(function (r) { %><span class="badge badge-<%= r === 'admin_tenant' ? 'primary' : 'info' %> mr-1"><%= r %></span><% }) } else { %><span class="badge badge-secondary">Sin acceso</span><% } %></td>
+              <td class="text-nowrap"><small><%= u.ultimo_acceso ? fh(u.ultimo_acceso) : 'Nunca' %></small></td>
+              <td><span class="badge badge-<%= u.estado_usuario === 'activo' ? 'success' : 'secondary' %>"><%= u.estado_usuario %></span></td>
+              <td class="text-center text-nowrap">
+                <a href="/plataforma/usuarios/<%= u.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Cuenta"><i class="fas fa-user-cog"></i></a>
+                <% if (admin && u.id !== yo) { %>
+                <form method="post" action="<%= accion %>/admins/<%= u.id %>/quitar" class="d-inline js-confirmar" data-confirmar="&iquest;Quitar el rol de administrador a <%= u.nombres %>? Conserva sus dem&aacute;s roles.">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn btn-xs btn-default" data-toggle="tooltip" title="Quitar administrador"><i class="fas fa-user-minus"></i></button>
+                </form>
+                <% } %>
+              </td>
+            </tr>
+            <% }) %>
+            <% if (!d.usuarios.length) { %><tr><td colspan="5" class="text-muted">Sin usuarios.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer small text-muted">Los dem&aacute;s roles los gestiona el administrador del cliente en Empresa &rsaquo; Usuarios.</div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="tab-empresas" role="tabpanel">
+    <div class="card card-outline card-secondary">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Raz&oacute;n social</th><th>NIT</th><th class="text-center">Trabajadores</th><th>Estado</th></tr></thead>
+          <tbody>
+            <% d.empresas.forEach(function (e) { %>
+            <tr class="<%= e.estado === 'activa' ? '' : 'text-muted' %>">
+              <td><%= e.razon_social %></td>
+              <td><%= e.nit %><%= e.digito_verificacion ? '-' + e.digito_verificacion : '' %></td>
+              <td class="text-center"><%= e.numero_trabajadores %></td>
+              <td><%= e.estado %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="tab-suscripcion" role="tabpanel">
+    <% var a = sus.actual, abierta = a && ['vigente', 'vencida'].indexOf(a.estado) !== -1;
+       var colorSus = { vigente: 'success', vencida: 'danger', renovada: 'light', cancelada: 'secondary' };
+       var conSaldo = sus.historial.filter(function (x) { return Number(x.saldo) > 0; }); %>
+    <div class="card card-outline card-primary">
+      <div class="card-body small">
+        <div class="d-flex flex-wrap justify-content-between">
+          <dl class="row mb-0 flex-grow-1">
+            <dt class="col-sm-2">Situaci&oacute;n</dt><dd class="col-sm-4"><%= sus.situacion.texto %></dd>
+            <% if (a) { %>
+            <dt class="col-sm-2">Plan</dt><dd class="col-sm-4"><%= a.plan_codigo %> &middot; <%= a.periodicidad %><%= Number(a.es_prueba) ? ' · prueba' : '' %></dd>
+            <dt class="col-sm-2">Vigencia</dt><dd class="col-sm-4"><%= a.fecha_inicio %> a <%= a.fecha_fin %></dd>
+            <dt class="col-sm-2">Valor / saldo</dt><dd class="col-sm-4"><%= pesos(a.valor) %> &middot; <span class="<%= Number(a.saldo) > 0 ? 'text-danger' : 'text-success' %>">saldo <%= pesos(a.saldo) %></span></dd>
+            <% } %>
+          </dl>
+          <div class="text-nowrap">
+            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-suscripcion"><i class="fas fa-redo mr-1"></i><%= a ? 'Renovar o cambiar plan' : 'Crear suscripci&oacute;n' %></button>
+            <% if (conSaldo.length) { %><button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-pago"><i class="fas fa-dollar-sign mr-1"></i>Registrar pago</button><% } %>
+            <% if (abierta) { %><button type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#modal-cancelar"><i class="fas fa-ban mr-1"></i>Cancelar</button><% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card card-outline card-secondary">
+      <div class="card-header"><h3 class="card-title">Historial</h3></div>
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Plan</th><th>Periodo</th><th class="text-right">Valor</th><th class="text-right">Pagado</th><th class="text-right">Saldo</th><th>Estado</th></tr></thead>
+          <tbody>
+            <% sus.historial.forEach(function (h) { %>
+            <tr class="<%= h.estado === 'renovada' ? 'text-muted' : '' %>">
+              <td><%= h.plan_codigo %><br><small><%= h.periodicidad %><%= Number(h.es_prueba) ? ' · prueba' : '' %></small></td>
+              <td class="text-nowrap"><small><%= h.fecha_inicio %> a <%= h.fecha_fin %></small></td>
+              <td class="text-right"><%= pesos(h.valor) %></td>
+              <td class="text-right"><%= pesos(h.pagado) %></td>
+              <td class="text-right<%= Number(h.saldo) > 0 ? ' text-danger' : '' %>"><%= pesos(h.saldo) %></td>
+              <td><span class="badge badge-<%= colorSus[h.estado] %>"><%= h.estado %></span><% if (h.motivo_estado) { %><br><small class="text-muted"><%= h.motivo_estado %></small><% } %></td>
+            </tr>
+            <% }) %>
+            <% if (!sus.historial.length) { %><tr><td colspan="6" class="text-muted">Sin suscripciones registradas.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card card-outline card-secondary">
+      <div class="card-header"><h3 class="card-title">Pagos</h3></div>
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Fecha</th><th class="text-right">Valor</th><th>Medio / referencia</th><th>Periodo</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+          <tbody>
+            <% sus.pagos.forEach(function (p) { var anulado = p.estado === 'anulado'; %>
+            <tr class="<%= anulado ? 'text-muted' : '' %>">
+              <td class="text-nowrap"><%= p.fecha %></td>
+              <td class="text-right"><span class="<%= anulado ? 'text-decoration-line-through' : '' %>"><%= pesos(p.valor) %></span></td>
+              <td><%= p.medio %><% if (p.referencia) { %><br><small><%= p.referencia %></small><% } %></td>
+              <td class="text-nowrap"><small><%= p.fecha_inicio %> a <%= p.fecha_fin %></small></td>
+              <td><%= p.estado %><% if (p.motivo_anulacion) { %><br><small><%= p.motivo_anulacion %></small><% } %></td>
+              <td class="text-center"><% if (!anulado) { %><button type="button" class="btn btn-xs btn-default js-anular-pago" data-id="<%= p.id %>" data-texto="<%= p.fecha %> · <%= pesos(p.valor) %>" data-toggle="tooltip" title="Anular"><i class="fas fa-times"></i></button><% } %></td>
+            </tr>
+            <% }) %>
+            <% if (!sus.pagos.length) { %><tr><td colspan="6" class="text-muted">Sin pagos registrados.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-suscripcion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="<%= accion %>/suscripcion" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><%= a ? 'Renovar o cambiar plan' : 'Nueva suscripci&oacute;n' %></h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-row">
+          <div class="form-group col-7"><label for="s-plan">Plan *</label>
+            <select id="s-plan" name="plan_codigo" class="form-control" required><% sus.planes.forEach(function (p) { %><option value="<%= p.codigo %>"<%= sus.sugerida.plan_codigo === p.codigo ? ' selected' : '' %>><%= p.nombre %></option><% }) %></select></div>
+          <div class="form-group col-5"><label for="s-per">Periodicidad *</label>
+            <select id="s-per" name="periodicidad" class="form-control"><% ['mensual', 'trimestral', 'semestral', 'anual'].forEach(function (x) { %><option value="<%= x %>"<%= sus.sugerida.periodicidad === x ? ' selected' : '' %>><%= x %></option><% }) %></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-6"><label for="s-ini">Inicio *</label><input type="date" id="s-ini" name="fecha_inicio" class="form-control" value="<%= sus.sugerida.fecha_inicio %>" required></div>
+          <div class="form-group col-6"><label for="s-valor">Valor pactado (COP) *</label><input type="text" id="s-valor" name="valor" class="form-control" value="<%= sus.sugerida.valor %>" inputmode="decimal" maxlength="18" required></div>
+        </div>
+        <div class="custom-control custom-checkbox mb-2"><input type="checkbox" class="custom-control-input" id="s-prueba" name="es_prueba" value="1"><label class="custom-control-label font-weight-normal" for="s-prueba">Periodo de prueba (puede ir en $0)</label></div>
+        <% if (t.estado === 'suspendido') { %><div class="custom-control custom-checkbox mb-2"><input type="checkbox" class="custom-control-input" id="s-react" name="reactivar" value="1" checked><label class="custom-control-label font-weight-normal" for="s-react">Reactivar el cliente (hoy est&aacute; suspendido)</label></div><% } %>
+        <div class="form-group mb-0"><label for="s-obs">Observaci&oacute;n</label><input type="text" id="s-obs" name="observacion" class="form-control" maxlength="500" placeholder="Orden de compra, descuento pactado, etc."></div>
+        <small class="text-muted d-block mt-2">La fecha fin se calcula por la periodicidad. <% if (abierta) { %>La suscripci&oacute;n actual queda como renovada.<% } %></small>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button></div>
+    </form>
+  </div>
+</div>
+
+<% if (conSaldo.length) { %>
+<div class="modal fade" id="modal-pago" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="<%= accion %>/pagos" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Registrar pago</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group"><label for="p-sus">Periodo *</label>
+          <select id="p-sus" name="suscripcion_id" class="form-control"><% conSaldo.forEach(function (x) { %><option value="<%= x.id %>"><%= x.fecha_inicio %> a <%= x.fecha_fin %> &middot; saldo <%= pesos(x.saldo) %></option><% }) %></select></div>
+        <div class="form-row">
+          <div class="form-group col-6"><label for="p-fecha">Fecha *</label><input type="date" id="p-fecha" name="fecha" class="form-control" required></div>
+          <div class="form-group col-6"><label for="p-valor">Valor (COP) *</label><input type="text" id="p-valor" name="valor" class="form-control" inputmode="decimal" maxlength="18" required></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-6"><label for="p-medio">Medio *</label><select id="p-medio" name="medio" class="form-control"><% sus.medios.forEach(function (m) { %><option value="<%= m %>"><%= m %></option><% }) %></select></div>
+          <div class="form-group col-6"><label for="p-ref">Referencia</label><input type="text" id="p-ref" name="referencia" class="form-control" maxlength="100"></div>
+        </div>
+        <div class="form-group mb-0"><label for="p-obs">Observaci&oacute;n</label><input type="text" id="p-obs" name="observacion" class="form-control" maxlength="500"></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success"><i class="fas fa-save mr-1"></i>Registrar</button></div>
+    </form>
+  </div>
+</div>
+<% } %>
+
+<% if (abierta) { %>
+<div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="<%= accion %>/suscripcion/<%= a.id %>/cancelar" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Cancelar suscripci&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="small">No se renovar&aacute;. El cliente conserva el acceso hasta el <strong><%= a.fecha_fin %></strong>; despu&eacute;s usted decide si suspenderlo o retirarlo.</p>
+        <div class="form-group mb-0"><label for="c-motivo">Motivo *</label><textarea id="c-motivo" name="motivo" class="form-control" rows="2" minlength="10" maxlength="500" required></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Volver</button><button type="submit" class="btn btn-danger">Cancelar suscripci&oacute;n</button></div>
+    </form>
+  </div>
+</div>
+<% } %>
+
+<div class="modal fade" id="modal-anular-pago" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-anular-pago" data-base="<%= accion %>/pagos/">
+      <div class="modal-header"><h5 class="modal-title">Anular pago</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="small js-titulo"></p>
+        <div class="form-group mb-0"><label for="ap-motivo">Motivo *</label><textarea id="ap-motivo" name="motivo" class="form-control" rows="2" minlength="10" maxlength="500" required></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Volver</button><button type="submit" class="btn btn-danger">Anular</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-editar" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="<%= accion %>" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Editar cliente</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group"><label for="c-nombre">Nombre *</label><input type="text" id="c-nombre" name="nombre" class="form-control" value="<%= t.nombre %>" maxlength="200" required></div>
+        <div class="form-row">
+          <div class="form-group col-6"><label for="c-plan">Plan</label><select id="c-plan" name="plan" class="form-control"><option value="">Sin plan (sin l&iacute;mites)</option>
+            <% if (d.plan.plan && d.plan.plan.estado !== 'activo') { %><option value="<%= d.plan.plan.codigo %>" selected><%= d.plan.plan.nombre %> (retirado)</option><% } %>
+            <% d.planes.forEach(function (p) { %><option value="<%= p.codigo %>"<%= t.plan === p.codigo ? ' selected' : '' %>><%= p.nombre %></option><% }) %></select></div>
+          <div class="form-group col-6"><label for="c-region">Regi&oacute;n de datos *</label><input type="text" id="c-region" name="region_datos" class="form-control" value="<%= t.region_datos %>" maxlength="40" required></div>
+        </div>
+        <small class="text-muted">La regi&oacute;n es informativa: cambiarla no mueve los datos de servidor.</small>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-admin" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <form method="post" action="<%= accion %>/admins" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Asignar administrador</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group"><label for="a-email">Correo *</label><input type="email" id="a-email" name="email" class="form-control" maxlength="190" required>
+          <small class="text-muted">Si el correo ya tiene cuenta, solo se le agrega el rol. Si no, complete sus datos y recibe una contrase&ntilde;a temporal.</small></div>
+        <div class="form-row">
+          <div class="form-group col-md-6"><label for="a-nom">Nombres</label><input type="text" id="a-nom" name="nombres" class="form-control" maxlength="100"></div>
+          <div class="form-group col-md-6"><label for="a-ape">Apellidos</label><input type="text" id="a-ape" name="apellidos" class="form-control" maxlength="100"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4"><label for="a-td">Tipo de documento</label><select id="a-td" name="tipo_documento" class="form-control"><option>CC</option><option>CE</option><option>PA</option><option>PPT</option><option>PEP</option></select></div>
+          <div class="form-group col-md-8"><label for="a-doc">N&uacute;mero de documento</label><input type="text" id="a-doc" name="numero_documento" class="form-control" maxlength="20"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-user-shield mr-1"></i>Asignar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-retirar" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="<%= accion %>/estado" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Retirar cliente</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="estado" value="retirado">
+        <p class="small">Fin de la relaci&oacute;n comercial: nadie del cliente vuelve a entrar. <strong>No se borra nada</strong>: los registros del SG-SST tienen retenciones legales (hasta 20 a&ntilde;os). Se puede reactivar.</p>
+        <div class="form-group mb-0"><label for="r-motivo">Motivo *</label><textarea id="r-motivo" name="motivo" class="form-control" rows="2" minlength="10" maxlength="500" required></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger"><i class="fas fa-door-open mr-1"></i>Retirar</button></div>
+    </form>
+  </div>
+</div>
+<%- include('../partials/pie') %>

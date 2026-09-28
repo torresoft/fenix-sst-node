@@ -1,0 +1,141 @@
+<%- include('../partials/cabecera') %>
+<%
+  var etiquetaAmbito = { general: 'general', declarado: 'declarado', automatico: 'autom&aacute;tico' };
+  var fecha = a.creado_en instanceof Date ? a.creado_en.toISOString().slice(0, 16).replace('T', ' ') : a.creado_en;
+%>
+<div class="mb-3 no-print">
+  <a href="/matriz-legal/auditor/<%= a.id %>/csv" class="btn btn-sm btn-success"><i class="fas fa-file-csv mr-1"></i>Descargar CSV</a>
+  <button type="button" class="btn btn-sm btn-default js-imprimir"><i class="fas fa-print mr-1"></i>Imprimir / PDF</button>
+  <a href="/matriz-legal/auditor" class="btn btn-sm btn-default">Volver</a>
+</div>
+
+<div class="card card-outline card-primary">
+  <div class="card-body">
+    <h4 class="mb-1"><%= empresa.razon_social %> <small class="text-muted">NIT <%= empresa.nit %></small></h4>
+    <p class="mb-1">Auditor&iacute;a #<%= a.id %> &middot; <%= fecha %> &middot; <%= autor %> &middot; fuente: <%= a.fuente %><%= a.nombre_archivo ? ' (' + a.nombre_archivo + ')' : '' %></p>
+    <p class="mb-0 small text-muted">
+      &Aacute;mbitos evaluados:
+      <% ambitos.forEach(function (x, i) { %><%= x[0] %> (<%- etiquetaAmbito[x[1]] || x[1] %>)<%= i < ambitos.length - 1 ? ', ' : '' %><% }) %>
+    </p>
+  </div>
+</div>
+
+<%- include('../partials/franja', { items: [
+  { valor: r.totales.cobertura + '%', texto: 'cobertura', color: 'success' },
+  { valor: r.totales.derogadas, texto: 'derogadas', color: r.totales.derogadas ? 'danger' : '' },
+  { valor: r.totales.desinformacion, texto: 'desinformaci&oacute;n', color: r.totales.desinformacion ? 'danger' : '' },
+  { valor: r.totales.faltantes, texto: 'faltantes', color: r.totales.faltantes ? 'warning' : '' },
+  { valor: r.totales.no_aplican, texto: 'no aplican' },
+  { valor: r.totales.no_reconocidas, texto: 'no reconocidas' }
+] }) %>
+</div>
+
+<% if (r.derogadas.length) { %>
+<div class="card card-outline card-danger">
+  <div class="card-header"><h3 class="card-title">Normas derogadas o sustituidas en la matriz</h3></div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>L&iacute;nea</th><th>Declarada</th><th>Norma</th><th>Reemplazo vigente</th><th>Qu&eacute; se rompe</th></tr></thead>
+      <tbody>
+        <% r.derogadas.forEach(function (d) { %>
+        <tr>
+          <td><%= d.linea %></td>
+          <td><%= d.declarada %></td>
+          <td><strong><%= d.codigo %></strong> <span class="badge badge-danger"><%= d.estado %></span><br><small><%= d.objeto %></small></td>
+          <td>
+            <% if (d.reemplazo) { %><strong><%= d.reemplazo %></strong><br><small><%= d.reemplazo_objeto %></small>
+            <% if (d.cadena.length > 1) { %><br><small class="text-muted">Cadena: <%= d.codigo %> &rarr; <%= d.cadena.join(' → ') %></small><% } %>
+            <% } else { %><span class="text-muted">Sin reemplazo en el cat&aacute;logo</span><% } %>
+          </td>
+          <td><%= d.impacto || '' %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% } %>
+
+<% if (r.desinformacion.length) { %>
+<div class="card card-outline card-danger">
+  <div class="card-header"><h3 class="card-title">Referencias falsas o mal atribuidas</h3></div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>L&iacute;nea</th><th>Declarada</th><th>Explicaci&oacute;n</th><th>Norma correcta</th></tr></thead>
+      <tbody>
+        <% r.desinformacion.forEach(function (d) { %>
+        <tr><td><%= d.linea %></td><td><%= d.declarada %></td><td><%= d.explicacion %></td><td><strong><%= d.norma_correcta || '' %></strong></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% } %>
+
+<% if (r.faltantes.length) { %>
+<div class="card card-outline card-warning">
+  <div class="card-header"><h3 class="card-title">Normas aplicables que faltan en la matriz</h3></div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Norma</th><th>&Aacute;mbito</th><th>Motivo</th></tr></thead>
+      <tbody>
+        <% r.faltantes.forEach(function (d) { %>
+        <tr><td><strong><%= d.codigo %></strong><br><small><%= d.objeto %></small></td><td><%= d.ambito %></td><td><%= d.motivo %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% } %>
+
+<% if (r.noAplican.length) { %>
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title">En la matriz pero no aplican al perfil</h3></div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>L&iacute;nea</th><th>Declarada</th><th>Norma</th><th>Motivo</th></tr></thead>
+      <tbody>
+        <% r.noAplican.forEach(function (d) { %>
+        <tr><td><%= d.linea %></td><td><%= d.declarada %></td><td><strong><%= d.codigo %></strong><br><small><%= d.objeto %></small></td><td><%= d.motivo %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% } %>
+
+<% if (r.noReconocidas.length) { %>
+<div class="card card-outline card-light">
+  <div class="card-header"><h3 class="card-title">L&iacute;neas no reconocidas (revisi&oacute;n manual)</h3></div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>L&iacute;nea</th><th>Texto</th><th>Motivo</th></tr></thead>
+      <tbody>
+        <% r.noReconocidas.forEach(function (d) { %>
+        <tr><td><%= d.linea %></td><td><%= d.declarada %></td><td><%= d.motivo %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% } %>
+
+<% if (r.correctas.length) { %>
+<div class="card card-outline card-success collapsed-card">
+  <div class="card-header">
+    <h3 class="card-title">Correctas (<%= r.correctas.length %>)</h3>
+    <div class="card-tools"><button type="button" class="btn btn-tool" data-card-widget="collapse" title="Expandir"><i class="fas fa-plus"></i></button></div>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>L&iacute;nea</th><th>Declarada</th><th>Norma</th></tr></thead>
+      <tbody>
+        <% r.correctas.forEach(function (d) { %>
+        <tr><td><%= d.linea %></td><td><%= d.declarada %></td><td><strong><%= d.codigo %></strong> <small><%= d.objeto %></small></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% } %>
+<%- include('../partials/pie') %>

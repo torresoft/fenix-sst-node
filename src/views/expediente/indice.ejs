@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expediente SG-SST - <%= m.empresa.razon_social %></title>
+<style>
+  body { font-family: Arial, sans-serif; color: #212529; margin: 24px; }
+  h1 { margin-bottom: 0; } .muted { color: #6c757d; font-size: 13px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin-top: 12px; }
+  th, td { border: 1px solid #dee2e6; padding: 6px; vertical-align: top; text-align: left; }
+  th { background: #f8f9fa; } code { font-size: 11px; word-break: break-all; }
+  .integro { color: #1e7e34; } .alterado, .faltante { color: #bd2130; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>Expediente del SG-SST</h1>
+<p class="muted"><%= m.empresa.razon_social %> &middot; NIT <%= m.empresa.nit %> &middot; generado <%= m.generado_en %> por <%= m.generado_por %></p>
+<p>Huella SHA-256 del manifiesto: <code><%= m.sha256_manifiesto %></code>. Para comprobar la integridad de los archivos sin conexi&oacute;n abra <a href="verificar.html">verificar.html</a>.</p>
+<table>
+  <tr><th>Tipo</th><th>Documento</th><th>Fecha</th><th>Estado</th><th>Firmas</th><th>Integridad</th></tr>
+  <% m.documentos.forEach(function (d) { %>
+  <tr>
+    <td><%= d.tipo %><br><span class="muted"><%= d.articulo || '' %></span></td>
+    <td><% if (d.ruta) { %><a href="<%= d.ruta %>"><%= d.codigo %> v<%= d.version %></a><% } else { %><%= d.codigo %> v<%= d.version %><% } %><br><%= d.titulo %><% if (d.custodio) { %><br><span class="muted">Custodio: <%= d.custodio %></span><% } %></td>
+    <td><%= d.fecha %><%= d.vence ? ' / vence ' + d.vence : '' %></td>
+    <td><%= d.estado %></td>
+    <td><% d.firmas.forEach(function (f) { %><%= f.firmante %> (<%= f.rol %>, <%= f.metodo %>)<br><% }) %><%= d.firmantes_externos ? d.modalidad_firma + ': ' + d.firmantes_externos : '' %></td>
+    <td class="<%= d.integridad %>"><%= d.integridad %><% if (d.sha256_registrado) { %><br><code><%= d.sha256_registrado %></code><% } %></td>
+  </tr>
+  <% }) %>
+</table>
+<% if (m.anexos.length) { %>
+<h3>Anexos</h3>
+<ul><% m.anexos.forEach(function (a) { %><li><a href="<%= a.ruta %>"><%= a.ruta %></a> <code><%= a.sha256 %></code></li><% }) %></ul>
+<% } %>
+</body>
+</html>

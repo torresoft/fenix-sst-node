@@ -1,0 +1,128 @@
+<%- include('../partials/cabecera') %>
+<%
+  var v = valores || {};
+  var normasSel = [].concat(v.normas || []);
+  var fijo = modo !== 'crear';
+  var textoModalidad = { electronica: 'Electr&oacute;nica (clave + c&oacute;digo)', manuscrita: 'Manuscrita escaneada', digital_externa: 'Digital certificada del emisor' };
+%>
+<% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+<form method="post" action="<%= accion %>?_csrf=<%= csrfToken %>" enctype="multipart/form-data" id="form-documento">
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card card-outline card-primary">
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group col-md-8">
+              <label for="d-tipo">Tipo documental *</label>
+              <select id="d-tipo" name="tipo_documental" class="form-control" required <%= fijo ? 'disabled' : '' %>>
+                <option value="">Seleccione</option>
+                <% tipos.forEach(function (t) { %>
+                <option value="<%= t.codigo %>"<%= v.tipo_documental === t.codigo ? ' selected' : '' %>
+                        data-referencia="<%= Number(t.solo_referencia) %>" data-firma="<%= Number(t.requiere_firma) %>"
+                        data-modalidades="<%= t.modalidades_firma.join(',') %>" data-vigencia="<%= t.vigencia_meses || '' %>"
+                        data-modulo="<%= t.modulo %>"><%= t.nombre %></option>
+                <% }) %>
+              </select>
+              <% if (fijo) { %><input type="hidden" name="tipo_documental" value="<%= v.tipo_documental %>"><% } %>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="d-codigo">C&oacute;digo *</label>
+              <input type="text" id="d-codigo" name="codigo" class="form-control text-uppercase" value="<%= v.codigo || '' %>" maxlength="60" pattern="[A-Za-z0-9._-]{2,60}" required <%= fijo ? 'readonly' : '' %>>
+              <% if (modo === 'version') { %><small class="text-muted">Versi&oacute;n nueva del documento vigente v<%= doc.version %></small><% } %>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="d-titulo">T&iacute;tulo *</label>
+            <input type="text" id="d-titulo" name="titulo" class="form-control" value="<%= v.titulo || '' %>" maxlength="255" required>
+          </div>
+          <div class="form-group">
+            <label for="d-desc">Descripci&oacute;n</label>
+            <textarea id="d-desc" name="descripcion" class="form-control" rows="2" maxlength="1000"><%= v.descripcion || '' %></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="d-fecha">Fecha del documento *</label>
+              <input type="date" id="d-fecha" name="fecha_documento" class="form-control" value="<%= v.fecha_documento || hoy %>" required>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="d-vence">Vence</label>
+              <input type="date" id="d-vence" name="fecha_vence" class="form-control" value="<%= v.fecha_vence || '' %>">
+              <small class="text-muted js-sugerencia"></small>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="d-vig">Vigencia (a&ntilde;o)</label>
+              <input type="number" id="d-vig" name="vigencia_anio" class="form-control" value="<%= v.vigencia_anio || '' %>" min="2000" max="2100">
+            </div>
+          </div>
+
+          <div class="alert alert-danger js-aviso-salud d-none">
+            <i class="fas fa-user-shield mr-1"></i><strong>Datos de salud:</strong> no cargue historia cl&iacute;nica, diagn&oacute;sticos,
+            paracl&iacute;nicos ni informes psicosociales individuales. El empleador solo puede tener conceptos de aptitud,
+            restricciones y agregados sin identificar (Res. 1843 de 2025).
+          </div>
+
+          <div class="form-group js-bloque-archivo">
+            <label for="d-archivo">Archivo <%= modo === 'editar' ? '(reemplazar)' : '*' %></label>
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="d-archivo" name="archivo" accept=".pdf,.docx,.xlsx,.odt,.ods,.png,.jpg,.jpeg">
+              <label class="custom-file-label" for="d-archivo"><%= doc && doc.archivo_nombre && modo === 'editar' ? doc.archivo_nombre : 'Seleccionar archivo' %></label>
+            </div>
+            <small class="text-muted">PDF, Office, OpenDocument o imagen. M&aacute;ximo <%= maxMb %> MB. Se guarda con su huella SHA-256.</small>
+          </div>
+          <div class="form-group js-bloque-referencia d-none">
+            <label for="d-ref">Custodio y referencia *</label>
+            <input type="text" id="d-ref" name="referencia_custodio" class="form-control" value="<%= v.referencia_custodio || '' %>" maxlength="255"
+                   placeholder="IPS que custodia, n&uacute;mero de orden o de historia">
+            <small class="text-muted">Tipo de solo referencia: el sistema no admite el archivo porque el empleador no puede custodiar la historia cl&iacute;nica.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card card-outline card-secondary js-bloque-firma d-none">
+        <div class="card-header"><h3 class="card-title">Firma</h3></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label for="d-modalidad">Modalidad de firma *</label>
+            <select id="d-modalidad" name="modalidad_firma" class="form-control" data-actual="<%= v.modalidad_firma || '' %>">
+              <% Object.keys(textoModalidad).forEach(function (k) { %><option value="<%= k %>"><%- textoModalidad[k] %></option><% }) %>
+            </select>
+          </div>
+          <div class="form-group js-bloque-externos d-none">
+            <label for="d-externos">Qui&eacute;n firm&oacute; *</label>
+            <input type="text" id="d-externos" name="firmantes_externos" class="form-control" value="<%= v.firmantes_externos || '' %>" maxlength="500" placeholder="Nombre y cargo de cada firmante">
+          </div>
+          <small class="text-muted">La firma electr&oacute;nica se solicita despu&eacute;s de guardar el borrador.</small>
+        </div>
+      </div>
+
+      <div class="card card-outline card-secondary">
+        <div class="card-header"><h3 class="card-title">Relaciones</h3></div>
+        <div class="card-body">
+          <% if (personas.length) { %>
+          <div class="form-group">
+            <label for="d-persona">Persona</label>
+            <select id="d-persona" name="persona_id" class="form-control" <%= modo === 'version' ? 'disabled' : '' %>>
+              <option value="">No aplica</option>
+              <% personas.forEach(function (p) { %><option value="<%= p.id %>"<%= String(v.persona_id) === String(p.id) ? ' selected' : '' %>><%= p.apellidos %> <%= p.nombres %> (<%= p.numero_documento %>)</option><% }) %>
+            </select>
+            <small class="text-muted">Obligatoria para registros individuales (EPP, capacitaci&oacute;n): de ella depende la retenci&oacute;n de 20 a&ntilde;os.</small>
+          </div>
+          <% } %>
+          <div class="form-group mb-0">
+            <label for="d-normas">Normas que cita</label>
+            <select id="d-normas" name="normas[]" class="form-control" multiple size="8">
+              <% normas.forEach(function (n) { %><option value="<%= n.codigo %>"<%= normasSel.indexOf(n.codigo) !== -1 ? ' selected' : '' %>><%= n.codigo %> - <%= n.objeto.slice(0, 60) %></option><% }) %>
+            </select>
+            <small class="text-muted">Si una norma citada cambia, el bolet&iacute;n normativo avisa que este documento qued&oacute; afectado.</small>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-save mr-1"></i>Guardar borrador</button>
+      <a href="<%= doc ? '/documentos/' + doc.id : '/documentos' %>" class="btn btn-default btn-block">Cancelar</a>
+    </div>
+  </div>
+</form>
+<%- include('../partials/pie') %>

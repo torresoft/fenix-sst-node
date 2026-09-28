@@ -1,0 +1,80 @@
+<%- include('../partials/cabecera') %>
+<%
+  var colorEstado = { activo: 'success', suspendido: 'warning', retirado: 'secondary' };
+  var activos = clientes.filter(function (c) { return c.estado === 'activo'; }).length;
+%>
+<div class="barra-acciones">
+  <span class="small text-muted"><%= clientes.length %> clientes &middot; <%= activos %> activos</span>
+  <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-cliente"><i class="fas fa-plus mr-1"></i>Nuevo cliente</button>
+</div>
+<div class="card card-outline card-primary">
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Cliente</th><th>Plan y uso</th><th>Empresas</th><th>Regi&oacute;n de datos</th><th>Alta</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+      <tbody>
+        <% clientes.forEach(function (c) { %>
+        <tr class="<%= c.estado === 'activo' ? '' : 'text-muted' %>">
+          <td><a href="/plataforma/clientes/<%= c.id %>"><strong><%= c.nombre %></strong></a><br><small class="text-muted">#<%= c.id %></small></td>
+          <td class="text-nowrap"><% var pe = c.planEstado; %>
+            <% if (pe.plan) { %><small><strong><%= pe.plan.nombre %></strong><br>Empresas <%= pe.uso.empresas %>/<%= limite(pe.plan.max_empresas) %> &middot; usuarios <%= pe.uso.usuarios %>/<%= limite(pe.plan.max_usuarios) %></small>
+            <% } else { %><small class="text-muted">Sin plan &middot; <%= pe.uso.usuarios %> usuarios</small><% } %>
+            <% if (pe.alertas.length) { %><br><span class="badge badge-danger" data-toggle="tooltip" title="<%= pe.alertas.join(' · ') %>">fuera de plan</span><% } %>
+          </td>
+          <td><small><%= c.razones || '-' %></small></td>
+          <td><small><%= c.region_datos %></small></td>
+          <td class="text-nowrap"><small><%= fh(c.creado_en).slice(0, 10) %></small></td>
+          <td><span class="badge badge-<%= colorEstado[c.estado] %>"><%= c.estado %></span></td>
+          <td class="text-center text-nowrap">
+            <a href="/plataforma/clientes/<%= c.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Ficha del cliente"><i class="fas fa-building"></i></a>
+            <% if (c.estado !== 'retirado') { var activo = c.estado === 'activo'; %>
+            <form method="post" action="/plataforma/clientes/<%= c.id %>/estado" class="d-inline<%= activo ? ' js-confirmar' : '' %>" data-confirmar="&iquest;Suspender a <%= c.nombre %>? Sus usuarios pierden el acceso de inmediato.">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="estado" value="<%= activo ? 'suspendido' : 'activo' %>">
+              <input type="hidden" name="volver" value="lista">
+              <button type="submit" class="btn btn-xs btn-default" data-toggle="tooltip" title="<%= activo ? 'Suspender' : 'Reactivar' %>"><i class="fas <%= activo ? 'fa-pause' : 'fa-play' %>"></i></button>
+            </form>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+        <% if (!clientes.length) { %><tr><td colspan="7" class="text-muted">Sin clientes.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-cliente" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <form method="post" action="/plataforma/clientes" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Nuevo cliente</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-row">
+          <div class="form-group col-md-6"><label for="t-nombre">Nombre del cliente *</label><input type="text" id="t-nombre" name="tenant" class="form-control" maxlength="200" required></div>
+          <div class="form-group col-md-6"><label for="t-razon">Raz&oacute;n social de la primera empresa</label><input type="text" id="t-razon" name="razon_social" class="form-control" maxlength="200" placeholder="Igual al nombre del cliente"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4"><label for="t-nit">NIT *</label><input type="text" id="t-nit" name="nit" class="form-control" maxlength="15" required></div>
+          <div class="form-group col-md-2"><label for="t-dv">DV</label><input type="text" id="t-dv" name="dv" class="form-control" maxlength="1"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6"><label for="t-plan">Plan</label>
+            <select id="t-plan" name="plan" class="form-control"><option value="">Sin plan (sin l&iacute;mites)</option><% planes.forEach(function (p) { %><option value="<%= p.codigo %>"><%= p.nombre %></option><% }) %></select></div>
+        </div>
+        <h6 class="mt-2">Administrador del cliente</h6>
+        <div class="form-group"><label for="t-email">Correo *</label><input type="email" id="t-email" name="email" class="form-control" maxlength="190" required>
+          <small class="text-muted">Si el correo ya tiene cuenta (p. ej. un consultor), solo se le asigna el rol de administrador.</small></div>
+        <div class="form-row">
+          <div class="form-group col-md-6"><label for="t-nom">Nombres</label><input type="text" id="t-nom" name="nombres" class="form-control" maxlength="100"></div>
+          <div class="form-group col-md-6"><label for="t-ape">Apellidos</label><input type="text" id="t-ape" name="apellidos" class="form-control" maxlength="100"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4"><label for="t-td">Tipo de documento</label><select id="t-td" name="tipo_documento" class="form-control"><option>CC</option><option>CE</option><option>PA</option><option>PPT</option><option>PEP</option></select></div>
+          <div class="form-group col-md-8"><label for="t-doc">N&uacute;mero de documento</label><input type="text" id="t-doc" name="numero_documento" class="form-control" maxlength="20"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Crear cliente</button></div>
+    </form>
+  </div>
+</div>
+<%- include('../partials/pie') %>

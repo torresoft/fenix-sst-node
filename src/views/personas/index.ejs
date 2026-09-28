@@ -1,0 +1,52 @@
+<%- include('../partials/cabecera') %>
+<%
+  var colorVinculo = { activa: 'success', retirada: 'secondary' };
+  var textoEstado = { activas: 'Vinculadas', retiradas: 'Retiradas', sin: 'Sin vinculación', todas: 'Todas' };
+%>
+<div class="card card-outline card-primary">
+  <div class="card-body py-2">
+    <form method="get" action="/personas" class="form-row align-items-end" id="form-filtros">
+      <div class="form-group col-md-3 mb-2">
+        <label for="f-estado">Estado</label>
+        <select id="f-estado" name="estado" class="form-control form-control-sm js-autoenvio">
+          <% Object.keys(textoEstado).forEach(function (k) { %><option value="<%= k %>"<%= filtros.estado === k ? ' selected' : '' %>><%= textoEstado[k] %></option><% }) %>
+        </select>
+      </div>
+      <div class="form-group col-md-5 mb-2">
+        <label for="f-q">Nombre o documento</label>
+        <input type="text" id="f-q" name="q" class="form-control form-control-sm" value="<%= filtros.q %>" maxlength="60">
+      </div>
+      <div class="form-group col-md-4 mb-2 text-right">
+        <button type="submit" class="btn btn-sm btn-default"><i class="fas fa-search"></i></button>
+        <a href="/personas/cargos" class="btn btn-sm btn-default"><i class="fas fa-id-badge mr-1"></i>Cargos</a>
+        <% if (gestionar) { %><a href="/personas/nueva" class="btn btn-sm btn-primary"><i class="fas fa-user-plus mr-1"></i>Nueva</a><% } %>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card card-outline card-secondary">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead><tr><th>Documento</th><th>Nombre</th><th>Vinculaci&oacute;n</th><th>Cargo</th><th>Centro</th><th>Ingreso</th><th>Retiro</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+        <tbody>
+          <% personas.forEach(function (p) { %>
+          <tr>
+            <td class="text-nowrap"><%= p.tipo_documento %> <%= p.numero_documento %></td>
+            <td><%= p.apellidos %> <%= p.nombres %></td>
+            <td><% if (p.vinculacion_id) { %><span class="badge badge-<%= colorVinculo[p.vinculacion_estado] %>"><%= tipos[p.tipo] || p.tipo %></span><% } else { %><span class="text-muted small">Sin vinculaci&oacute;n</span><% } %></td>
+            <td><%= p.cargo || '' %></td>
+            <td><%= p.centro || '' %></td>
+            <td class="text-nowrap"><%= p.fecha_ingreso || '' %></td>
+            <td class="text-nowrap"><%= p.fecha_retiro || '' %></td>
+            <td class="text-center"><a href="/personas/<%= p.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Ver ficha"><i class="fas fa-eye"></i></a></td>
+          </tr>
+          <% }) %>
+          <% if (!personas.length) { %><tr><td colspan="8" class="text-muted">No hay personas con esos filtros.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/pie') %>

@@ -1,0 +1,193 @@
+<%- include('../partials/cabecera') %>
+<%
+  var doc = d.doc;
+  var colorEstado = { borrador: 'secondary', en_firma: 'warning', vigente: 'success', reemplazado: 'light', anulado: 'dark' };
+  var textoEstado = { borrador: 'Borrador', en_firma: 'En firma', vigente: 'Vigente', reemplazado: 'Reemplazado', anulado: 'Anulado' };
+  var textoModalidad = { electronica: 'Electr&oacute;nica', manuscrita: 'Manuscrita escaneada', digital_externa: 'Digital certificada del emisor' };
+  var colorSolicitud = { pendiente: 'warning', firmada: 'success', anulada: 'dark' };
+  var kb = function (b) { return b ? (b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.ceil(b / 1024) + ' KB') : ''; };
+%>
+<div class="mb-3">
+  <a href="/documentos" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Documentos</a>
+  <% if (doc.archivo_ruta) { %><a href="/documentos/<%= doc.id %>/archivo" class="btn btn-sm btn-default"><i class="fas fa-download mr-1"></i>Descargar</a><% } %>
+  <form method="post" action="/documentos/<%= doc.id %>/verificar" class="d-inline">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button type="submit" class="btn btn-sm btn-default" data-toggle="tooltip" title="Recalcula la huella del archivo y la compara con la registrada y con cada firma"><i class="fas fa-fingerprint mr-1"></i>Verificar integridad</button>
+  </form>
+  <% if (gestionar) { %>
+  <span class="float-right">
+    <% if (doc.estado === 'borrador') { %>
+    <a href="/documentos/<%= doc.id %>/editar" class="btn btn-sm btn-default"><i class="fas fa-edit mr-1"></i>Editar</a>
+    <% if (doc.modalidad_firma === 'electronica') { %>
+    <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modal-firmas"><i class="fas fa-signature mr-1"></i>Solicitar firmas</button>
+    <% } else { %>
+    <form method="post" action="/documentos/<%= doc.id %>/publicar" class="d-inline">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-sm btn-success" <%= d.impedimentos.length ? 'disabled' : '' %>><i class="fas fa-check mr-1"></i>Publicar</button>
+    </form>
+    <% } %>
+    <% } %>
+    <% if (doc.estado === 'vigente') { %><a href="/documentos/<%= doc.id %>/nueva-version" class="btn btn-sm btn-primary"><i class="fas fa-code-branch mr-1"></i>Nueva versi&oacute;n</a><% } %>
+    <% if (['borrador', 'en_firma', 'vigente'].indexOf(doc.estado) !== -1) { %>
+    <button type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#modal-anular"><i class="fas fa-ban mr-1"></i>Anular</button>
+    <% } %>
+  </span>
+  <% } %>
+</div>
+
+<% if (verificacion) { %>
+<div class="alert alert-<%= verificacion.ok ? 'success' : 'danger' %>" id="integridad">
+  <h5 class="mb-1"><i class="fas <%= verificacion.ok ? 'fa-shield-alt' : 'fa-exclamation-triangle' %> mr-1"></i>
+    <%= verificacion.ok ? 'Documento íntegro' : 'Problema de integridad' %></h5>
+  Archivo: <strong><%= verificacion.archivo %></strong>
+  <% if (verificacion.hash_en_disco && verificacion.hash_en_disco !== verificacion.hash_registrado) { %><br><small class="text-monospace">En disco: <%= verificacion.hash_en_disco %></small><% } %>
+  <% verificacion.firmas.forEach(function (f) { %><br>Firma de <%= f.firmante %>: <strong><%= f.coincide ? 'coincide con el contenido' : 'NO coincide con el contenido' %></strong><% }) %>
+</div>
+<% } %>
+
+<% if (d.impedimentos.length && ['borrador', 'en_firma'].indexOf(doc.estado) !== -1) { %>
+<div class="alert alert-light"><i class="fas fa-info-circle mr-1"></i>Para quedar vigente: <%= d.impedimentos.join('; ') %>.</div>
+<% } %>
+
+<div class="card card-outline card-<%= colorEstado[doc.estado] === 'light' ? 'secondary' : colorEstado[doc.estado] %>">
+      <div class="card-header">
+        <h3 class="card-title"><%= doc.titulo %></h3>
+        <div class="card-tools"><span class="badge badge-<%= colorEstado[doc.estado] %>"><%= textoEstado[doc.estado] %></span></div>
+      </div>
+      <div class="card-body">
+        <% if (doc.descripcion) { %><p><%= doc.descripcion %></p><% } %>
+        <dl class="row mb-0 small">
+          <dt class="col-sm-4">Tipo</dt><dd class="col-sm-8"><%= d.tipo.nombre %> <span class="text-muted">(<%= d.tipo.origen_articulo || d.tipo.codigo %>)</span></dd>
+          <dt class="col-sm-4">C&oacute;digo / versi&oacute;n</dt><dd class="col-sm-8"><%= doc.codigo %> v<%= doc.version %></dd>
+          <dt class="col-sm-4">Fecha</dt><dd class="col-sm-8"><%= doc.fecha_documento %><%= doc.fecha_vence ? ' · vence ' + doc.fecha_vence : '' %><%= doc.vigencia_anio ? ' · vigencia ' + doc.vigencia_anio : '' %></dd>
+          <% if (d.persona) { %><dt class="col-sm-4">Persona</dt><dd class="col-sm-8"><%= d.persona.nombres %> <%= d.persona.apellidos %> (<%= d.persona.tipo_documento %> <%= d.persona.numero_documento %>)</dd><% } %>
+          <% if (doc.modalidad_firma) { %><dt class="col-sm-4">Firma</dt><dd class="col-sm-8"><%- textoModalidad[doc.modalidad_firma] %><%= doc.firmantes_externos ? ': ' + doc.firmantes_externos : '' %></dd><% } %>
+          <% if (doc.referencia_custodio) { %><dt class="col-sm-4">Custodio</dt><dd class="col-sm-8"><%= doc.referencia_custodio %></dd><% } %>
+          <% if (doc.archivo_ruta) { %>
+          <dt class="col-sm-4">Archivo</dt><dd class="col-sm-8"><%= doc.archivo_nombre %> (<%= kb(doc.archivo_bytes) %>)</dd>
+          <dt class="col-sm-4">SHA-256</dt><dd class="col-sm-8 text-monospace text-break"><%= doc.archivo_hash %></dd>
+          <% } %>
+          <dt class="col-sm-4">Retenci&oacute;n</dt><dd class="col-sm-8"><%= doc.retencion_hasta ? 'Hasta ' + doc.retencion_hasta : (d.tipo.retencion === '20_anios_desde_retiro' ? '20 años desde el retiro de la persona' : 'Según la tabla de retención de la empresa') %></dd>
+          <% if (doc.motivo_estado) { %><dt class="col-sm-4">Motivo</dt><dd class="col-sm-8"><%= doc.motivo_estado %></dd><% } %>
+        </dl>
+      </div>
+    </div>
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-firmas" role="tab">Firmas <span class="badge badge-light"><%= d.firmas.length %></span></a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-versiones" role="tab">Versiones <span class="badge badge-light"><%= d.versiones.length %></span></a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-trazabilidad" role="tab">Trazabilidad</a></li>
+</ul>
+<div class="tab-content pestanas">
+<div class="tab-pane fade show active" id="tab-firmas" role="tabpanel">
+<div class="card card-outline card-secondary">
+      <div class="card-body p-0">
+        <% if (!d.solicitudes.length && !d.firmas.length) { %>
+        <p class="text-muted p-3 mb-0"><%= doc.modalidad_firma === 'electronica' ? 'Aún no se han solicitado firmas.' : 'Sin firmas electrónicas en el sistema.' %></p>
+        <% } else { %>
+        <table class="table table-bordered table-sm mb-0">
+          <thead><tr><th>Firmante</th><th>Rol</th><th>Estado</th><th>Fecha</th></tr></thead>
+          <tbody>
+            <% d.solicitudes.forEach(function (s) { %>
+            <tr><td><%= s.nombre %></td><td><%= s.rol_firmante %></td><td><span class="badge badge-<%= colorSolicitud[s.estado] %>"><%= s.estado %></span></td><td class="text-nowrap"><%= s.firmado_en ? new Date(s.firmado_en).toISOString().slice(0, 16).replace('T', ' ') + ' UTC' : '' %></td></tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% d.firmas.forEach(function (f) { %>
+        <div class="p-2 border-top small">
+          <strong><i class="fas fa-signature mr-1"></i><%= f.firmante_nombre %></strong> &middot; <%= f.firmante_documento %> &middot; <%= f.metodo_auth %> &middot; IP <%= f.ip || '-' %>
+          <span class="badge badge-<%= f.hash_contenido === doc.archivo_hash ? 'success' : 'danger' %> ml-1"><%= f.hash_contenido === doc.archivo_hash ? 'huella coincide' : 'huella distinta' %></span>
+          <div class="text-muted mt-1"><%= f.texto_firmado %></div>
+        </div>
+        <% }) %>
+        <% } %>
+      </div>
+    </div>
+</div>
+<div class="tab-pane fade" id="tab-versiones" role="tabpanel">
+<div class="card card-outline card-secondary">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <tbody>
+            <% d.versiones.forEach(function (v) { %>
+            <tr class="<%= v.id === doc.id ? 'table-active' : '' %>">
+              <td><a href="/documentos/<%= v.id %>">v<%= v.version %></a></td><td><%= v.fecha_documento %></td>
+              <td><span class="badge badge-<%= colorEstado[v.estado] %>"><%= textoEstado[v.estado] %></span></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+<div class="tab-pane fade" id="tab-trazabilidad" role="tabpanel">
+<div class="card card-outline card-secondary">
+      <div class="card-body small">
+        <p class="mb-1"><strong>Normas que cita:</strong>
+          <% if (!d.normas.length) { %><span class="text-muted">ninguna</span><% } %>
+          <% d.normas.forEach(function (n) { %><span class="badge badge-<%= n.estado_vigencia === 'derogada' || n.estado_vigencia === 'sustituida' ? 'danger' : 'light' %> mr-1" data-toggle="tooltip" title="<%= n.objeto || '' %>"><%= n.norma_codigo %></span><% }) %>
+        </p>
+        <p class="mb-1"><strong>Soporta est&aacute;ndares 0312:</strong>
+          <%= d.estandares.length ? d.estandares.map(function (e) { return e.numeral; }).join(', ') : 'ninguno' %></p>
+        <p class="mb-1"><strong>Evidencia en matriz legal:</strong>
+          <%= d.matriz.length ? d.matriz.map(function (m) { return m.norma_codigo; }).join(', ') : 'ninguna' %></p>
+        <% if (d.obligaciones.length) { %>
+        <p class="mb-0"><strong>Obligaciones:</strong>
+          <% d.obligaciones.forEach(function (o) { %><br><%= o.plazo_codigo %> &middot; <%= o.fecha_limite %> &middot; <%= o.estado %><% }) %></p>
+        <% } %>
+      </div>
+    </div>
+</div>
+</div>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-firmas" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <form method="post" action="/documentos/<%= doc.id %>/firmas" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Solicitar firmas</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="small text-muted">Al solicitar, el documento queda en firma y su contenido ya no se puede cambiar. Cuando firme el &uacute;ltimo, queda vigente.</p>
+        <div class="js-firmantes">
+          <div class="form-row js-firmante">
+            <div class="form-group col-md-6">
+              <label>Firmante *</label>
+              <select name="firmante_usuario" class="form-control" required>
+                <option value="">Seleccione</option>
+                <% usuarios.forEach(function (u) { %><option value="<%= u.id %>"><%= u.nombre %></option><% }) %>
+              </select>
+            </div>
+            <div class="form-group col-md-5">
+              <label>Rol en el documento *</label>
+              <input type="text" name="firmante_rol" class="form-control" maxlength="60" required placeholder="Representante legal, responsable del SG-SST...">
+            </div>
+            <div class="form-group col-md-1 d-flex align-items-end">
+              <button type="button" class="btn btn-default js-quitar" data-toggle="tooltip" title="Quitar"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-default js-agregar"><i class="fas fa-plus mr-1"></i>Agregar firmante</button>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-warning"><i class="fas fa-paper-plane mr-1"></i>Solicitar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-anular" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="/documentos/<%= doc.id %>/anular" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Anular documento</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="small">El documento no se borra: queda anulado con el motivo y sigue disponible como evidencia.</p>
+        <div class="form-group">
+          <label for="an-motivo">Motivo *</label>
+          <textarea id="an-motivo" name="motivo" class="form-control" rows="3" minlength="10" maxlength="255" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger"><i class="fas fa-ban mr-1"></i>Anular</button></div>
+    </form>
+  </div>
+</div>
+<% } %>
+<%- include('../partials/pie') %>

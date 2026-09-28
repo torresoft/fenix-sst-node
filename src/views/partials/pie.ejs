@@ -1,0 +1,16 @@
+    </div>
+  </section>
+</div>
+<footer class="main-footer">
+  <small>TORRESOFT &middot; SG-SST</small>
+</footer>
+</div>
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/vendor/adminlte/js/adminlte.min.js"></script>
+<script src="/js/comun/app.js"></script>
+<% (locals.scripts || []).forEach(function (s) { %>
+<script src="<%= s %>"></script>
+<% }) %>
+</body>
+</html>

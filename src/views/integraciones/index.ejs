@@ -1,0 +1,65 @@
+<%- include('../partials/cabecera') %>
+<%
+  var tabs = [['nomina', 'N&oacute;mina'], ['pila', 'Planillas PILA'], ['furat', 'FURAT para la ARL'], ['cargue', 'Cargue al Ministerio']];
+  var colorAccion = { crear: 'success', vincular: 'info', retirar: 'warning', omitir: 'light', error: 'danger', conforme: 'success', inconsistente: 'danger' };
+%>
+<ul class="nav nav-tabs mb-3">
+  <% tabs.forEach(function (t) { %><li class="nav-item"><a class="nav-link<%= tab === t[0] ? ' active' : '' %>" href="?tab=<%= t[0] %>"><%- t[1] %></a></li><% }) %>
+</ul>
+
+<% if (tab === 'nomina' || tab === 'pila') { %>
+<div class="barra-acciones">
+  <span class="small text-muted"><% if (tab === 'nomina') { %>Ingresos y retiros desde la n&oacute;mina: un retiro no registrado deja sin examen de egreso y rompe la conservaci&oacute;n de 20 a&ntilde;os. Las filas con fecha de retiro retiran; las dem&aacute;s vinculan.<% } else { %>Verificaci&oacute;n de afiliaci&oacute;n y pago al SGRL de los trabajadores de contratistas en la clase de riesgo de la actividad (art. 2.2.4.6.28, D. 1072).<% } %></span>
+  <a href="/integraciones/plantilla/<%= tab %>.csv" class="btn btn-sm btn-default"><i class="fas fa-file-csv mr-1"></i>Plantilla</a>
+</div>
+<form method="post" action="/integraciones/<%= tab %>/simular?_csrf=<%= encodeURIComponent(csrfToken) %>" enctype="multipart/form-data" class="card card-outline card-primary">
+  <div class="card-body">
+    <div class="form-group mb-2"><label>Archivo CSV *</label><input type="file" name="archivo" accept=".csv,text/csv" class="form-control-file" required></div>
+    <small class="text-muted">Columnas: <code><%= columnas[tab].join(', ') %></code>. Separador coma o punto y coma; fechas AAAA-MM-DD.</small>
+  </div>
+  <div class="card-footer text-right py-2"><button class="btn btn-sm btn-primary"><i class="fas fa-search mr-1"></i>Simular</button></div>
+</form>
+
+<% if (resultado) { %>
+<div class="card card-outline card-<%= aplicado ? 'success' : 'warning' %>">
+  <div class="card-header"><h3 class="card-title"><%= aplicado ? 'Resultado aplicado' : 'Simulación: nada se ha guardado todavía' %></h3>
+    <% if (!aplicado && pendiente && pendiente.tipo === tab) { %><div class="card-tools">
+      <form method="post" action="/integraciones/<%= tab %>/aplicar" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-sm btn-success"><i class="fas fa-check mr-1"></i>Aplicar <%= pendiente.nombre %></button></form>
+    </div><% } %></div>
+  <div class="card-body p-0"><div class="table-responsive"><table class="table table-bordered table-sm mb-0">
+    <thead><tr><th>Fila</th><th>Documento</th><th><%= tab === 'nomina' ? 'Nombre' : 'Contratista' %></th><th>Acci&oacute;n</th><th>Detalle</th></tr></thead>
+    <tbody><% resultado.forEach(function (r) { var a = r.accion || r.resultado; %><tr>
+      <td><%= r.fila %></td><td><%= r.documento %></td><td><%= r.nombre || r.contratista %></td>
+      <td><span class="badge badge-<%= colorAccion[a] || 'light' %>"><%= a %></span><%= r.aplicada ? ' ✓' : '' %></td>
+      <td class="small"><%= r.detalle %><% if (r.advertencia) { %><br><span class="text-warning"><%= r.advertencia %></span><% } %></td>
+    </tr><% }) %></tbody>
+  </table></div></div>
+</div>
+<% } %>
+
+<% var propios = historial.filter(function (h) { return h.tipo === tab; }); if (propios.length) { %>
+<div class="card card-outline card-secondary collapsed-card"><div class="card-header"><h3 class="card-title">Importaciones anteriores</h3><div class="card-tools"><button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button></div></div>
+  <div class="card-body p-0"><table class="table table-sm mb-0"><tbody><% propios.forEach(function (h) { %><tr><td class="text-nowrap"><%= fh(h.creado_en) %></td><td><%= h.archivo_nombre %></td><td><%= h.aplicadas %> de <%= h.filas %> filas</td><td><code class="small"><%= h.archivo_hash.slice(0, 16) %>&hellip;</code></td></tr><% }) %></tbody></table></div></div>
+<% } %>
+<% } %>
+
+<% if (tab === 'furat') { %>
+<p class="small text-muted">Datos del FURAT/FUREL (Res. 156 de 2005) listos para cargar o transcribir en el portal de la ARL. El reporte se radica dentro de los 2 d&iacute;as h&aacute;biles siguientes; la constancia se registra en el evento.</p>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><table class="table table-bordered table-hover table-sm mb-0">
+  <thead><tr><th>Evento</th><th>Tipo</th><th>Fecha</th><th>Persona</th><th class="text-center">Exportar</th></tr></thead>
+  <tbody><% eventos.forEach(function (e) { %><tr><td><a href="/eventos/<%= e.id %>"><%= e.codigo %></a></td><td><%= e.tipo %><%= e.gravedad ? ' · ' + e.gravedad : '' %></td><td><%= e.fecha_base %></td><td><%= e.apellidos || '' %> <%= e.nombres || '' %></td>
+    <td class="text-center"><a href="/integraciones/furat/<%= e.id %>.csv" class="btn btn-xs btn-default" data-toggle="tooltip" title="Descargar CSV"><i class="fas fa-file-csv"></i></a></td></tr><% }) %>
+    <% if (!eventos.length) { %><tr><td colspan="5" class="text-muted">Sin accidentes ni enfermedades laborales registrados.</td></tr><% } %></tbody>
+</table></div></div>
+<% } %>
+
+<% if (tab === 'cargue') { %>
+<p class="small text-muted">Tabla de valores y plan de mejoramiento de la autoevaluaci&oacute;n, en el formato para el aplicativo del SGRL del Ministerio del Trabajo. El plazo de cargue lo fija la circular anual.</p>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><table class="table table-bordered table-sm mb-0">
+  <thead><tr><th>Vigencia</th><th>Estado</th><th class="text-right">Puntaje</th><th class="text-center">Exportar</th></tr></thead>
+  <tbody><% autoevaluaciones.forEach(function (a) { %><tr><td><a href="/autoevaluacion/<%= a.id %>"><%= a.vigencia_anio %></a></td><td><%= a.estado %></td><td class="text-right"><%= a.puntaje || '' %></td>
+    <td class="text-center"><% if (a.estado === 'cerrada') { %><a href="/autoevaluacion/<%= a.id %>/csv" class="btn btn-xs btn-default" data-toggle="tooltip" title="Descargar CSV"><i class="fas fa-file-csv"></i></a><% } %></td></tr><% }) %>
+    <% if (!autoevaluaciones.length) { %><tr><td colspan="4" class="text-muted">Sin autoevaluaciones.</td></tr><% } %></tbody>
+</table></div></div>
+<% } %>
+<%- include('../partials/pie') %>

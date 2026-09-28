@@ -1,0 +1,160 @@
+<%- include('../partials/cabecera') %>
+<%
+  var textoConcepto = { apto: 'Apto', apto_con_restricciones: 'Apto con restricciones', no_apto: 'No apto', aplazado: 'Aplazado' };
+  var colorConcepto = { apto: 'success', apto_con_restricciones: 'warning', no_apto: 'danger', aplazado: 'secondary' };
+  var textoTipo = { ingreso: 'Ingreso', periodico: 'Periódico', egreso: 'Egreso', post_incapacidad: 'Post incapacidad', reintegro: 'Reintegro', cambio_ocupacion: 'Cambio de ocupación' };
+  var colorObl = { en_termino: 'success', por_vencer: 'warning', vencido: 'danger' };
+  var tabs = [['evaluaciones', 'Evaluaciones m&eacute;dicas'], ['ausentismo', 'Ausentismo'], ['perfil', 'Perfil sociodemogr&aacute;fico']];
+%>
+<div class="alert alert-light border small"><i class="fas fa-user-shield mr-1 text-danger"></i>
+  Aqu&iacute; no se registra historia cl&iacute;nica: solo concepto de aptitud, restricciones y recomendaciones laborales, e incapacidades sin diagn&oacute;stico (Res. 1843 de 2025).
+  <% if (!p.detalle) { %><br>El detalle por trabajador solo lo ve el equipo SST; su rol consulta los agregados.<% } %></div>
+<ul class="nav nav-tabs mb-3">
+  <% tabs.forEach(function (t) { %><li class="nav-item"><a class="nav-link<%= tab === t[0] ? ' active' : '' %>" href="?tab=<%= t[0] %>"><%- t[1] %></a></li><% }) %>
+</ul>
+
+<% if (tab === 'evaluaciones') { %>
+<% if (p.pendientes.length) { %>
+<div class="card card-outline card-warning">
+  <div class="card-header"><h3 class="card-title">Pendientes con plazo</h3></div>
+  <div class="card-body p-0"><table class="table table-sm mb-0"><tbody>
+    <% p.pendientes.forEach(function (o) { %><tr><td><%= o.descripcion %></td><td class="text-nowrap"><%= o.fecha_limite %> <span class="badge badge-<%= colorObl[o.estado] %>"><%= o.estado %></span></td></tr><% }) %>
+  </tbody></table></div>
+</div>
+<% } %>
+<div class="barra-acciones">
+  <form method="get" class="form-inline"><input type="hidden" name="tab" value="evaluaciones"><label class="small mr-2">A&ntilde;o</label><input type="number" name="anio" value="<%= anio %>" class="form-control form-control-sm js-autoenvio"></form>
+  <% if (gestionar) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-orden"><i class="fas fa-plus mr-1"></i>Orden de examen</button><% } %>
+</div>
+<div class="card card-outline card-secondary">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead><tr><th>Persona</th><th>Tipo</th><th>IPS</th><th>Orden</th><th>Concepto</th><th>Restricciones / recomendaciones</th><th>Pr&oacute;ximo</th><th class="text-center">Acciones</th></tr></thead>
+        <tbody>
+          <% p.evaluaciones.forEach(function (e) { %>
+          <tr class="<%= e.estado === 'anulada' ? 'text-muted' : '' %>">
+            <td><a href="/personas/<%= e.persona_id %>"><%= e.apellidos %> <%= e.nombres %></a></td>
+            <td><%= textoTipo[e.tipo] %></td>
+            <td class="small"><%= e.ips %></td>
+            <td class="text-nowrap"><%= e.fecha_orden %></td>
+            <td><% if (e.concepto) { %><span class="badge badge-<%= colorConcepto[e.concepto] %>"><%= textoConcepto[e.concepto] %></span><br><small><%= e.fecha_examen %></small><% } else { %><span class="badge badge-light"><%= e.estado %></span><% } %></td>
+            <td class="small"><%= e.restricciones || '' %><% if (e.recomendaciones) { %><br><em><%= e.recomendaciones %></em><% } %></td>
+            <td class="text-nowrap small"><%= e.proximo_examen || '' %></td>
+            <td class="text-center text-nowrap">
+              <% if (gestionar && e.estado === 'ordenada') { %>
+              <button type="button" class="btn btn-xs btn-success js-concepto" data-id="<%= e.id %>" data-persona="<%= e.persona_id %>" data-orden="<%= e.fecha_orden %>" data-nombre="<%= e.nombres %> <%= e.apellidos %>" data-tipo="<%= e.tipo %>" data-toggle="tooltip" title="Registrar concepto"><i class="fas fa-stethoscope"></i></button>
+              <form method="post" action="/salud/evaluaciones/<%= e.id %>/anular" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button type="submit" class="btn btn-xs btn-default" data-toggle="tooltip" title="Anular orden"><i class="fas fa-ban"></i></button></form>
+              <% } %>
+              <% if (gestionar && e.concepto === 'apto_con_restricciones') { %>
+              <button type="button" class="btn btn-xs btn-warning js-adaptacion" data-id="<%= e.id %>" data-examen="<%= e.fecha_examen %>" data-toggle="tooltip" title="Registrar adaptaci&oacute;n del puesto"><i class="fas fa-tools"></i></button>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+          <% if (!p.evaluaciones.length) { %><tr><td colspan="8" class="text-muted">Sin evaluaciones.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<% } %>
+
+<% if (tab === 'ausentismo') { %>
+<div class="barra-acciones">
+  <div class="small"><form method="get" class="form-inline d-inline"><input type="hidden" name="tab" value="ausentismo"><label class="mr-2">A&ntilde;o</label><input type="number" name="anio" value="<%= anio %>" class="form-control form-control-sm js-autoenvio mr-3"></form>
+    Origen com&uacute;n: <strong><%= p.ausentismo.dias_comun %></strong> d&iacute;as &middot; laboral: <strong><%= p.ausentismo.dias_laboral %></strong> d&iacute;as</div>
+  <% if (gestionar) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-incapacidad"><i class="fas fa-plus mr-1"></i>Incapacidad</button><% } %>
+</div>
+<div class="card card-outline card-secondary">
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Persona</th><th>Origen</th><th>Inicio</th><th>D&iacute;as</th><th>Observaci&oacute;n</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+      <tbody>
+        <% p.incapacidades.forEach(function (i) { %>
+        <tr class="<%= i.estado === 'anulada' ? 'text-muted' : '' %>">
+          <td><%= i.apellidos %> <%= i.nombres %></td><td><%= i.origen === 'comun' ? 'Común' : 'Laboral' %><%= Number(i.prorroga) ? ' (prórroga)' : '' %></td>
+          <td class="text-nowrap"><%= i.fecha_inicio %></td><td><%= i.dias %></td><td class="small"><%= i.observacion || '' %></td>
+          <td class="text-center"><% if (gestionar && i.estado === 'registrada') { %><form method="post" action="/salud/incapacidades/<%= i.id %>/anular"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button type="submit" class="btn btn-xs btn-default" data-toggle="tooltip" title="Anular"><i class="fas fa-ban"></i></button></form><% } %></td>
+        </tr>
+        <% }) %>
+        <% if (!p.incapacidades.length) { %><tr><td colspan="6" class="text-muted">Sin incapacidades en <%= anio %>.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% } %>
+
+<% if (tab === 'perfil') { var pf = p.perfil; %>
+<p class="small text-muted">Datos agregados de las <%= pf.total %> personas con vinculaci&oacute;n activa. El informe anual de condiciones de salud (agregado, sin datos individuales) se carga en Documentos con el tipo COND_SALUD.</p>
+<div class="row">
+  <div class="col-md-4"><div class="card card-outline card-secondary"><div class="card-header"><h3 class="card-title">Sexo</h3></div><div class="card-body p-0"><table class="table table-sm mb-0"><tbody>
+    <% [['F', 'Femenino'], ['M', 'Masculino'], ['NB', 'No binario'], ['sin_dato', 'Sin dato']].forEach(function (x) { %><tr><td><%= x[1] %></td><td class="text-right"><%= pf.porSexo[x[0]] %></td></tr><% }) %>
+  </tbody></table></div></div></div>
+  <div class="col-md-4"><div class="card card-outline card-secondary"><div class="card-header"><h3 class="card-title">Edad</h3></div><div class="card-body p-0"><table class="table table-sm mb-0"><tbody>
+    <% Object.keys(pf.porEdad).forEach(function (k) { %><tr><td><%= k === 'sin_dato' ? 'Sin dato' : k %></td><td class="text-right"><%= pf.porEdad[k] %></td></tr><% }) %>
+  </tbody></table></div></div></div>
+  <div class="col-md-4"><div class="card card-outline card-secondary"><div class="card-header"><h3 class="card-title">Cargo</h3></div><div class="card-body p-0"><table class="table table-sm mb-0"><tbody>
+    <% Object.keys(pf.porCargo).forEach(function (k) { %><tr><td><%= k %></td><td class="text-right"><%= pf.porCargo[k] %></td></tr><% }) %>
+  </tbody></table></div></div></div>
+</div>
+<% } %>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-orden" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/salud/evaluaciones" class="modal-content" id="form-orden">
+    <div class="modal-header"><h5 class="modal-title">Orden de examen</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Persona *</label><select name="persona_id" class="form-control js-persona-orden" required><option value="">Seleccione</option><% personas.forEach(function (x) { %><option value="<%= x.id %>"><%= x.apellidos %> <%= x.nombres %></option><% }) %></select></div>
+      <div class="form-row"><div class="form-group col-6"><label>Tipo *</label><select name="tipo" class="form-control"><% Object.keys(textoTipo).forEach(function (k) { %><option value="<%= k %>"><%= textoTipo[k] %></option><% }) %></select></div>
+      <div class="form-group col-6"><label>Fecha *</label><input type="date" name="fecha_orden" class="form-control" value="<%= hoy %>" required></div></div>
+      <div class="form-group"><label>IPS *</label><input type="text" name="ips" class="form-control" maxlength="150" required></div>
+      <div class="form-group mb-0"><label>&Eacute;nfasis seg&uacute;n perfil del cargo</label><textarea name="enfasis" class="form-control" rows="3" maxlength="1000"></textarea><small class="text-muted">Se sugiere desde el perfil del cargo y los peligros de la matriz vigente.</small></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+
+<div class="modal fade" id="modal-concepto" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog modal-lg" role="document">
+  <form method="post" class="modal-content" id="form-concepto">
+    <div class="modal-header"><h5 class="modal-title">Concepto de aptitud</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><p class="font-weight-bold js-nombre"></p>
+      <div class="form-row">
+        <div class="form-group col-md-4"><label>Concepto *</label><select name="concepto" class="form-control"><% Object.keys(textoConcepto).forEach(function (k) { %><option value="<%= k %>"><%= textoConcepto[k] %></option><% }) %></select></div>
+        <div class="form-group col-md-4"><label>Fecha del examen *</label><input type="date" name="fecha_examen" class="form-control" max="<%= hoy %>" required></div>
+        <div class="form-group col-md-4 js-proximo"><label>Pr&oacute;ximo examen</label><input type="date" name="proximo_examen" class="form-control"></div>
+      </div>
+      <div class="form-group"><label>Restricciones laborales</label><textarea name="restricciones" class="form-control" rows="2" maxlength="2000" placeholder="Ej.: no levantar m&aacute;s de 12 kg"></textarea></div>
+      <div class="form-group"><label>Recomendaciones</label><textarea name="recomendaciones" class="form-control" rows="2" maxlength="2000"></textarea></div>
+      <div class="form-group mb-0"><label>Concepto firmado por el m&eacute;dico (CONCEPTO_APTITUD vigente) *</label>
+        <select name="documento_id" class="form-control" required><option value="">Seleccione</option><% documentos.forEach(function (x) { %><option value="<%= x.id %>" data-persona="<%= x.persona_id || '' %>"><%= x.codigo %> v<%= x.version %></option><% }) %></select>
+        <small class="text-muted">S&uacute;balo en <a href="/documentos/nuevo?tipo=CONCEPTO_APTITUD">Documentos</a> (firma digital del emisor). Nunca la historia cl&iacute;nica.</small></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success">Registrar concepto</button></div>
+  </form></div></div>
+
+<div class="modal fade" id="modal-adaptacion" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" class="modal-content" id="form-adaptacion">
+    <div class="modal-header"><h5 class="modal-title">Adaptaci&oacute;n del puesto</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Fecha *</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+      <div class="form-group mb-0"><label>Adaptaci&oacute;n realizada *</label><textarea name="observacion" class="form-control" rows="3" required></textarea></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-warning">Registrar</button></div>
+  </form></div></div>
+
+<div class="modal fade" id="modal-incapacidad" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/salud/incapacidades" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Incapacidad</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Persona *</label><select name="persona_id" class="form-control" required><option value="">Seleccione</option><% personas.forEach(function (x) { %><option value="<%= x.id %>"><%= x.apellidos %> <%= x.nombres %></option><% }) %></select></div>
+      <div class="form-row">
+        <div class="form-group col-4"><label>Origen *</label><select name="origen" class="form-control"><option value="comun">Com&uacute;n</option><option value="laboral">Laboral</option></select></div>
+        <div class="form-group col-4"><label>Inicio *</label><input type="date" name="fecha_inicio" class="form-control" max="<%= hoy %>" required></div>
+        <div class="form-group col-4"><label>D&iacute;as *</label><input type="number" name="dias" class="form-control" min="1" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-8"><label>Evento (si es laboral)</label><select name="evento_id" class="form-control"><option value="">Ninguno</option><% eventos.forEach(function (x) { %><option value="<%= x.id %>"><%= x.codigo %></option><% }) %></select></div>
+        <div class="form-group col-4 pt-4"><div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="inc-pr" name="prorroga" value="1"><label class="custom-control-label" for="inc-pr">Pr&oacute;rroga</label></div></div>
+      </div>
+      <div class="form-group mb-0"><label>Observaci&oacute;n (sin diagn&oacute;stico)</label><input type="text" name="observacion" class="form-control" maxlength="500"></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+<% } %>
+<%- include('../partials/pie') %>

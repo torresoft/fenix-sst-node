@@ -1,0 +1,236 @@
+<%- include('../partials/cabecera') %>
+<%
+  var cumplimiento = {
+    sin_evaluar: ['secondary', 'Sin evaluar'], cumple: ['success', 'Cumple'],
+    cumple_parcial: ['warning', 'Cumple parcial'], no_cumple: ['danger', 'No cumple']
+  };
+  var vigencia = { vigente: 'Vigente', vigente_parcial: 'Vigente parcial', efecto_agotado: 'Efecto agotado', derogada: 'Derogada', sustituida: 'Sustituida' };
+  var origenAmbito = { general: 'General', declarado: 'Declarado', automatico: 'Autom&aacute;tico' };
+  var motivoTexto = { aplica_perfil: 'Aplica a su perfil', en_matriz: 'Est&aacute; en su matriz', citada_en_documentos: 'Citada en documentos' };
+  function filaNorma(f) {
+    var est = f.item ? f.item.estado_cumplimiento : 'sin_evaluar';
+    return { est: est, badge: cumplimiento[est] };
+  }
+%>
+
+<%- include('../partials/franja', { items: [
+  { valor: m.conteo.porcentaje + '%', texto: 'cumplimiento', color: 'primary' },
+  { valor: m.conteo.total, texto: 'normas aplicables' },
+  { valor: m.conteo.cumple, texto: 'cumple', color: m.conteo.cumple ? 'success' : '' },
+  { valor: m.conteo.cumple_parcial, texto: 'cumple parcial', color: m.conteo.cumple_parcial ? 'warning' : '' },
+  { valor: m.conteo.no_cumple, texto: 'no cumple', color: m.conteo.no_cumple ? 'danger' : '' },
+  { valor: m.conteo.sin_evaluar, texto: 'sin evaluar' }
+] }) %>
+</div>
+
+<% if (boletines.length) { %>
+<div class="card card-outline card-danger">
+  <div class="card-header">
+    <h3 class="card-title"><i class="fas fa-exclamation-triangle text-danger mr-1"></i>Matriz desactualizada: <%= boletines.length %> cambio(s) normativo(s) por revisar</h3>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Norma</th><th>Cambio</th><th>Por qu&eacute; le afecta</th><th>Publicado</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+      <tbody>
+        <% boletines.forEach(function (b) { %>
+        <tr>
+          <td><strong><%= b.norma_codigo %></strong><br><small class="text-muted"><%= b.objeto || '' %></small></td>
+          <td>
+            <% if (b.tipo_cambio === 'nueva') { %><span class="badge badge-info">Norma nueva</span><% } else { %><span class="badge badge-warning"><%= b.estado_anterior %> &rarr; <%= b.estado_nuevo %></span><% } %>
+            <br><small><%= b.detalle %></small>
+          </td>
+          <td>
+            <% (b.motivo.motivos || []).forEach(function (mo) { %><span class="badge badge-light mr-1"><%- motivoTexto[mo] || '' %></span><% }) %>
+            <% if (b.motivo.documentos && b.motivo.documentos.length) { %><br><small>Documentos: <%= b.motivo.documentos.map(function (d) { return '#' + d; }).join(', ') %></small><% } %>
+          </td>
+          <td class="text-nowrap"><%= b.publicado_en instanceof Date ? b.publicado_en.toISOString().slice(0, 10) : b.publicado_en %></td>
+          <td class="text-center">
+            <% if (gestionar) { %>
+            <button type="button" class="btn btn-xs btn-primary js-revisar" data-toggle="tooltip" title="Marcar como revisado"
+                    data-id="<%= b.id %>" data-norma="<%= b.norma_codigo %>"><i class="fas fa-clipboard-check"></i></button>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% } %>
+
+<div class="barra-acciones">
+  <ul class="nav nav-tabs border-bottom-0" role="tablist">
+    <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-normas" role="tab">Normas aplicables</a></li>
+    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-perfil" role="tab">Perfil de aplicabilidad</a></li>
+  </ul>
+  <a href="/matriz-legal/auditor" class="btn btn-sm btn-outline-danger"><i class="fas fa-search mr-1"></i>Auditar una matriz existente</a>
+</div>
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="tab-normas" role="tabpanel">
+    <% grupos.forEach(function (g) { %>
+    <div class="card card-outline card-secondary">
+      <div class="card-header">
+        <h3 class="card-title"><%= g.ambito.nombre %> <span class="badge badge-secondary ml-1"><%= g.filas.length %></span></h3>
+        <div class="card-tools"><button type="button" class="btn btn-tool" data-card-widget="collapse" title="Contraer o expandir"><i class="fas fa-minus"></i></button></div>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-sm mb-0">
+            <thead><tr><th>Norma</th><th>Cumplimiento</th><th>Responsable</th><th>Evidencia</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+            <tbody>
+              <% g.filas.forEach(function (f) { var e = filaNorma(f); %>
+              <tr id="norma-<%= f.norma.codigo %>">
+                <td>
+                  <strong><%= f.norma.codigo %></strong>
+                  <% if (f.norma.estado_vigencia !== 'vigente') { %><span class="badge badge-light"><%= vigencia[f.norma.estado_vigencia] %></span><% } %>
+                  <br><small><%= f.norma.objeto %></small>
+                </td>
+                <td><span class="badge badge-<%= e.badge[0] %>"><%= e.badge[1] %></span></td>
+                <td><%= f.item && f.item.responsable_id ? (nombres.get(f.item.responsable_id) || '') : '' %></td>
+                <td>
+                  <% f.evidencias.forEach(function (d) { %>
+                  <small class="d-block<%= d.estado !== 'vigente' ? ' text-danger' : '' %>"><i class="fas fa-file-alt mr-1"></i><%= d.codigo %> v<%= d.version %><%= d.estado !== 'vigente' ? ' (' + d.estado + ')' : '' %></small>
+                  <% }) %>
+                </td>
+                <td class="text-center">
+                  <% if (gestionar) { %>
+                  <button type="button" class="btn btn-xs btn-default js-evaluar" data-toggle="tooltip" title="Evaluar cumplimiento"
+                          data-norma="<%= f.norma.codigo %>" data-objeto="<%= f.norma.objeto %>" data-estado="<%= e.est %>"
+                          data-responsable="<%= f.item && f.item.responsable_id ? f.item.responsable_id : '' %>"
+                          data-observacion="<%= f.item && f.item.observacion ? f.item.observacion : '' %>"
+                          data-evidencias="<%= f.evidencias.map(function (d) { return d.id; }).join(',') %>">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <% } %>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+
+    <% if (m.fueraDePerfil.length) { %>
+    <div class="card card-outline card-warning">
+      <div class="card-header"><h3 class="card-title"><i class="fas fa-exclamation-circle text-warning mr-1"></i>Evaluadas que ya no aplican o fueron derogadas</h3></div>
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Norma</th><th>Vigencia</th><th>Reemplazo</th><th>Cumplimiento registrado</th></tr></thead>
+          <tbody>
+            <% m.fueraDePerfil.forEach(function (f) { var e = filaNorma(f); %>
+            <tr>
+              <td><strong><%= f.norma.codigo %></strong><br><small><%= f.norma.objeto %></small></td>
+              <td><%= vigencia[f.norma.estado_vigencia] || f.norma.estado_vigencia %></td>
+              <td><%= f.norma.derogada_por || '' %></td>
+              <td><span class="badge badge-<%= e.badge[0] %>"><%= e.badge[1] %></span></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+  </div>
+  <div class="tab-pane fade" id="tab-perfil" role="tabpanel">
+    <div class="card card-outline card-primary">
+      <div class="card-header"><h3 class="card-title">Perfil de aplicabilidad</h3></div>
+      <form method="post" action="/matriz-legal/perfil">
+        <div class="card-body columnas-2">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <% m.ambitos.forEach(function (a) {
+               var origen = m.activos.get(a.codigo);
+               var auto = origen === 'general' || origen === 'automatico'; %>
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="amb-<%= a.codigo %>" name="ambitos" value="<%= a.codigo %>"
+                   <%= origen ? 'checked' : '' %> <%= (auto || !a.declarable || !gestionar) ? 'disabled' : '' %>>
+            <label class="custom-control-label font-weight-normal" for="amb-<%= a.codigo %>">
+              <%= a.nombre %>
+              <% if (origen && origen !== 'declarado') { %><span class="badge badge-light"><%- origenAmbito[origen] %></span><% } %>
+              <br><small class="text-muted"><%= a.descripcion || '' %></small>
+            </label>
+          </div>
+          <% }) %>
+        </div>
+        <% if (gestionar) { %>
+        <div class="card-footer">
+          <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save mr-1"></i>Guardar perfil</button>
+        </div>
+        <% } %>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-evaluar" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <form method="post" action="/matriz-legal/item" class="modal-content" id="form-evaluar">
+      <div class="modal-header">
+        <h5 class="modal-title">Evaluar cumplimiento</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="norma_codigo" value="">
+        <p class="mb-1"><strong class="js-norma"></strong></p>
+        <p class="small text-muted js-objeto"></p>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="e-estado">Estado de cumplimiento *</label>
+            <select id="e-estado" name="estado_cumplimiento" class="form-control" required>
+              <option value="sin_evaluar">Sin evaluar</option>
+              <option value="cumple">Cumple</option>
+              <option value="cumple_parcial">Cumple parcial</option>
+              <option value="no_cumple">No cumple</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="e-responsable">Responsable</label>
+            <select id="e-responsable" name="responsable_id" class="form-control">
+              <option value="">Sin asignar</option>
+              <% responsables.forEach(function (u) { %><option value="<%= u.id %>"><%= u.nombre %></option><% }) %>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="e-documentos">Evidencia (documentos vigentes)</label>
+          <select id="e-documentos" name="documentos" class="form-control" multiple size="6"></select>
+          <small class="form-text text-muted">Para marcar <em>Cumple</em> se exige al menos un documento. Ctrl + clic para seleccionar varios.</small>
+        </div>
+        <div class="form-group">
+          <label for="e-observacion">Observaci&oacute;n</label>
+          <textarea id="e-observacion" name="observacion" class="form-control" rows="3" maxlength="1000"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-revisar" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-revisar">
+      <div class="modal-header">
+        <h5 class="modal-title">Revisar cambio normativo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p><strong class="js-norma"></strong></p>
+        <div class="form-group">
+          <label for="r-observacion">&iquest;Qu&eacute; se revis&oacute; o ajust&oacute;? *</label>
+          <textarea id="r-observacion" name="observacion" class="form-control" rows="3" minlength="5" maxlength="500" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-clipboard-check mr-1"></i>Marcar revisado</button>
+      </div>
+    </form>
+  </div>
+</div>
+<%- include('../partials/pie') %>

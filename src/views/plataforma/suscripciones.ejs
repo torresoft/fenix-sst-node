@@ -1,0 +1,47 @@
+<%- include('../partials/cabecera') %>
+<%
+  var c = t.cifras;
+  var color = { al_dia: 'success', por_vencer: 'warning', vencida: 'danger', cancelada: 'secondary', sin: 'light' };
+%>
+<%- include('../partials/franja', { items: [
+  { valor: c.alDia, texto: 'Al d&iacute;a', color: 'success', ruta: '?nivel=al_dia' },
+  { valor: c.porVencer, texto: 'Por vencer', color: c.porVencer ? 'warning' : '', ruta: '?nivel=por_vencer' },
+  { valor: c.vencidas, texto: 'Vencidas', color: c.vencidas ? 'danger' : '', ruta: '?nivel=vencida' },
+  { valor: c.sin, texto: 'Sin suscripci&oacute;n', ruta: '?nivel=sin' },
+  { valor: pesos(c.recaudo_mes), texto: 'Recaudo del mes' },
+  { valor: pesos(c.cartera), texto: 'Cartera pendiente', color: Number(c.cartera) > 0 ? 'danger' : '', ruta: '?nivel=saldo' },
+] }) %>
+
+<div class="barra-acciones">
+  <form method="get" action="/plataforma/suscripciones" class="form-inline">
+    <select name="nivel" class="form-control form-control-sm js-autoenvio">
+      <option value="">Todos los clientes</option>
+      <% [['al_dia', 'Al día'], ['por_vencer', 'Por vencer'], ['vencida', 'Vencidas'], ['sin', 'Sin suscripción'], ['saldo', 'Con saldo pendiente']].forEach(function (o) { %>
+      <option value="<%= o[0] %>"<%= nivel === o[0] ? ' selected' : '' %>><%= o[1] %></option>
+      <% }) %>
+    </select>
+  </form>
+</div>
+
+<div class="card card-outline card-primary">
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Cliente</th><th>Plan</th><th>Vigencia</th><th>Situaci&oacute;n</th><th class="text-right">Valor</th><th class="text-right">Saldo</th><th class="text-center">Acciones</th></tr></thead>
+      <tbody>
+        <% filas.forEach(function (f) { %>
+        <tr>
+          <td><a href="/plataforma/clientes/<%= f.tenant_id %>#suscripcion"><strong><%= f.nombre %></strong></a><% if (f.tenant_estado !== 'activo') { %> <span class="badge badge-warning"><%= f.tenant_estado %></span><% } %></td>
+          <td><% if (f.id) { %><%= f.plan_codigo %><br><small class="text-muted"><%= f.periodicidad %><%= Number(f.es_prueba) ? ' · prueba' : '' %></small><% } else { %>-<% } %></td>
+          <td class="text-nowrap"><small><%= f.id ? f.fecha_inicio + ' a ' + f.fecha_fin : '' %></small></td>
+          <td><span class="badge badge-<%= color[f.situacion.nivel] %>"><%= f.situacion.texto %></span><% if (f.suspendido_en) { %><br><small class="text-danger">Suspendido autom&aacute;ticamente el <%= f.suspendido_en %></small><% } %></td>
+          <td class="text-right text-nowrap"><%= f.id ? pesos(f.valor) : '' %></td>
+          <td class="text-right text-nowrap<%= Number(f.saldo) > 0 ? ' text-danger' : '' %>"><%= f.id ? pesos(f.saldo) : '' %></td>
+          <td class="text-center"><a href="/plataforma/clientes/<%= f.tenant_id %>#suscripcion" class="btn btn-xs btn-default" data-toggle="tooltip" title="Gestionar suscripci&oacute;n"><i class="fas fa-file-invoice-dollar"></i></a></td>
+        </tr>
+        <% }) %>
+        <% if (!filas.length) { %><tr><td colspan="7" class="text-muted">Ning&uacute;n cliente cumple el filtro.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/pie') %>

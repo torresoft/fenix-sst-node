@@ -1,0 +1,73 @@
+<%- include('../partials/cabecera') %>
+<div class="row">
+  <% if (gestionar) { %>
+  <div class="col-lg-6">
+    <div class="card card-outline card-danger">
+      <div class="card-header"><h3 class="card-title">Auditar la matriz legal de la empresa</h3></div>
+      <form method="post" action="/matriz-legal/auditor" id="form-auditor">
+        <div class="card-body">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="fuente" value="manual">
+          <input type="hidden" name="nombre_archivo" value="">
+          <p class="text-muted small">
+            Cargue el CSV de la matriz actual o pegue el listado de normas (una por l&iacute;nea). Se detectan normas
+            derogadas, referencias falsas, normas que no aplican al perfil y las que faltan.
+          </p>
+          <div class="form-group">
+            <label for="a-archivo">Archivo CSV o TXT</label>
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="a-archivo" accept=".csv,.txt,text/csv,text/plain">
+              <label class="custom-file-label" for="a-archivo">Seleccionar archivo</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="a-texto">Normas de la matriz *</label>
+            <textarea id="a-texto" name="texto" class="form-control text-monospace" rows="12" required
+                      placeholder="Ley 1562 de 2012&#10;Resoluci&oacute;n 2346 de 2007&#10;Res. 652 y 1356 de 2012&#10;Decreto 1072 de 2015"></textarea>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button type="submit" class="btn btn-danger"><i class="fas fa-search mr-1"></i>Auditar</button>
+          <a href="/matriz-legal" class="btn btn-default">Volver a la matriz</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <% } %>
+
+  <div class="<%= gestionar ? 'col-lg-6' : 'col-12' %>">
+    <div class="card card-outline card-secondary">
+      <div class="card-header"><h3 class="card-title">Auditor&iacute;as realizadas</h3></div>
+      <div class="card-body p-0">
+        <% if (!historial.length) { %>
+        <p class="text-muted p-3 mb-0">A&uacute;n no hay auditor&iacute;as para esta empresa.</p>
+        <% } else { %>
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-sm mb-0">
+            <thead>
+              <tr><th>#</th><th>Fecha</th><th>Declaradas</th><th>Derogadas</th><th>Faltantes</th><th>Cobertura</th><th class="text-center">Acciones</th></tr>
+            </thead>
+            <tbody>
+              <% historial.forEach(function (h) { %>
+              <tr>
+                <td><%= h.id %></td>
+                <td class="text-nowrap"><%= h.creado_en instanceof Date ? h.creado_en.toISOString().slice(0, 16).replace('T', ' ') : h.creado_en %><br><small class="text-muted"><%= h.autor %></small></td>
+                <td><%= h.total_declaradas %></td>
+                <td><span class="badge badge-<%= h.total_derogadas + h.total_desinformacion ? 'danger' : 'success' %>"><%= h.total_derogadas + h.total_desinformacion %></span></td>
+                <td><%= h.total_faltantes %></td>
+                <td><%= h.cobertura %>%</td>
+                <td class="text-center text-nowrap">
+                  <a href="/matriz-legal/auditor/<%= h.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Ver informe"><i class="fas fa-eye"></i></a>
+                  <a href="/matriz-legal/auditor/<%= h.id %>/csv" class="btn btn-xs btn-default" data-toggle="tooltip" title="Descargar CSV"><i class="fas fa-file-csv"></i></a>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/pie') %>

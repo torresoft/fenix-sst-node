@@ -1,0 +1,250 @@
+<%- include('../partials/cabecera') %>
+<%
+  var e = d.e;
+  var abierto = ['cerrado', 'anulado'].indexOf(e.estado) === -1;
+  var puede = gestionar && abierto;
+  var investigando = puede && !e.investigacion_cerrada_en;
+  var textoTipo = { incidente: 'Incidente', accidente: 'Accidente de trabajo', enfermedad: 'Enfermedad laboral' };
+  var colorGravedad = { leve: 'info', grave: 'warning', mortal: 'danger' };
+  var colorObl = { en_termino: 'success', por_vencer: 'warning', vencido: 'danger', cumplido: 'secondary', anulado: 'dark' };
+  var textoCausa = { acto_inseguro: 'Acto inseguro', condicion_insegura: 'Condición insegura', factor_personal: 'Factor personal', factor_trabajo: 'Factor del trabajo' };
+  var nombreRol = {}; d.roles.forEach(function (r) { nombreRol[r.codigo] = r.nombre; });
+  var criterio = {}; d.criterios.forEach(function (c) { criterio[c.codigo] = c.descripcion; });
+  var docsDe = function (tipo) { return soportes.filter(function (s) { return s.tipo_documental === tipo; }); };
+%>
+<div class="mb-3">
+  <a href="/eventos" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Eventos</a>
+  <% if (puede) { %>
+  <span class="float-right">
+    <form method="post" action="/eventos/<%= e.id %>/cerrar" class="d-inline">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-sm btn-success" <%= d.impedimentosCerrar.length ? 'disabled' : '' %> data-toggle="tooltip" title="<%= d.impedimentosCerrar.join('. ') || 'Cerrar el evento' %>"><i class="fas fa-check mr-1"></i>Cerrar evento</button>
+    </form>
+    <button type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#modal-anular"><i class="fas fa-ban mr-1"></i>Anular</button>
+  </span>
+  <% } %>
+</div>
+
+<div class="card card-outline card-<%= e.gravedad ? colorGravedad[e.gravedad] : 'secondary' %>">
+      <div class="card-header">
+        <h3 class="card-title"><%= textoTipo[e.tipo] %><% if (e.gravedad) { %> <span class="badge badge-<%= colorGravedad[e.gravedad] %>"><%= e.gravedad %></span><% } %></h3>
+        <div class="card-tools"><span class="badge badge-light"><%= e.estado %></span></div>
+      </div>
+      <div class="card-body small">
+        <dl class="row mb-2">
+          <% if (d.persona) { %><dt class="col-5">Persona</dt><dd class="col-7"><a href="/personas/<%= d.persona.id %>"><%= d.persona.nombres %> <%= d.persona.apellidos %></a></dd><% } %>
+          <% if (e.ocurrencia_texto) { %><dt class="col-5">Ocurrencia</dt><dd class="col-7"><%= e.ocurrencia_texto %></dd><% } %>
+          <% if (e.fecha_diagnostico) { %><dt class="col-5">Calificaci&oacute;n</dt><dd class="col-7"><%= e.fecha_diagnostico %> <%= e.entidad_calificadora ? '(' + e.entidad_calificadora + ')' : '' %></dd><% } %>
+          <% if (d.centro) { %><dt class="col-5">Centro</dt><dd class="col-7"><%= d.centro.nombre %></dd><% } %>
+          <% if (e.lugar) { %><dt class="col-5">Lugar</dt><dd class="col-7"><%= e.lugar %></dd><% } %>
+          <% if (e.tipo_lesion || e.parte_cuerpo) { %><dt class="col-5">Lesi&oacute;n</dt><dd class="col-7"><%= [e.tipo_lesion, e.parte_cuerpo, e.agente_lesion].filter(Boolean).join(' · ') %></dd><% } %>
+          <% if (e.agente_riesgo) { %><dt class="col-5">Factor de riesgo</dt><dd class="col-7"><%= e.agente_riesgo %></dd><% } %>
+          <dt class="col-5">Incapacidad</dt><dd class="col-7"><%= e.dias_incapacidad %> d&iacute;as<%= Number(e.dias_cargados) ? ' · ' + e.dias_cargados + ' cargados' : '' %></dd>
+        </dl>
+        <p class="mb-1"><%= e.descripcion %></p>
+        <% if (e.criterios_grave.length) { %><ul class="mb-0 pl-3"><% e.criterios_grave.forEach(function (c) { %><li><%= criterio[c] || c %></li><% }) %></ul><% } %>
+        <% if (e.observacion) { %><p class="text-danger mb-0">Anulado: <%= e.observacion %></p><% } %>
+      </div>
+    </div>
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-plazos" role="tab"><i class="fas fa-stopwatch mr-1"></i>Plazos legales</a></li>
+<% if (e.tipo !== 'incidente') { %>  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-reporte" role="tab">Reporte <%= e.tipo === 'enfermedad' ? 'FUREL' : 'FURAT' %></a></li><% } %>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-investigacion" role="tab">Investigaci&oacute;n</a></li>
+<% if (d.requiereInformeArl) { %>  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-informe-arl" role="tab">Informe a la ARL</a></li><% } %>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-plan" role="tab">Plan de acci&oacute;n <span class="badge badge-light"><%= d.acciones.length %></span></a></li>
+</ul>
+<div class="tab-content pestanas">
+<div class="tab-pane fade show active" id="tab-plazos" role="tabpanel">
+<div class="card card-outline card-danger">
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <% d.obligaciones.forEach(function (o) { %>
+            <tr class="<%= o.severidad === 'critica' && ['en_termino', 'por_vencer', 'vencido'].indexOf(o.estado) !== -1 ? 'fila-critica' : '' %>">
+              <td><%= o.descripcion %><br><small class="text-muted"><%= o.norma_codigo %><%= o.tipo_plazo === 'habil' ? ' · días hábiles' : '' %></small></td>
+              <td class="text-nowrap"><strong><%= o.fecha_limite %></strong><br><span class="badge badge-<%= colorObl[o.estado] %>"><%= o.estado %></span></td>
+            </tr>
+            <% }) %>
+            <% if (!d.obligaciones.length) { %><tr><td class="text-muted">Sin plazos asociados.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+<% if (e.tipo !== 'incidente') { %><div class="tab-pane fade" id="tab-reporte" role="tabpanel">
+<div class="card card-outline card-warning">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-sm mb-0">
+          <thead><tr><th>Entidad</th><th>Radicado</th><th>Fecha</th></tr></thead>
+          <tbody>
+            <% d.furat.forEach(function (x) { %><tr><td><%= x.entidad %></td><td><%= x.radicado %></td><td><%= x.fecha_radicacion %></td></tr><% }) %>
+            <% d.faltanReportes.forEach(function (x) { %><tr class="table-warning"><td><%= x %></td><td colspan="2">Pendiente</td></tr><% }) %>
+          </tbody>
+        </table>
+      </div>
+      <% if (puede && d.faltanReportes.length) { %>
+      <div class="card-footer">
+        <form method="post" action="/eventos/<%= e.id %>/reporte" class="form-row align-items-end">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group col-md-3 mb-1"><label class="small">Entidad *</label><select name="entidad" class="form-control form-control-sm"><% d.faltanReportes.forEach(function (x) { %><option><%= x %></option><% }) %></select></div>
+          <div class="form-group col-md-3 mb-1"><label class="small">Radicado *</label><input type="text" name="radicado" class="form-control form-control-sm" maxlength="100" required></div>
+          <div class="form-group col-md-3 mb-1"><label class="small">Fecha *</label><input type="date" name="fecha_radicacion" class="form-control form-control-sm" min="<%= e.fecha_base %>" max="<%= hoy %>" value="<%= hoy %>" required></div>
+          <div class="form-group col-md-3 mb-1"><label class="small">Soporte</label>
+            <select name="documento_id" class="form-control form-control-sm"><option value="">Sin soporte</option><% docsDe(e.tipo === 'enfermedad' ? 'FUREL' : 'FURAT').forEach(function (s) { %><option value="<%= s.id %>"><%= s.codigo %> v<%= s.version %></option><% }) %></select></div>
+          <div class="col-12"><button type="submit" class="btn btn-sm btn-warning"><i class="fas fa-paper-plane mr-1"></i>Registrar radicaci&oacute;n</button></div>
+        </form>
+      </div>
+      <% } %>
+    </div>
+</div><% } %>
+<div class="tab-pane fade" id="tab-investigacion" role="tabpanel">
+<div class="card card-outline card-primary">
+      <div class="card-header"><h3 class="card-title">Investigaci&oacute;n</h3><% if (e.investigacion_cerrada_en) { %><div class="card-tools"><span class="badge badge-success">Cerrada <%= e.investigacion_cerrada_en %></span></div><% } %></div>
+      <div class="card-body">
+        <% if (d.faltanRoles.length && !e.investigacion_cerrada_en) { %><div class="alert alert-warning small py-1">Equipo incompleto (Res. 1401 art. 7): falta <%= d.faltanRoles.join('; ') %>.</div><% } %>
+        <h6>Equipo investigador</h6>
+        <table class="table table-sm table-bordered">
+          <tbody>
+            <% d.equipo.forEach(function (m) { %>
+            <tr><td><%= m.nombre %><%= m.cargo ? ' (' + m.cargo + ')' : '' %></td><td><small><%= nombreRol[m.rol_codigo] || m.rol_codigo %></small></td>
+              <td class="text-center"><% if (investigando) { %><form method="post" action="/eventos/<%= e.id %>/investigadores/<%= m.id %>/retirar"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button type="submit" class="btn btn-xs btn-default" data-toggle="tooltip" title="Retirar"><i class="fas fa-times"></i></button></form><% } %></td></tr>
+            <% }) %>
+            <% if (!d.equipo.length) { %><tr><td class="text-muted" colspan="3">Sin investigadores.</td></tr><% } %>
+          </tbody>
+        </table>
+        <% if (investigando) { %>
+        <form method="post" action="/eventos/<%= e.id %>/investigadores" class="form-row align-items-end mb-3">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group col-md-4 mb-1"><label class="small">Rol *</label><select name="rol_codigo" class="form-control form-control-sm"><% d.roles.forEach(function (r) { %><option value="<%= r.codigo %>"><%= r.nombre %></option><% }) %></select></div>
+          <div class="form-group col-md-3 mb-1"><label class="small">Usuario</label><select name="usuario_id" class="form-control form-control-sm"><option value="">Externo</option><% usuarios.forEach(function (u) { %><option value="<%= u.id %>"><%= u.nombre %></option><% }) %></select></div>
+          <div class="form-group col-md-3 mb-1"><label class="small">Nombre (si es externo)</label><input type="text" name="nombre" class="form-control form-control-sm" maxlength="150"></div>
+          <div class="form-group col-md-2 mb-1"><button type="submit" class="btn btn-sm btn-default btn-block"><i class="fas fa-plus"></i></button></div>
+        </form>
+        <% } %>
+
+        <h6>An&aacute;lisis causal</h6>
+        <% if (d.faltaAnalisis.length && !e.investigacion_cerrada_en) { %><div class="alert alert-light small py-1">Falta <%= d.faltaAnalisis.join(' y ') %>.</div><% } %>
+        <table class="table table-sm table-bordered">
+          <tbody>
+            <% d.causas.forEach(function (c) { %>
+            <tr><td class="text-nowrap"><small><%= textoCausa[c.tipo] %></small></td><td><%= c.descripcion %></td>
+              <td class="text-center"><% if (investigando) { %><form method="post" action="/eventos/<%= e.id %>/causas/<%= c.id %>/retirar"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button type="submit" class="btn btn-xs btn-default" data-toggle="tooltip" title="Retirar"><i class="fas fa-times"></i></button></form><% } %></td></tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% if (investigando) { %>
+        <form method="post" action="/eventos/<%= e.id %>/causas" class="form-row align-items-end mb-3">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group col-md-4 mb-1"><select name="tipo" class="form-control form-control-sm"><% Object.keys(textoCausa).forEach(function (k) { %><option value="<%= k %>"><%= textoCausa[k] %></option><% }) %></select></div>
+          <div class="form-group col-md-6 mb-1"><input type="text" name="descripcion" class="form-control form-control-sm" maxlength="1000" required placeholder="Descripci&oacute;n de la causa"></div>
+          <div class="form-group col-md-2 mb-1"><button type="submit" class="btn btn-sm btn-default btn-block"><i class="fas fa-plus"></i></button></div>
+        </form>
+
+        <form method="post" action="/eventos/<%= e.id %>/datos">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-row">
+            <div class="form-group col-md-6"><label class="small">Metodolog&iacute;a</label><input type="text" name="metodologia" class="form-control form-control-sm" value="<%= e.metodologia || '' %>" maxlength="100" placeholder="&Aacute;rbol de causas, 5 porqu&eacute;s..."></div>
+            <div class="form-group col-md-3"><label class="small">D&iacute;as incapacidad</label><input type="number" name="dias_incapacidad" class="form-control form-control-sm" value="<%= e.dias_incapacidad %>" min="0"></div>
+            <div class="form-group col-md-3"><label class="small">D&iacute;as cargados</label><input type="number" name="dias_cargados" class="form-control form-control-sm" value="<%= e.dias_cargados %>" min="0"></div>
+          </div>
+          <div class="form-group"><label class="small">Conclusiones *</label><textarea name="conclusiones" class="form-control form-control-sm" rows="3"><%= e.conclusiones || '' %></textarea></div>
+          <button type="submit" class="btn btn-sm btn-default"><i class="fas fa-save mr-1"></i>Guardar</button>
+        </form>
+        <hr>
+        <form method="post" action="/eventos/<%= e.id %>/investigacion/cerrar" class="form-row align-items-end">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group col-md-8 mb-1"><label class="small">Informe de investigaci&oacute;n firmado *</label>
+            <select name="documento_id" class="form-control form-control-sm"><option value="">Seleccione</option><% docsDe('INV_ACCIDENTE').forEach(function (s) { %><option value="<%= s.id %>"><%= s.codigo %> v<%= s.version %> (<%= s.estado %>)</option><% }) %></select>
+            <small class="text-muted">Cree el informe en <a href="/documentos/nuevo?tipo=INV_ACCIDENTE">Documentos</a> y f&iacute;rmelo: debe estar vigente.</small></div>
+          <div class="form-group col-md-4 mb-1"><button type="submit" class="btn btn-sm btn-primary btn-block"><i class="fas fa-lock mr-1"></i>Cerrar investigaci&oacute;n</button></div>
+        </form>
+        <% } else if (e.conclusiones) { %>
+        <p class="small mb-1"><strong>Metodolog&iacute;a:</strong> <%= e.metodologia || '-' %></p>
+        <p class="small mb-1"><strong>Conclusiones:</strong> <%= e.conclusiones %></p>
+        <% if (d.informe) { %><p class="small mb-0"><strong>Informe:</strong> <a href="/documentos/<%= d.informe.id %>"><%= d.informe.codigo %> v<%= d.informe.version %></a></p><% } %>
+        <% } %>
+      </div>
+    </div>
+</div>
+<% if (d.requiereInformeArl) { %><div class="tab-pane fade" id="tab-informe-arl" role="tabpanel">
+<div class="card card-outline card-danger">
+      <div class="card-body small">
+        <% if (d.informeArl) { %>
+        Radicado <strong><%= d.informeArl.radicado %></strong> el <%= d.informeArl.fecha_radicacion %>.
+        <% } else if (puede && e.investigacion_cerrada_en) { %>
+        <form method="post" action="/eventos/<%= e.id %>/informe-arl" class="form-row align-items-end">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group col-md-5 mb-1"><label class="small">Radicado *</label><input type="text" name="radicado" class="form-control form-control-sm" maxlength="100" required></div>
+          <div class="form-group col-md-4 mb-1"><label class="small">Fecha *</label><input type="date" name="fecha_radicacion" class="form-control form-control-sm" max="<%= hoy %>" value="<%= hoy %>" required></div>
+          <div class="form-group col-md-3 mb-1"><button type="submit" class="btn btn-sm btn-danger btn-block">Radicar</button></div>
+        </form>
+        <% } else { %>Se radica cuando se cierre la investigaci&oacute;n.<% } %>
+      </div>
+    </div>
+</div><% } %>
+<div class="tab-pane fade" id="tab-plan" role="tabpanel">
+<div class="card card-outline card-info">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <tbody>
+            <% d.acciones.forEach(function (a) { var vencida = a.estado === 'abierta' && a.fecha_limite < hoy; %>
+            <tr>
+              <td><small class="text-muted"><%= a.referencia %> &middot; <%= a.tipo %></small><br><%= a.descripcion %><% if (a.observacion_cierre) { %><br><small><i class="fas fa-comment-alt mr-1"></i><%= a.observacion_cierre %></small><% } %></td>
+              <td><%= a.responsable %></td>
+              <td class="text-nowrap<%= vencida ? ' text-danger font-weight-bold' : '' %>"><%= a.fecha_limite %></td>
+              <td><span class="badge badge-<%= a.estado === 'cerrada' ? 'success' : (vencida ? 'danger' : 'info') %>"><%= vencida ? 'vencida' : a.estado %></span></td>
+              <td class="text-center"><% if (gestionar && a.estado === 'abierta') { %><button type="button" class="btn btn-xs btn-success js-cerrar-accion" data-toggle="tooltip" title="Cerrar acci&oacute;n" data-id="<%= a.id %>" data-descripcion="<%= a.descripcion %>"><i class="fas fa-check"></i></button><% } %></td>
+            </tr>
+            <% }) %>
+            <% if (!d.acciones.length) { %><tr><td class="text-muted">Sin acciones.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+      <% if (puede) { %>
+      <div class="card-footer">
+        <form method="post" action="/eventos/<%= e.id %>/acciones" class="form-row align-items-end">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group col-md-12 mb-1"><input type="text" name="descripcion" class="form-control form-control-sm" maxlength="1000" required placeholder="Acci&oacute;n correctiva o preventiva (priorice eliminaci&oacute;n, sustituci&oacute;n e ingenier&iacute;a antes que EPP)"></div>
+          <div class="form-group col-md-3 mb-1"><select name="tipo" class="form-control form-control-sm"><option value="correctiva">Correctiva</option><option value="preventiva">Preventiva</option><option value="mejora">Mejora</option></select></div>
+          <div class="form-group col-md-4 mb-1"><select name="responsable_id" class="form-control form-control-sm" required><option value="">Responsable</option><% usuarios.forEach(function (u) { %><option value="<%= u.id %>"><%= u.nombre %></option><% }) %></select></div>
+          <div class="form-group col-md-3 mb-1"><input type="date" name="fecha_limite" class="form-control form-control-sm" min="<%= hoy %>" required></div>
+          <div class="form-group col-md-2 mb-1"><button type="submit" class="btn btn-sm btn-info btn-block"><i class="fas fa-plus"></i></button></div>
+        </form>
+      </div>
+      <% } %>
+    </div>
+</div>
+</div>
+
+<% if (puede) { %>
+<div class="modal fade" id="modal-anular" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="/eventos/<%= e.id %>/anular" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Anular evento</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="small">Solo para un registro hecho por error. Tambi&eacute;n se anulan sus plazos abiertos y queda la traza. Ocultar un accidente real es un agravante de la multa (D. 472 de 2015).</p>
+        <div class="form-group mb-0"><label for="an-motivo">Motivo *</label><textarea id="an-motivo" name="motivo" class="form-control" rows="2" minlength="10" maxlength="500" required></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger">Anular</button></div>
+    </form>
+  </div>
+</div>
+<% } %>
+
+<div class="modal fade" id="modal-accion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-accion">
+      <div class="modal-header"><h5 class="modal-title">Cerrar acci&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="small js-titulo"></p>
+        <div class="form-group"><label for="ac-fecha">Fecha de cierre *</label><input type="date" id="ac-fecha" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+        <div class="form-group mb-0"><label for="ac-obs">&iquest;C&oacute;mo se cerr&oacute;? *</label><textarea id="ac-obs" name="observacion" class="form-control" rows="3" minlength="5" maxlength="1000" required></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success">Cerrar acci&oacute;n</button></div>
+    </form>
+  </div>
+</div>
+<%- include('../partials/pie') %>

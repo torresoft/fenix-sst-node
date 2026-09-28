@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="es">
+<body style="font-family: Arial, sans-serif; color: #212529;">
+  <h2 style="margin-bottom: 4px;">Su suscripci&oacute;n a F&eacute;nix SST <%- dias ? 'est&aacute; por vencer' : 'vence hoy' %></h2>
+  <p>La suscripci&oacute;n de <strong><%= cliente %></strong> cubre hasta el <strong><%= fin %></strong><%= dias ? ' (' + dias + ' día(s))' : '' %>.</p>
+  <p>Para renovarla, comun&iacute;quese con TORRESOFT. Sus registros del SG-SST se conservan en todo caso.</p>
+  <p><a href="<%= appUrl %>/login">Ingresar</a></p>
+  <p style="font-size: 11px; color: #6c757d;">Mensaje autom&aacute;tico de F&eacute;nix SST.</p>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<%- include('../partials/cabecera') %>
+<div class="card">
+  <div class="card-body">
+    <p>Genera un archivo ZIP con los documentos del SG-SST de la empresa, listo para entregar al inspector del Ministerio del Trabajo o a la ARL. Incluye:</p>
+    <ul>
+      <li>Los archivos de cada documento, organizados por tipo documental.</li>
+      <li><code>index.html</code>: &iacute;ndice navegable, con firmas y estado de cada documento.</li>
+      <li><code>manifiesto.json</code>: huella SHA-256 de cada archivo y de lo firmado.</li>
+      <li><code>verificar.html</code>: comprueba la integridad de los archivos en el equipo del inspector, sin conexi&oacute;n.</li>
+      <li>CSV de la matriz de peligros vigente y de la &uacute;ltima autoevaluaci&oacute;n cerrada.</li>
+    </ul>
+    <form method="post" action="/expediente">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" name="historico" value="1" id="historico">
+        <label class="form-check-label" for="historico">Incluir versiones reemplazadas y anuladas</label>
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-file-archive"></i> Generar expediente</button>
+    </form>
+  </div>
+</div>
+<%- include('../partials/pie') %>

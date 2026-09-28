@@ -1,0 +1,69 @@
+<%- include('../partials/cabecera') %>
+<%
+  var i = inspeccion;
+  var colorNivel = { bajo: 'success', medio: 'warning', alto: 'danger' };
+%>
+<div class="barra-acciones">
+  <a href="/inspecciones" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Inspecciones</a>
+  <span class="small"><%= i.tipo %> &middot; programada <%= i.fecha_programada %><%= i.con_copasst ? ' · con COPASST' : '' %> &middot; <strong><%= i.estado %></strong></span>
+</div>
+
+<% if (i.estado === 'realizada') { %>
+<div class="card card-outline card-success">
+  <div class="card-body">
+    <dl class="row mb-0">
+      <dt class="col-sm-3">Realizada</dt><dd class="col-sm-9"><%= i.fecha_realizada %> por <%= i.inspector %></dd>
+      <% if (i.resumen) { %><dt class="col-sm-3">Resumen</dt><dd class="col-sm-9 pre-line"><%= i.resumen %></dd><% } %>
+      <% if (i.documento_id) { %><dt class="col-sm-3">Registro</dt><dd class="col-sm-9"><a href="/documentos/<%= i.documento_id %>">Ver formato firmado</a></dd><% } %>
+    </dl>
+  </div>
+</div>
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title">Hallazgos</h3></div>
+  <div class="card-body p-0"><table class="table table-bordered table-sm mb-0">
+    <thead><tr><th>#</th><th>Hallazgo</th><th>Nivel</th><th>Acci&oacute;n correctiva</th></tr></thead>
+    <tbody>
+      <% hallazgos.forEach(function (h) { %><tr>
+        <td><%= h.numero %></td><td><%= h.descripcion %></td><td><span class="badge badge-<%= colorNivel[h.nivel] %>"><%= h.nivel %></span></td>
+        <td><% if (h.accion_mejora_id) { %><a href="/acciones?origen=inspeccion"><%= h.accion_estado %></a> &middot; <%= h.accion_estado === 'cerrada' ? 'cerrada ' + h.fecha_cierre : 'l&iacute;mite ' + h.fecha_limite %><% } else { %><span class="text-muted small">No requiere</span><% } %></td>
+      </tr><% }) %>
+      <% if (!hallazgos.length) { %><tr><td colspan="4" class="text-muted">Sin hallazgos.</td></tr><% } %>
+    </tbody>
+  </table></div>
+</div>
+<% } else if (i.estado === 'anulada') { %>
+<div class="callout callout-secondary"><p class="mb-0">Anulada: <%= i.motivo_estado %></p></div>
+<% } else if (gestionar) { %>
+<form method="post" action="/inspecciones/<%= i.id %>/realizar" class="card card-outline card-primary">
+  <div class="card-header"><h3 class="card-title">Resultado de la inspecci&oacute;n</h3></div>
+  <div class="card-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="form-row">
+      <div class="form-group col-md-3"><label>Fecha *</label><input type="date" name="fecha_realizada" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+      <div class="form-group col-md-5"><label>Inspector(es) *</label><input type="text" name="inspector" class="form-control" maxlength="150" required></div>
+      <div class="form-group col-md-4"><label>Formato firmado</label><select name="documento_id" class="form-control"><option value="">&mdash;</option><% registros.forEach(function (d) { %><option value="<%= d.id %>"><%= d.codigo %> v<%= d.version %></option><% }) %></select></div>
+    </div>
+    <div class="form-group"><label>Resumen</label><textarea name="resumen" class="form-control" rows="2"></textarea></div>
+    <label>Hallazgos</label>
+    <table class="table table-sm table-bordered mb-2">
+      <thead><tr><th>Descripci&oacute;n</th><th class="ancho-10">Nivel</th><th class="ancho-3"></th></tr></thead>
+      <tbody class="js-hallazgos">
+        <tr class="js-hallazgo"><td><input type="text" name="hallazgo_descripcion" class="form-control form-control-sm" maxlength="1000"></td>
+          <td><select name="hallazgo_nivel" class="form-control form-control-sm"><% niveles.forEach(function (k) { %><option value="<%= k %>"><%= k %></option><% }) %></select></td>
+          <td class="text-center"><button type="button" class="btn btn-xs btn-default js-quitar" data-toggle="tooltip" title="Quitar"><i class="fas fa-times"></i></button></td></tr>
+      </tbody>
+    </table>
+    <button type="button" class="btn btn-sm btn-default js-agregar mb-3"><i class="fas fa-plus mr-1"></i>Hallazgo</button>
+    <fieldset class="border rounded p-2"><legend class="w-auto small px-1 mb-0">Acciones correctivas (hallazgos medios y altos)</legend>
+      <div class="form-row mb-0"><div class="col-md-6"><label class="small">Responsable</label><select name="responsable_id" class="form-control form-control-sm"><option value="">Seleccione</option><% usuarios.forEach(function (u) { %><option value="<%= u.id %>"><%= u.nombres %> <%= u.apellidos %></option><% }) %></select></div>
+      <div class="col-md-6"><label class="small">Fecha l&iacute;mite</label><input type="date" name="fecha_limite" class="form-control form-control-sm" min="<%= hoy %>"></div></div>
+    </fieldset>
+  </div>
+  <div class="card-footer text-right"><button type="submit" class="btn btn-success"><i class="fas fa-check mr-1"></i>Registrar resultado</button></div>
+</form>
+<form method="post" action="/inspecciones/<%= i.id %>/anular" class="form-inline js-confirmar" data-confirmar="&iquest;Anular la inspecci&oacute;n?">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="text" name="motivo" class="form-control form-control-sm mr-2" placeholder="Motivo de anulaci&oacute;n" minlength="10" required>
+  <button class="btn btn-sm btn-outline-secondary">Anular</button></form>
+<% } else { %>
+<div class="callout callout-info"><p class="mb-0">Pendiente de realizar.</p></div>
+<% } %>
+<%- include('../partials/pie') %>

@@ -1,0 +1,5 @@
+{
+  "_nota": "Texto del acuerdo de uso de firma electronica (D. 2364 de 2012, art. 7). Al cambiar el texto, subir la version: cada usuario lo acepta de nuevo.",
+  "version": "1.0",
+  "texto": "Acepto usar la firma electronica de Fenix SST para firmar los documentos del Sistema de Gestion de Seguridad y Salud en el Trabajo de esta empresa.\n\nEntiendo que mi firma se forma con mi usuario personal e intransferible, mi contrasena y un codigo de un solo uso enviado a mi correo, y que el sistema guarda el texto exacto que acepto, la huella SHA-256 del documento, la fecha, la hora y la direccion IP.\n\nReconozco que esta firma tiene los mismos efectos juridicos que mi firma manuscrita (Ley 527 de 1999 y Decreto 2364 de 2012) y me comprometo a no compartir mis credenciales."
+}

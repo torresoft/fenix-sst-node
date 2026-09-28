@@ -1,0 +1,16 @@
+<div class="form-row">
+  <div class="form-group col-md-4"><label>NIT *</label><input type="text" name="nit" class="form-control" maxlength="20" value="<%= c.nit || '' %>" <%= c.nit ? 'readonly' : '' %> required></div>
+  <div class="form-group col-md-8"><label>Raz&oacute;n social *</label><input type="text" name="razon_social" class="form-control" maxlength="200" value="<%= c.razon_social || '' %>" required></div>
+</div>
+<div class="form-row">
+  <div class="form-group col-md-9"><label>Actividad que ejecutar&aacute; *</label><input type="text" name="actividad" class="form-control" maxlength="300" value="<%= c.actividad || '' %>" required></div>
+  <div class="form-group col-md-3"><label>Clase de riesgo *</label><select name="clase_riesgo" class="form-control"><% clases.forEach(function (k) { %><option value="<%= k %>"<%= c.clase_riesgo === k ? ' selected' : '' %>><%= k %></option><% }) %></select></div>
+</div>
+<div class="form-row">
+  <div class="form-group col-md-6"><label>Contacto</label><input type="text" name="contacto_nombre" class="form-control" maxlength="150" value="<%= c.contacto_nombre || '' %>"></div>
+  <div class="form-group col-md-6"><label>Correo</label><input type="email" name="contacto_email" class="form-control" maxlength="150" value="<%= c.contacto_email || '' %>"></div>
+</div>
+<div class="form-row mb-0">
+  <div class="form-group col-md-6 mb-0"><label>Inicio del contrato</label><input type="date" name="fecha_inicio" class="form-control" value="<%= c.fecha_inicio || '' %>"></div>
+  <div class="form-group col-md-6 mb-0"><label>Fin del contrato</label><input type="date" name="fecha_fin" class="form-control" value="<%= c.fecha_fin || '' %>"></div>
+</div>

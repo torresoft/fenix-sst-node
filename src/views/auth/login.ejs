@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar sesi&oacute;n | F&eacute;nix SST</title>
+  <link rel="icon" type="image/png" href="/img/brand.png">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="/vendor/adminlte/css/adminlte.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="hold-transition login-page login-fondo">
+<div class="login-box">
+  <div class="card card-outline card-primary">
+    <div class="card-header text-center">
+      <img src="/img/logo.png" alt="F&eacute;nix SST" class="login-logo-img">
+    </div>
+    <div class="card-body">
+      <p class="login-box-msg">Ingrese con su usuario nominal</p>
+      <% if (error) { %>
+      <div class="alert alert-danger py-2"><%- error %></div>
+      <% } %>
+      <form method="post" action="/login" autocomplete="on">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group">
+          <label for="email">Correo electr&oacute;nico *</label>
+          <input type="email" id="email" name="email" class="form-control" value="<%= email %>" required autofocus>
+        </div>
+        <div class="form-group">
+          <label for="password">Contrase&ntilde;a *</label>
+          <input type="password" id="password" name="password" class="form-control" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <i class="fas fa-sign-in-alt mr-1"></i>Iniciar sesi&oacute;n
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/vendor/adminlte/js/adminlte.min.js"></script>
+</body>
+</html>

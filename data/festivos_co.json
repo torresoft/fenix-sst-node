@@ -1,0 +1,559 @@
+{
+  "_fuente": "Ley 51 de 1983 (Ley Emiliani) + festivos de fecha fija. Verificar contra calendario oficial antes de produccion.",
+  "_regla": "Los festivos marcados trasladado=true se corrieron al lunes siguiente por la Ley Emiliani.",
+  "_generado": "2026-08-31",
+  "festivos": {
+    "2026": [
+      {
+        "fecha": "2026-01-01",
+        "nombre": "Ano Nuevo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-01-12",
+        "nombre": "Reyes Magos",
+        "trasladado": true
+      },
+      {
+        "fecha": "2026-03-23",
+        "nombre": "San Jose",
+        "trasladado": true
+      },
+      {
+        "fecha": "2026-04-02",
+        "nombre": "Jueves Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-04-03",
+        "nombre": "Viernes Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-05-01",
+        "nombre": "Dia del Trabajo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-05-18",
+        "nombre": "Ascension del Senor",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-06-08",
+        "nombre": "Corpus Christi",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-06-15",
+        "nombre": "Sagrado Corazon",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-06-29",
+        "nombre": "San Pedro y San Pablo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-07-20",
+        "nombre": "Independencia de Colombia",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-08-07",
+        "nombre": "Batalla de Boyaca",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-08-17",
+        "nombre": "Asuncion de la Virgen",
+        "trasladado": true
+      },
+      {
+        "fecha": "2026-10-12",
+        "nombre": "Dia de la Raza",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-11-02",
+        "nombre": "Todos los Santos",
+        "trasladado": true
+      },
+      {
+        "fecha": "2026-11-16",
+        "nombre": "Independencia de Cartagena",
+        "trasladado": true
+      },
+      {
+        "fecha": "2026-12-08",
+        "nombre": "Inmaculada Concepcion",
+        "trasladado": false
+      },
+      {
+        "fecha": "2026-12-25",
+        "nombre": "Navidad",
+        "trasladado": false
+      }
+    ],
+    "2027": [
+      {
+        "fecha": "2027-01-01",
+        "nombre": "Ano Nuevo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2027-01-11",
+        "nombre": "Reyes Magos",
+        "trasladado": true
+      },
+      {
+        "fecha": "2027-03-22",
+        "nombre": "San Jose",
+        "trasladado": true
+      },
+      {
+        "fecha": "2027-03-25",
+        "nombre": "Jueves Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2027-03-26",
+        "nombre": "Viernes Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2027-05-01",
+        "nombre": "Dia del Trabajo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2027-05-10",
+        "nombre": "Ascension del Senor",
+        "trasladado": false
+      },
+      {
+        "fecha": "2027-05-31",
+        "nombre": "Corpus Christi",
+        "trasladado": false
+      },
+      {
+        "fecha": "2027-06-07",
+        "nombre": "Sagrado Corazon",
+        "trasladado": false
+      },
+      {
+        "fecha": "2027-07-05",
+        "nombre": "San Pedro y San Pablo",
+        "trasladado": true
+      },
+      {
+        "fecha": "2027-07-20",
+        "nombre": "Independencia de Colombia",
+        "trasladado": false
+      },
+      {
+        "fecha": "2027-08-07",
+        "nombre": "Batalla de Boyaca",
+        "trasladado": false
+      },
+      {
+        "fecha": "2027-08-16",
+        "nombre": "Asuncion de la Virgen",
+        "trasladado": true
+      },
+      {
+        "fecha": "2027-10-18",
+        "nombre": "Dia de la Raza",
+        "trasladado": true
+      },
+      {
+        "fecha": "2027-11-01",
+        "nombre": "Todos los Santos",
+        "trasladado": false
+      },
+      {
+        "fecha": "2027-11-15",
+        "nombre": "Independencia de Cartagena",
+        "trasladado": true
+      },
+      {
+        "fecha": "2027-12-08",
+        "nombre": "Inmaculada Concepcion",
+        "trasladado": false
+      },
+      {
+        "fecha": "2027-12-25",
+        "nombre": "Navidad",
+        "trasladado": false
+      }
+    ],
+    "2028": [
+      {
+        "fecha": "2028-01-01",
+        "nombre": "Ano Nuevo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2028-01-10",
+        "nombre": "Reyes Magos",
+        "trasladado": true
+      },
+      {
+        "fecha": "2028-03-20",
+        "nombre": "San Jose",
+        "trasladado": true
+      },
+      {
+        "fecha": "2028-04-13",
+        "nombre": "Jueves Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2028-04-14",
+        "nombre": "Viernes Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2028-05-01",
+        "nombre": "Dia del Trabajo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2028-05-29",
+        "nombre": "Ascension del Senor",
+        "trasladado": false
+      },
+      {
+        "fecha": "2028-06-19",
+        "nombre": "Corpus Christi",
+        "trasladado": false
+      },
+      {
+        "fecha": "2028-06-26",
+        "nombre": "Sagrado Corazon",
+        "trasladado": false
+      },
+      {
+        "fecha": "2028-07-03",
+        "nombre": "San Pedro y San Pablo",
+        "trasladado": true
+      },
+      {
+        "fecha": "2028-07-20",
+        "nombre": "Independencia de Colombia",
+        "trasladado": false
+      },
+      {
+        "fecha": "2028-08-07",
+        "nombre": "Batalla de Boyaca",
+        "trasladado": false
+      },
+      {
+        "fecha": "2028-08-21",
+        "nombre": "Asuncion de la Virgen",
+        "trasladado": true
+      },
+      {
+        "fecha": "2028-10-16",
+        "nombre": "Dia de la Raza",
+        "trasladado": true
+      },
+      {
+        "fecha": "2028-11-06",
+        "nombre": "Todos los Santos",
+        "trasladado": true
+      },
+      {
+        "fecha": "2028-11-13",
+        "nombre": "Independencia de Cartagena",
+        "trasladado": true
+      },
+      {
+        "fecha": "2028-12-08",
+        "nombre": "Inmaculada Concepcion",
+        "trasladado": false
+      },
+      {
+        "fecha": "2028-12-25",
+        "nombre": "Navidad",
+        "trasladado": false
+      }
+    ],
+    "2029": [
+      {
+        "fecha": "2029-01-01",
+        "nombre": "Ano Nuevo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2029-01-08",
+        "nombre": "Reyes Magos",
+        "trasladado": true
+      },
+      {
+        "fecha": "2029-03-19",
+        "nombre": "San Jose",
+        "trasladado": false
+      },
+      {
+        "fecha": "2029-03-29",
+        "nombre": "Jueves Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2029-03-30",
+        "nombre": "Viernes Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2029-05-01",
+        "nombre": "Dia del Trabajo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2029-05-14",
+        "nombre": "Ascension del Senor",
+        "trasladado": false
+      },
+      {
+        "fecha": "2029-06-04",
+        "nombre": "Corpus Christi",
+        "trasladado": false
+      },
+      {
+        "fecha": "2029-06-11",
+        "nombre": "Sagrado Corazon",
+        "trasladado": false
+      },
+      {
+        "fecha": "2029-07-02",
+        "nombre": "San Pedro y San Pablo",
+        "trasladado": true
+      },
+      {
+        "fecha": "2029-07-20",
+        "nombre": "Independencia de Colombia",
+        "trasladado": false
+      },
+      {
+        "fecha": "2029-08-07",
+        "nombre": "Batalla de Boyaca",
+        "trasladado": false
+      },
+      {
+        "fecha": "2029-08-20",
+        "nombre": "Asuncion de la Virgen",
+        "trasladado": true
+      },
+      {
+        "fecha": "2029-10-15",
+        "nombre": "Dia de la Raza",
+        "trasladado": true
+      },
+      {
+        "fecha": "2029-11-05",
+        "nombre": "Todos los Santos",
+        "trasladado": true
+      },
+      {
+        "fecha": "2029-11-12",
+        "nombre": "Independencia de Cartagena",
+        "trasladado": true
+      },
+      {
+        "fecha": "2029-12-08",
+        "nombre": "Inmaculada Concepcion",
+        "trasladado": false
+      },
+      {
+        "fecha": "2029-12-25",
+        "nombre": "Navidad",
+        "trasladado": false
+      }
+    ],
+    "2030": [
+      {
+        "fecha": "2030-01-01",
+        "nombre": "Ano Nuevo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2030-01-07",
+        "nombre": "Reyes Magos",
+        "trasladado": true
+      },
+      {
+        "fecha": "2030-03-25",
+        "nombre": "San Jose",
+        "trasladado": true
+      },
+      {
+        "fecha": "2030-04-18",
+        "nombre": "Jueves Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2030-04-19",
+        "nombre": "Viernes Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2030-05-01",
+        "nombre": "Dia del Trabajo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2030-06-03",
+        "nombre": "Ascension del Senor",
+        "trasladado": false
+      },
+      {
+        "fecha": "2030-06-24",
+        "nombre": "Corpus Christi",
+        "trasladado": false
+      },
+      {
+        "fecha": "2030-07-01",
+        "nombre": "Sagrado Corazon",
+        "trasladado": false
+      },
+      {
+        "fecha": "2030-07-01",
+        "nombre": "San Pedro y San Pablo",
+        "trasladado": true
+      },
+      {
+        "fecha": "2030-07-20",
+        "nombre": "Independencia de Colombia",
+        "trasladado": false
+      },
+      {
+        "fecha": "2030-08-07",
+        "nombre": "Batalla de Boyaca",
+        "trasladado": false
+      },
+      {
+        "fecha": "2030-08-19",
+        "nombre": "Asuncion de la Virgen",
+        "trasladado": true
+      },
+      {
+        "fecha": "2030-10-14",
+        "nombre": "Dia de la Raza",
+        "trasladado": true
+      },
+      {
+        "fecha": "2030-11-04",
+        "nombre": "Todos los Santos",
+        "trasladado": true
+      },
+      {
+        "fecha": "2030-11-11",
+        "nombre": "Independencia de Cartagena",
+        "trasladado": false
+      },
+      {
+        "fecha": "2030-12-08",
+        "nombre": "Inmaculada Concepcion",
+        "trasladado": false
+      },
+      {
+        "fecha": "2030-12-25",
+        "nombre": "Navidad",
+        "trasladado": false
+      }
+    ],
+    "2031": [
+      {
+        "fecha": "2031-01-01",
+        "nombre": "Ano Nuevo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2031-01-06",
+        "nombre": "Reyes Magos",
+        "trasladado": false
+      },
+      {
+        "fecha": "2031-03-24",
+        "nombre": "San Jose",
+        "trasladado": true
+      },
+      {
+        "fecha": "2031-04-10",
+        "nombre": "Jueves Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2031-04-11",
+        "nombre": "Viernes Santo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2031-05-01",
+        "nombre": "Dia del Trabajo",
+        "trasladado": false
+      },
+      {
+        "fecha": "2031-05-26",
+        "nombre": "Ascension del Senor",
+        "trasladado": false
+      },
+      {
+        "fecha": "2031-06-16",
+        "nombre": "Corpus Christi",
+        "trasladado": false
+      },
+      {
+        "fecha": "2031-06-23",
+        "nombre": "Sagrado Corazon",
+        "trasladado": false
+      },
+      {
+        "fecha": "2031-06-30",
+        "nombre": "San Pedro y San Pablo",
+        "trasladado": true
+      },
+      {
+        "fecha": "2031-07-20",
+        "nombre": "Independencia de Colombia",
+        "trasladado": false
+      },
+      {
+        "fecha": "2031-08-07",
+        "nombre": "Batalla de Boyaca",
+        "trasladado": false
+      },
+      {
+        "fecha": "2031-08-18",
+        "nombre": "Asuncion de la Virgen",
+        "trasladado": true
+      },
+      {
+        "fecha": "2031-10-13",
+        "nombre": "Dia de la Raza",
+        "trasladado": true
+      },
+      {
+        "fecha": "2031-11-03",
+        "nombre": "Todos los Santos",
+        "trasladado": true
+      },
+      {
+        "fecha": "2031-11-17",
+        "nombre": "Independencia de Cartagena",
+        "trasladado": true
+      },
+      {
+        "fecha": "2031-12-08",
+        "nombre": "Inmaculada Concepcion",
+        "trasladado": false
+      },
+      {
+        "fecha": "2031-12-25",
+        "nombre": "Navidad",
+        "trasladado": false
+      }
+    ]
+  }
+}

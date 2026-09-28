@@ -1,0 +1,36 @@
+<%- include('../partials/cabecera') %>
+<% var q = function (e) { return '?estado=' + e + (origen ? '&origen=' + origen : ''); }; %>
+<div class="barra-acciones">
+  <ul class="nav nav-pills">
+    <% [['abierta', 'Abiertas', 'warning'], ['cerrada', 'Cerradas', 'success'], ['anulada', 'Anuladas', 'secondary']].forEach(function (t) { %>
+    <li class="nav-item"><a class="nav-link py-1<%= estado === t[0] ? ' active' : '' %>" href="<%= q(t[0]) %>"><%= t[1] %> <span class="badge badge-<%= t[2] %>"><%= conteo[t[0]] %></span></a></li><% }) %>
+  </ul>
+  <form method="get" class="form-inline"><input type="hidden" name="estado" value="<%= estado %>">
+    <select name="origen" class="form-control form-control-sm js-autoenvio"><option value="">Todos los or&iacute;genes</option><% Object.keys(origenes).forEach(function (k) { %><option value="<%= k %>"<%= origen === k ? ' selected' : '' %>><%= origenes[k] %></option><% }) %></select></form>
+</div>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><div class="table-responsive">
+  <table class="table table-bordered table-hover table-sm mb-0">
+    <thead><tr><th>Origen</th><th>Acci&oacute;n</th><th>Tipo</th><th>Responsable</th><th><%= estado === 'cerrada' ? 'Cierre' : 'L&iacute;mite' %></th><th class="text-center">Acciones</th></tr></thead>
+    <tbody>
+      <% filas.forEach(function (a) { var vencida = a.estado === 'abierta' && a.fecha_limite < hoy; %><tr>
+        <td class="text-nowrap"><%= origenes[a.origen] %><% if (a.referencia) { %><br><small class="text-muted"><%= a.referencia %></small><% } %></td>
+        <td><%= a.descripcion %><% if (a.observacion_cierre) { %><br><small class="text-success"><%= a.observacion_cierre %></small><% } %></td>
+        <td><%= a.tipo %></td><td><%= a.responsable || '' %></td>
+        <td class="text-nowrap"><%= a.estado === 'cerrada' ? a.fecha_cierre : a.fecha_limite %><% if (vencida) { %> <span class="badge badge-danger">Vencida</span><% } %></td>
+        <td class="text-center"><% if (gestionar && a.estado === 'abierta') { %><button type="button" class="btn btn-xs btn-success js-cerrar" data-id="<%= a.id %>" data-toggle="tooltip" title="Cerrar"><i class="fas fa-check"></i></button><% } %></td>
+      </tr><% }) %>
+      <% if (!filas.length) { %><tr><td colspan="6" class="text-muted">Sin acciones.</td></tr><% } %>
+    </tbody>
+  </table>
+</div></div></div>
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-cerrar" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" class="modal-content" id="form-cerrar">
+    <div class="modal-header"><h5 class="modal-title">Cerrar acci&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="volver_origen" value="<%= origen || '' %>">
+      <div class="form-group"><label>Fecha de cierre *</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+      <div class="form-group mb-0"><label>C&oacute;mo se cerr&oacute; *</label><textarea name="observacion" class="form-control" rows="3" minlength="5" required></textarea></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success">Cerrar acci&oacute;n</button></div>
+  </form></div></div>
+<% } %>
+<%- include('../partials/pie') %>

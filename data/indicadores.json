@@ -1,0 +1,265 @@
+{
+  "_corte": "2026-08-31",
+  "_fuente": "Resolucion 0312 de 2019, art. 30 (PDF oficial MinTrabajo, hojas 32-33).",
+  "_encabezado_art30": "A partir del año 2019, las empresas anualmente llevarán un registro de los indicadores de SST, entre los cuales se determinará: frecuencia de accidentalidad, severidad de accidentalidad, proporción de accidentes de trabajo mortales, prevalencia de la enfermedad laboral, incidencia de la enfermedad laboral y ausentismo por causa médica.",
+  "_notas_art30": [
+    "Número de casos de enfermedad laboral: Corresponde a las enfermedades calificadas como laborales y no al número de personas con enfermedad laboral.",
+    "Días cargados: Es el número de días que se cargan o asignan a una lesión ocasionada por un accidente de trabajo o enfermedad laboral, siempre que la lesión origine muerte, invalidez o incapacidad permanente parcial. Los días cargados se utilizan solamente para el cálculo de los índices de severidad, como un estimativo de la pérdida real causada.",
+    "La constante 100.000 para los indicadores de enfermedad laboral es la utilizada por la Organización Mundial de Salud para la estadística internacional, permitiendo comparación estandarizada.",
+    "La X es el resultado de cada indicador.",
+    "Número de días de trabajo programados en el mes es igual a: el número de días de trabajo programados en la empresa por el número de trabajadores."
+  ],
+  "_reglas_art30": [
+    "1. Deberán contabilizar para el cálculo de los indicadores, a todos los trabajadores dependientes e independientes, trabajadores en misión, cooperados, estudiantes y todas aquellas personas que presten sus servicios o ejecuten labores bajo cualquier clase o modalidad de contratación en las instalaciones, sedes o centros de trabajo del empleador o contratante.",
+    "2. No deberán crear mecanismos que fomenten el no reporte de accidentes de trabajo o enfermedades laborales.",
+    "3. No se deben reconocer bonos, premios, sobresueldos o cualquier tipo de estímulo por no reportar accidentes, enfermedades o incapacidades temporales, bajo políticas como cero accidentes.",
+    "4. No les está permitido levantar o suspender el goce de las incapacidades temporales. No se deben crear programas de reincorporación temprana sin el consentimiento del trabajador, del médico tratante y sin que exista un programa de rehabilitación, conforme a los parámetros y guías establecidas por el Ministerio del Trabajo.",
+    "5. Todo accidente o enfermedad con incapacidad temporal igual o superior a un (1) día, que afecte la salud del trabajador debe ser reportado y tenido en cuenta para el cálculo de los indicadores de SST.",
+    "6. Cada empresa definirá, establecerá de manera autónoma e independiente y tendrá los soportes correspondientes de los indicadores adicionales a los mínimos señalados en la presente resolución a disposición del Ministerio del Trabajo, atendiendo los criterios señalados en los artículos 2.2.4.6.20, 2.2.4.6.21 y 2.2.4.6.22. del Decreto 1072 de 2015."
+  ],
+  "_no_verificado": [
+    "'Numero de trabajadores en el mes' no esta definido en la norma (al corte, promedio o total). Parametrizar por tenant y guardar numerador y denominador de cada medicion."
+  ],
+  "resultado": [
+    {
+      "codigo": "FREC_AT",
+      "nombre": "Frecuencia de accidentalidad",
+      "tipo": "resultado",
+      "formula_texto": "(N AT del mes / N trabajadores del mes) x 100",
+      "numerador": "accidentes_trabajo_mes",
+      "denominador": "trabajadores_mes",
+      "factor": 100,
+      "periodicidad": "mensual",
+      "norma_codigo": "RES-0312-2019",
+      "formula_literal": "(Número de accidentes de trabajo que se presentaron en el mes / Número de trabajadores en el mes) * 100.",
+      "definicion": "Número de veces que ocurre un accidente de trabajo en el mes",
+      "interpretacion": "Por cada cien (100) trabajadores que laboraron en el mes, se presentaron X accidentes de trabajo."
+    },
+    {
+      "codigo": "SEV_AT",
+      "nombre": "Severidad de accidentalidad",
+      "tipo": "resultado",
+      "formula_texto": "((dias de incapacidad por AT + dias cargados) / N trabajadores del mes) x 100",
+      "numerador": "dias_incapacidad_at_mes + dias_cargados_mes",
+      "denominador": "trabajadores_mes",
+      "factor": 100,
+      "periodicidad": "mensual",
+      "norma_codigo": "RES-0312-2019",
+      "formula_literal": "(Número de días de incapacidad por accidente de trabajo en el mes + número de días cargados en el mes / Número de trabajadores en el mes) * 100.",
+      "definicion": "Número de días perdidos por accidentes de trabajo en el mes.",
+      "interpretacion": "Por cada cien (100) trabajadores que laboraron en el mes, se perdieron X días por accidente de trabajo."
+    },
+    {
+      "codigo": "PROP_AT_MORTAL",
+      "nombre": "Proporcion de accidentes de trabajo mortales",
+      "tipo": "resultado",
+      "formula_texto": "(N AT mortales del ano / total AT del ano) x 100",
+      "numerador": "at_mortales_ano",
+      "denominador": "at_total_ano",
+      "factor": 100,
+      "periodicidad": "anual",
+      "norma_codigo": "RES-0312-2019",
+      "formula_literal": "(Número de accidentes de trabajo mortales que se presentaron en el año / Total de accidentes de trabajo que se presentaron en el año) * 100.",
+      "definicion": "Número de accidentes de trabajo mortales en el año.",
+      "interpretacion": "En el año, el X% de accidentes de trabajo fueron mortales."
+    },
+    {
+      "codigo": "PREV_EL",
+      "nombre": "Prevalencia de enfermedad laboral",
+      "tipo": "resultado",
+      "formula_texto": "((casos nuevos + antiguos de EL) / promedio de trabajadores) x 100000",
+      "numerador": "casos_el_nuevos + casos_el_antiguos",
+      "denominador": "promedio_trabajadores",
+      "factor": 100000,
+      "periodicidad": "anual",
+      "norma_codigo": "RES-0312-2019",
+      "formula_literal": "(Número de casos nuevos y antiguos de enfermedad laboral en el período “Z” / Promedio de trabajadores en el período “Z”) * 100.000",
+      "definicion": "Número de casos de enfermedad laboral presentes en una población en un período de tiempo.",
+      "interpretacion": "Por cada 100.000 trabajadores existen X casos de enfermedad laboral en el periodo Z."
+    },
+    {
+      "codigo": "INC_EL",
+      "nombre": "Incidencia de enfermedad laboral",
+      "tipo": "resultado",
+      "formula_texto": "(casos nuevos de EL / promedio de trabajadores) x 100000",
+      "numerador": "casos_el_nuevos",
+      "denominador": "promedio_trabajadores",
+      "factor": 100000,
+      "periodicidad": "anual",
+      "norma_codigo": "RES-0312-2019",
+      "formula_literal": "(Número de casos nuevos de enfermedad laboral en el período “Z” / Promedio de trabajadores en el período “Z”) * 100.000",
+      "definicion": "Número de casos nuevos de enfermedad laboral en una población determinada en un período de tiempo.",
+      "interpretacion": "Por cada 100.000 trabajadores existen X casos nuevos de enfermedad laboral en el periodo Z."
+    },
+    {
+      "codigo": "AUS_MEDICO",
+      "nombre": "Ausentismo por causa medica",
+      "tipo": "resultado",
+      "formula_texto": "(dias de ausencia por incapacidad laboral o comun en el mes / (dias de trabajo programados x N trabajadores)) x 100",
+      "numerador": "dias_ausencia_incapacidad_laboral_comun_mes",
+      "denominador": "dias_programados_mes * trabajadores_mes",
+      "factor": 100,
+      "periodicidad": "mensual",
+      "norma_codigo": "RES-0312-2019",
+      "formula_literal": "(Número de días de ausencia por incapacidad laboral o común en el mes / Número de días de trabajo programados en el mes) * 100.",
+      "definicion": "Ausentismo es la no asistencia al trabajo, con incapacidad médica.",
+      "interpretacion": "En el mes se perdió X% de días programados de trabajo por incapacidad médica."
+    }
+  ],
+  "estructura": [
+    {
+      "codigo": "EST_POLITICA",
+      "nombre": "Politica de SST divulgada",
+      "tipo": "estructura",
+      "derivable": true,
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "EST_OBJETIVOS",
+      "nombre": "Objetivos y metas definidos",
+      "tipo": "estructura",
+      "derivable": true,
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "EST_PLAN",
+      "nombre": "Plan de trabajo anual con cronograma",
+      "tipo": "estructura",
+      "derivable": true,
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "EST_RESPONSABILIDADES",
+      "nombre": "Responsabilidades asignadas",
+      "tipo": "estructura",
+      "derivable": true,
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "EST_METODO_PELIGROS",
+      "nombre": "Metodo de identificacion de peligros definido",
+      "tipo": "estructura",
+      "derivable": true,
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "EST_COPASST",
+      "nombre": "COPASST o Vigia conformado",
+      "tipo": "estructura",
+      "derivable": true,
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "EST_EMERGENCIAS",
+      "nombre": "Plan de prevencion y respuesta ante emergencias",
+      "tipo": "estructura",
+      "derivable": true,
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "EST_CAPACITACION",
+      "nombre": "Programa de capacitacion definido",
+      "tipo": "estructura",
+      "derivable": true,
+      "norma_codigo": "DEC-1072-2015"
+    }
+  ],
+  "proceso": [
+    {
+      "codigo": "PRO_EVAL_INICIAL",
+      "nombre": "Ejecucion de la evaluacion inicial",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "PRO_PLAN_TRABAJO",
+      "nombre": "Ejecucion del plan de trabajo anual",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "PRO_CAPACITACION",
+      "nombre": "Ejecucion del plan de capacitacion",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "PRO_INTERVENCION",
+      "nombre": "Intervencion de peligros identificados",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "PRO_COND_SALUD",
+      "nombre": "Evaluacion de condiciones de salud y de trabajo",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "PRO_ACCIONES",
+      "nombre": "Ejecucion de acciones de investigaciones",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "PRO_MEDICIONES",
+      "nombre": "Ejecucion del cronograma de mediciones ambientales",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "PRO_SVE",
+      "nombre": "Desarrollo de programas de vigilancia epidemiologica",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "PRO_REPORTE",
+      "nombre": "Cumplimiento de procesos de reporte e investigacion",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "PRO_ESTADISTICA",
+      "nombre": "Registro estadistico de AT, EL, incidentes y ausentismo",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "PRO_EMERGENCIAS",
+      "nombre": "Ejecucion del plan de emergencias",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    },
+    {
+      "codigo": "PRO_MANTENIMIENTO",
+      "nombre": "Ejecucion del plan de mantenimiento de equipos",
+      "tipo": "proceso",
+      "formula_texto": "(ejecutado / programado) x 100",
+      "periodicidad": "mensual",
+      "norma_codigo": "DEC-1072-2015"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verificar expediente SG-SST</title>
+<style>
+  body { font-family: Arial, sans-serif; color: #212529; margin: 24px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin-top: 12px; }
+  th, td { border: 1px solid #dee2e6; padding: 6px; text-align: left; word-break: break-all; }
+  .ok td { background: #e6f4ea; } .error td { background: #fdecea; } .aviso td { background: #fff8e1; }
+</style>
+</head>
+<body>
+<h1>Verificar integridad del expediente</h1>
+<p><%= m.empresa.razon_social %> &middot; NIT <%= m.empresa.nit %> &middot; generado <%= m.generado_en %></p>
+<p>Seleccione los archivos de la carpeta <strong>documentos</strong> (puede elegir todos a la vez). La huella se calcula en este equipo, sin conexi&oacute;n, y se compara con la registrada al firmar.</p>
+<input type="file" id="archivos" multiple>
+<p id="resumen"></p>
+<table><thead><tr><th>Archivo</th><th>Resultado</th><th>SHA-256 calculado</th></tr></thead><tbody id="resultado"></tbody></table>
+<script src="manifiesto.js"></script>
+<script src="verificar.js"></script>
+</body>
+</html>

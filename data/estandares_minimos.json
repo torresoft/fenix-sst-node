@@ -1,0 +1,1303 @@
+{
+  "_corte": "2026-08-31",
+  "_fuente": "Resolucion 0312 de 2019, arts. 3, 7, 8, 9, 15, 16, 27 y 28. PDF oficial de MinTrabajo cotejado con el normograma del SENA y el aplicativo REME-SGSST. Investigacion del 2026-09-26.",
+  "_advertencia": "Verificar vigencias en el Gestor Normativo de Funcion Publica antes de usar con efectos juridicos. Ver _no_verificado.",
+  "_nota_aplicabilidad": "Se evalua por prioridad ascendente; aplica el primer conjunto cuyos rangos contengan (trabajadores, nivel de riesgo). es_residual aplica cuando ninguno coincide: mas de 50 trabajadores, o riesgo IV-V de cualquier tamano (arts. 8, 15 y 16).",
+  "_nota_pesos": "Los pesos son los de la Tabla de Valores del art. 27 (unica tabla con pesos en la norma). Art. 27: los items que no aplican a empresas <50 trab. riesgo I-III se califican con el puntaje maximo en la columna 'No Aplica', por eso la escala siempre es sobre 100 aunque se evaluen 7 o 21.",
+  "_no_verificado": [
+    "Mapeo de los 7 (art. 3) y 21 (art. 9) a numerales de la Tabla de Valores: la resolucion NO asigna numerales en los arts. 3 y 9; el mapeo viene de fuente secundaria (smsafemode) y es coherente con los nombres, pero no esta en texto oficial. Puntos dudosos: identificacion de peligros -> 4.1.2 vs 4.1.1; en los 21 dos items cubren 2 numerales (persona+curso 50h -> 1.1.1+1.2.3; COPASST conformar+capacitar -> 1.1.6+1.1.7): 21 items = 23 numerales. Dejarlo parametrizable.",
+    "Nombres de items del art. 27: el escaneo oficial de la hoja 30 es de baja resolucion. Los pesos se leen con certeza y cuadran (suma 100, subtotales por estandar y por componente), pero la redaccion exacta de cada item se tomo del reporte del aplicativo REME-SGSST y se contrasto contra la imagen. Posibles diferencias menores (ej. 'fechada' vs 'fecha' en 2.1.1; 'medico laborales' vs 'medico/laborales' en 3.1.6).",
+    "Art. 16: los criterios de 'Revision por la alta direccion. Alcance de la auditoria' (6.1.3) y 'Planificacion de la auditoria con el COPASST' (6.1.4) parecen cruzados en el texto oficial (el de 6.1.4 habla de revision por la alta direccion). Se transcribieron tal cual.",
+    "criterio/modo_verificacion: texto extraido del normograma SENA y cotejado visualmente con el PDF; puede haber diferencias menores de puntuacion o plural (ej. art. 3 'programa o actividades' en PDF vs 'programas o actividades' en normograma).",
+    "Gestor Normativo de Funcion Publica: no se pudo consultar (id desconocido / pagina 'No disponible'). Diario Oficial no consultado.",
+    "Vigencia a 31-ago-2026: el normograma SENA no muestra notas de modificacion o derogatoria; fuentes secundarias indican que sigue vigente (la Res. 2708 de 2026 derogo circulares, no la 0312). No verificado en Diario Oficial.",
+    "Perfil del responsable para AGRO_3: el art. 7 no lo define; el valor del archivo existente no tiene soporte en el texto.",
+    "Art. 30: 'Numero de trabajadores en el mes' no esta definido (promedio vs corte). Parametrizar."
+  ],
+  "aplicabilidad": [
+    {
+      "conjunto": "AGRO_3",
+      "articulo": "7",
+      "criterio": "Unidades de produccion agropecuaria con diez (10) o menos trabajadores de forma permanente, clasificadas con riesgo I, II o III, sin consideracion del regimen de tenencia ni condicion juridica",
+      "estandares": 3,
+      "perfil_responsable": null,
+      "prioridad": 1,
+      "trabajadores_min": 1,
+      "trabajadores_max": 10,
+      "riesgo_nivel_min": 1,
+      "riesgo_nivel_max": 3,
+      "solo_agropecuario": true,
+      "es_residual": false,
+      "evalua_tabla_completa": false
+    },
+    {
+      "conjunto": "MIN_7",
+      "articulo": "3",
+      "criterio": "Hasta 10 trabajadores, clase de riesgo I, II o III",
+      "estandares": 7,
+      "perfil_responsable": "Tecnico en SST con licencia vigente, 1 anio de experiencia certificada y curso virtual de 50 horas",
+      "prioridad": 2,
+      "trabajadores_min": 1,
+      "trabajadores_max": 10,
+      "riesgo_nivel_min": 1,
+      "riesgo_nivel_max": 3,
+      "solo_agropecuario": false,
+      "es_residual": false,
+      "evalua_tabla_completa": false
+    },
+    {
+      "conjunto": "MED_21",
+      "articulo": "9",
+      "criterio": "De 11 a 50 trabajadores, clase de riesgo I, II o III",
+      "estandares": 21,
+      "perfil_responsable": "Tecnologo en SST con licencia vigente, 2 anios de experiencia certificada y curso virtual de 50 horas",
+      "prioridad": 3,
+      "trabajadores_min": 11,
+      "trabajadores_max": 50,
+      "riesgo_nivel_min": 1,
+      "riesgo_nivel_max": 3,
+      "solo_agropecuario": false,
+      "es_residual": false,
+      "evalua_tabla_completa": false
+    },
+    {
+      "conjunto": "FULL_60",
+      "articulo": "16",
+      "criterio": "Mas de 50 trabajadores con cualquier clase de riesgo, o cualquier tamano con clase de riesgo IV o V (arts. 8, 15 y 16)",
+      "estandares": 60,
+      "perfil_responsable": "Profesional en SST o profesional con posgrado en SST, con licencia vigente y curso virtual de 50 horas",
+      "prioridad": 4,
+      "trabajadores_min": null,
+      "trabajadores_max": null,
+      "riesgo_nivel_min": null,
+      "riesgo_nivel_max": null,
+      "solo_agropecuario": false,
+      "es_residual": true,
+      "evalua_tabla_completa": true
+    }
+  ],
+  "ponderacion_phva": [
+    {
+      "ciclo": "PLANEAR",
+      "peso": 25,
+      "componentes": [
+        {
+          "nombre": "Recursos",
+          "peso": 10
+        },
+        {
+          "nombre": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+          "peso": 15
+        }
+      ]
+    },
+    {
+      "ciclo": "HACER",
+      "peso": 60,
+      "componentes": [
+        {
+          "nombre": "Gestión de la salud",
+          "peso": 20
+        },
+        {
+          "nombre": "Gestión de peligros y riesgos",
+          "peso": 30
+        },
+        {
+          "nombre": "Gestión de amenazas",
+          "peso": 10
+        }
+      ]
+    },
+    {
+      "ciclo": "VERIFICAR",
+      "peso": 5,
+      "componentes": [
+        {
+          "nombre": "Verificación del SG-SST",
+          "peso": 5
+        }
+      ]
+    },
+    {
+      "ciclo": "ACTUAR",
+      "peso": 10,
+      "componentes": [
+        {
+          "nombre": "Mejoramiento",
+          "peso": 10
+        }
+      ]
+    }
+  ],
+  "valoracion": [
+    {
+      "codigo": "CRITICO",
+      "min": 0,
+      "max": 59.99,
+      "criterio_literal": "Si el puntaje obtenido es menor al 60%",
+      "acciones": [
+        "Realizar y tener a disposicion del Ministerio del Trabajo un Plan de Mejoramiento de inmediato",
+        "Enviar a la respectiva Administradora de Riesgos Laborales un reporte de avances en el termino maximo de tres (3) meses despues de realizada la autoevaluacion",
+        "Seguimiento anual y plan de visita a la empresa con valoracion critica, por parte del Ministerio del Trabajo"
+      ]
+    },
+    {
+      "codigo": "MODERADAMENTE_ACEPTABLE",
+      "min": 60,
+      "max": 85,
+      "criterio_literal": "Si el puntaje obtenido esta entre el 60 y 85%",
+      "acciones": [
+        "Realizar y tener a disposicion del Ministerio del Trabajo un Plan de Mejoramiento",
+        "Enviar a la Administradora de Riesgos Laborales un reporte de avances en el termino maximo de seis (6) meses despues de realizada la autoevaluacion",
+        "Plan de visita por parte del Ministerio del Trabajo"
+      ]
+    },
+    {
+      "codigo": "ACEPTABLE",
+      "min": 85.01,
+      "max": 100,
+      "criterio_literal": "Si el puntaje obtenido es mayor al 85%",
+      "acciones": [
+        "Mantener la calificacion y evidencias a disposicion del Ministerio del Trabajo, e incluir en el Plan Anual de Trabajo las mejoras detectadas"
+      ]
+    }
+  ],
+  "tabla_valores": [
+    {
+      "numeral": "1.1.1",
+      "estandar": "1.1 Recursos financieros, técnicos humanos y de otra índole requeridos para coordinar y desarrollar el Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)",
+      "peso_estandar": 4,
+      "nombre": "Responsable del Sistema de Gestión de Seguridad y Salud en el Trabajo SG-SST",
+      "ciclo": "PLANEAR",
+      "componente": "Recursos",
+      "peso": 0.5,
+      "item_articulo": "Asignación de una persona que diseñe e implemente el Sistema de Gestión de SST",
+      "criterio": "Asignar una persona que cumpla con el siguiente perfil:\nEl diseño e implementación del Sistema de Gestión de SST podrá ser realizado por profesionales en SST, profesionales con posgrado en SST, que cuenten con licencia en Seguridad y Salud en el Trabajo vigente y el curso de capacitación virtual de cincuenta (50) horas.",
+      "modo_verificacion": "Solicitar el documento en el que consta la asignación, con la respectiva determinación de responsabilidades y constatar la hoja de vida con soportes, de la persona asignada.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "1.1.2",
+      "estandar": "1.1 Recursos financieros, técnicos humanos y de otra índole requeridos para coordinar y desarrollar el Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)",
+      "peso_estandar": 4,
+      "nombre": "Responsabilidades en el Sistema de Gestión de Seguridad y Salud en el Trabajo SG-SST",
+      "ciclo": "PLANEAR",
+      "componente": "Recursos",
+      "peso": 0.5,
+      "item_articulo": "Asignación de responsabilidades en SST",
+      "criterio": "Asignar y documentar las responsabilidades específicas en el Sistema de Gestión SST a todos los niveles de la organización, para el desarrollo y mejora continua de dicho Sistema.",
+      "modo_verificacion": "Solicitar el soporte que contenga la asignación de las responsabilidades en SST.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "1.1.3",
+      "estandar": "1.1 Recursos financieros, técnicos humanos y de otra índole requeridos para coordinar y desarrollar el Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)",
+      "peso_estandar": 4,
+      "nombre": "Asignación de recursos para el Sistema de Gestión de Seguridad y Salud en el Trabajo SG-SST",
+      "ciclo": "PLANEAR",
+      "componente": "Recursos",
+      "peso": 0.5,
+      "item_articulo": "Asignación de recursos para el Sistema de Gestión en SST",
+      "criterio": "Definir y asignar el talento humano, los recursos financieros, técnicos y tecnológicos, requeridos para la implementación, mantenimiento y continuidad del Sistema de Gestión de SST.",
+      "modo_verificacion": "Constatar la existencia de evidencias físicas que demuestren la definición y asignación del talento humano, los recursos financieros, técnicos y de otra índole para la implementación, mantenimiento y continuidad del Sistema de Gestión de SST, evidenciando la asignación de recursos con base en el plan de trabajo anual.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "1.1.4",
+      "estandar": "1.1 Recursos financieros, técnicos humanos y de otra índole requeridos para coordinar y desarrollar el Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)",
+      "peso_estandar": 4,
+      "nombre": "Afiliación al Sistema General de Riesgos Laborales",
+      "ciclo": "PLANEAR",
+      "componente": "Recursos",
+      "peso": 0.5,
+      "item_articulo": "Afiliación al Sistema de Seguridad Social Integral",
+      "criterio": "Garantizar que todos los trabajadores, independientemente de su forma de vinculación o contratación están afiliados al Sistema de Seguridad Social en Salud, Pensión y Riesgos Laborales.",
+      "modo_verificacion": "Solicitar una lista de los trabajadores vinculados laboralmente a la fecha y comparar con la planilla de pago de aportes a la seguridad social de los cuatro (4) meses anteriores a la fecha de verificación.\nRealizar el siguiente muestreo:\nEn empresas entre cincuenta y uno (51) y doscientos (200) trabajadores verificar el 10%.\nMayores a doscientos un (201) trabajadores verificar el registro de 30 trabajadores. Solicitar una lista de los trabajadores vinculados por prestación de servicios a la fecha y comparar con la última planilla de pago de aportes a la seguridad social suministrada por los contratistas.\nTomar: Entre cincuenta y un (51) y doscientos (200) trabajadores verificar el 10%.\nMayores a doscientos un (201) trabajadores verificar el registro de 30 trabajadores. De la muestra seleccionada verificar la afiliación al Sistema General de Seguridad Social. En los casos excepcionales de trabajadores independientes que se afilien a través de agremiaciones verificar que corresponda a una agremiación autorizada por el Ministerio de Salud y Protección Social, conforme al listado publicado en la página web del Ministerio del Trabajo o del Ministerio de Salud y Protección Social.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "1.1.5",
+      "estandar": "1.1 Recursos financieros, técnicos humanos y de otra índole requeridos para coordinar y desarrollar el Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)",
+      "peso_estandar": 4,
+      "nombre": "Identificación de trabajadores de alto riesgo y cotización de pensión especial",
+      "ciclo": "PLANEAR",
+      "componente": "Recursos",
+      "peso": 0.5,
+      "item_articulo": "Identificación de trabajadores que se dediquen en forma permanente a actividades de alto riesgo y cotización de pensión especial",
+      "criterio": "En el caso de que aplique, identificar a los trabajadores que se dediquen en forma permanente al ejercicio de las actividades de alto riesgo establecidas en el Decreto 2090 de 2003 o de las normas que lo adicionen, modifiquen o complementen y cotizar el monto establecido en la norma, al Sistema de Pensiones.",
+      "modo_verificacion": "En los casos de que aplique, verificar si se tienen identificados los trabajadores que se dedican en forma permanente al ejercicio de las actividades de alto riesgo de que trata el Decreto 2090 de 2003 y si se ha realizado el pago de la cotización especial señalado en dicha norma.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "1.1.6",
+      "estandar": "1.1 Recursos financieros, técnicos humanos y de otra índole requeridos para coordinar y desarrollar el Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)",
+      "peso_estandar": 4,
+      "nombre": "Conformación COPASST",
+      "ciclo": "PLANEAR",
+      "componente": "Recursos",
+      "peso": 0.5,
+      "item_articulo": "Conformación y funcionamiento del COPASST",
+      "criterio": "Conformar y garantizar el funcionamiento del Comité Paritario de Seguridad y Salud en el Trabajo (COPASST).",
+      "modo_verificacion": "Solicitar los soportes de la convocatoria, elección, conformación del Comité Paritario de Seguridad y Salud en el Trabajo y el acta de constitución. Constatar si es igual el número de representantes del empleador y de los trabajadores y revisar si el acta de conformación se encuentra vigente. Solicitar las actas de reunión mensuales del último año del Comité Paritario y verificar el cumplimiento de sus funciones.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "1.1.7",
+      "estandar": "1.1 Recursos financieros, técnicos humanos y de otra índole requeridos para coordinar y desarrollar el Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)",
+      "peso_estandar": 4,
+      "nombre": "Capacitación COPASST",
+      "ciclo": "PLANEAR",
+      "componente": "Recursos",
+      "peso": 0.5,
+      "item_articulo": "Capacitación de los integrantes del COPASST",
+      "criterio": "Capacitar a los integrantes del COPASST para el cumplimiento efectivo de las responsabilidades que les asigna la ley.",
+      "modo_verificacion": "Solicitar documentos que evidencien las actividades de capacitación brindada a los integrantes del COPASST.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "1.1.8",
+      "estandar": "1.1 Recursos financieros, técnicos humanos y de otra índole requeridos para coordinar y desarrollar el Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)",
+      "peso_estandar": 4,
+      "nombre": "Conformación Comité de Convivencia",
+      "ciclo": "PLANEAR",
+      "componente": "Recursos",
+      "peso": 0.5,
+      "item_articulo": "Conformación y funcionamiento del Comité de Convivencia Laboral",
+      "criterio": "Conformar y garantizar el funcionamiento del Comité de Convivencia Laboral, de acuerdo con la normatividad vigente.",
+      "modo_verificacion": "Solicitar el documento de conformación del Comité de Convivencia Laboral y verificar que esté integrado de acuerdo a la normativa y que se encuentra vigente. Solicitar las actas de las reuniones (como mínimo una reunión cada tres (3) meses) y los informes de Gestión del Comité de Convivencia Laboral, verificando el desarrollo de sus funciones.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "1.2.1",
+      "estandar": "1.2 Capacitación en el Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso_estandar": 6,
+      "nombre": "Programa Capacitación Promoción y Prevención - PyP",
+      "ciclo": "PLANEAR",
+      "componente": "Recursos",
+      "peso": 2,
+      "item_articulo": "Programa de capacitación anual",
+      "criterio": "Elaborar y ejecutar el programa de capacitación anual en promoción y prevención, que incluye lo referente a los peligros/riesgos prioritarios y las medidas de prevención y control, extensivo a todos los niveles de la organización.",
+      "modo_verificacion": "Solicitar el programa de capacitación anual y la matriz de identificación de peligros y verificar que el mismo esté dirigido a los peligros ya identificados y esté acorde con la evaluación y control de los riesgos y/o necesidades en Seguridad y Salud en el Trabajo.\nSolicitar los documentos que evidencien el cumplimiento del programa de capacitación.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "1.2.2",
+      "estandar": "1.2 Capacitación en el Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso_estandar": 6,
+      "nombre": "Inducción y reinducción en Sistema de Gestión de Seguridad y Salud en el Trabajo SG-SST, actividades de Promoción y Prevención PyP",
+      "ciclo": "PLANEAR",
+      "componente": "Recursos",
+      "peso": 2,
+      "item_articulo": "Inducción y reinducción en SST",
+      "criterio": "Realizar actividades de inducción y reinducción, las cuales deben estar incluidas en el programa de capacitación, dirigidas a todos los trabajadores, independientemente de su forma de vinculación y/o contratación, de manera previa al inicio de sus labores, en aspectos generales y específicos de las actividades o funciones a realizar que incluya entre otros, la identificación de peligros y control de los riesgos en su trabajo y la prevención de accidentes de trabajo y enfermedades laborales.",
+      "modo_verificacion": "Solicitar la lista de trabajadores, participantes independientemente de su forma de vinculación y/o contratación, y verificar los soportes documentales que den cuenta de la inducción y reinducción de conformidad con el criterio. La referencia es el programa de capacitación y su cumplimento. Para realizar la verificación tener en cuenta:\nEn empresas entre cincuenta y uno (51) y doscientos (200) trabajadores, verificar el 10%. En empresas con doscientos uno (201) trabajadores en adelante, verificar los soportes para 30 trabajadores.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "1.2.3",
+      "estandar": "1.2 Capacitación en el Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso_estandar": 6,
+      "nombre": "Responsables del Sistema de Gestión de Seguridad y Salud en el Trabajo SG-SST con curso virtual de 50 horas",
+      "ciclo": "PLANEAR",
+      "componente": "Recursos",
+      "peso": 2,
+      "item_articulo": "Curso Virtual de capacitación de cincuenta (50) horas en SST.",
+      "criterio": "El responsable del Sistema de Gestión de SST realiza el curso de capacitación virtual de cincuenta (50) horas en SST definido por el Ministerio del Trabajo.",
+      "modo_verificacion": "Solicitar el certificado de aprobación del curso de capacitación virtual de cincuenta (50) horas en SST definido por el Ministerio del Trabajo, expedido a nombre del responsable del Sistema de Gestión de Seguridad y Salud en el Trabajo.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "2.1.1",
+      "estandar": "2.1 Política de Seguridad y Salud en el Trabajo",
+      "peso_estandar": 1,
+      "nombre": "Política del Sistema de Gestión de Seguridad y Salud en el Trabajo SG-SST firmada, fechada y comunicada al COPASST",
+      "ciclo": "PLANEAR",
+      "componente": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso": 1,
+      "item_articulo": "Política de Seguridad y Salud en el Trabajo.",
+      "criterio": "Establecer por escrito la Política de Seguridad y Salud en el Trabajo y comunicarla al Comité Paritario de Seguridad y Salud en el Trabajo - COPASST.\nLa Política debe ser fechada y firmada por el representante legal y expresa el compromiso de la alta dirección, el alcance sobre todos los centros de trabajo y todos sus trabajadores independientemente de su forma de vinculación y/o contratación, es revisada, como mínimo una vez al año, hace parte de las políticas de gestión de la empresa, se encuentra difundida y accesible para todos los niveles de la organización. Incluye como mínimo el compromiso con:\n– La identificación de los peligros, evaluación y valoración de los riesgos y con los respectivos controles.\n– Proteger la seguridad y salud de todos los trabajadores mediante la mejora continua.\n– El cumplimiento de la normatividad vigente aplicable en materia de riesgos laborales.",
+      "modo_verificacion": "Solicitar la política del Sistema de Gestión de SST de la empresa y confirmar que cumpla con los aspectos contenidos en el criterio.\nValidar para la revisión anual de la política como mínimo: fecha de emisión, firmada por el representante legal actual, que estén incluidos los requisitos normativos actuales.\nEntrevistar a los miembros del COPASST para indagar el conocimiento de la política en SST.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "2.2.1",
+      "estandar": "2.2 Objetivos del Sistema de Gestión de la Seguridad y Salud en el Trabajo SG-SST",
+      "peso_estandar": 1,
+      "nombre": "Objetivos definidos, claros, medibles, cuantificables, con metas, documentados, revisados del SG-SST",
+      "ciclo": "PLANEAR",
+      "componente": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso": 1,
+      "item_articulo": "Objetivos de SST",
+      "criterio": "Definir los objetivos del Sistema de Gestión de SST de conformidad con la política de SST, los cuales deben ser claros, medibles, cuantificables y tener metas, coherentes con el plan de trabajo anual, compatibles con la normatividad vigente, se encuentran documentados, son comunicados a los trabajadores, son revisados y evaluados mínimo una vez al año, actualizados de ser necesario y se encuentran en documento firmado por el empleador.",
+      "modo_verificacion": "Revisar si los objetivos se encuentran definidos, cumplen con las condiciones mencionadas en el criterio y si existen evidencias del proceso de difusión.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "2.3.1",
+      "estandar": "2.3 Evaluación inicial del SG-SST",
+      "peso_estandar": 1,
+      "nombre": "Evaluación e identificación de prioridades",
+      "ciclo": "PLANEAR",
+      "componente": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso": 1,
+      "item_articulo": "Evaluación Inicial del Sistema de Gestión",
+      "criterio": "Realizar la evaluación inicial del Sistema de Gestión de SST, identificando las prioridades para establecer el plan de trabajo anual o para la actualización del existente.\nDebe ser realizada por el responsable del Sistema de Gestión de SST o contratada por la empresa con personal externo con licencia en Seguridad y Salud en el Trabajo.",
+      "modo_verificacion": "Solicitar la evaluación inicial del Sistema de Gestión de SST mediante la matriz legal, matriz de peligros y evaluación de riesgos, verificación de controles, lista de asistencia a capacitaciones, análisis de puestos de trabajo, exámenes médicos de ingreso y periódicos y seguimiento de indicadores, entre otros.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "2.4.1",
+      "estandar": "2.4 Plan Anual de Trabajo",
+      "peso_estandar": 2,
+      "nombre": "Plan que identifica objetivos, metas, responsabilidad, recursos con cronograma y firmado",
+      "ciclo": "PLANEAR",
+      "componente": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso": 2,
+      "item_articulo": "Plan Anual de Trabajo",
+      "criterio": "Diseñar y definir un plan anual de trabajo para el cumplimiento del Sistema de Gestión de SST, el cual identifica los objetivos, metas, responsabilidades, recursos, cronograma de actividades, firmado por el empleador y el responsable del Sistema de Gestión de SST.",
+      "modo_verificacion": "Solicitar el plan de trabajo anual.\nVerificar el cumplimiento del mismo. En el caso de que se hayan presentado incumplimientos al plan, solicitar los planes de mejora respectivos.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "2.5.1",
+      "estandar": "2.5 Conservación de la documentación",
+      "peso_estandar": 2,
+      "nombre": "Archivo o retención documental del Sistema de Gestión de Seguridad y Salud en el Trabajo SG-SST",
+      "ciclo": "PLANEAR",
+      "componente": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso": 2,
+      "item_articulo": "Archivo y retención documental del Sistema de Gestión de SST",
+      "criterio": "Contar con un sistema de archivo y retención documental, para los registros y documentos que soportan el Sistema de Gestión de SST.",
+      "modo_verificacion": "Constatar la existencia de un sistema de archivo y retención documental, para los registros y documentos que soportan el Sistema de Gestión de SST.\nVerificar mediante muestreo que los registros y documentos sean legibles (entendible para el lector objeto), fácilmente identificables y accesibles (para todos los que estén vinculados con cada documento en particular), protegidos contra daño y pérdida.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "2.6.1",
+      "estandar": "2.6 Rendición de cuentas",
+      "peso_estandar": 1,
+      "nombre": "Rendición sobre el desempeño",
+      "ciclo": "PLANEAR",
+      "componente": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso": 1,
+      "item_articulo": "Rendición de cuentas",
+      "criterio": "Realizar anualmente la Rendición de Cuentas del desarrollo del Sistema de Gestión de SST, que incluya a todos los niveles de la empresa.",
+      "modo_verificacion": "Solicitar los registros documentales que evidencien la rendición de cuentas anual, al interior de la empresa.\nSolicitar a la empresa los mecanismos de rendición de cuentas que haya definido y verificar que se haga y se cumplan con los criterios del requisito.\nLa rendición de cuentas debe incluir todos los niveles de la empresa ya que en cada uno de ellos hay responsabilidades sobre la Seguridad y Salud en el Trabajo.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "2.7.1",
+      "estandar": "2.7 Normatividad nacional vigente y aplicable en materia de seguridad y salud en el trabajo",
+      "peso_estandar": 2,
+      "nombre": "Matriz legal",
+      "ciclo": "PLANEAR",
+      "componente": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso": 2,
+      "item_articulo": "Matriz legal",
+      "criterio": "Definir la matriz legal que contemple las normas actualizadas del Sistema General de Riesgos Laborales aplicables a la empresa.",
+      "modo_verificacion": "Solicitar la matriz legal.\nVerificar que contenga:\n– Normas vigentes en riesgos laborales, aplicables a la empresa.\n– Normas técnicas de cumplimiento de acuerdo con los peligros / riesgos identificados en la empresa.\n– Normas vigentes de diferentes entidades que le apliquen, relacionadas con riesgos laborales.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "2.8.1",
+      "estandar": "2.8 Comunicación",
+      "peso_estandar": 1,
+      "nombre": "Mecanismos de comunicación, auto reporte en Sistema de Gestión de Seguridad y Salud en el Trabajo SG-SST",
+      "ciclo": "PLANEAR",
+      "componente": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso": 1,
+      "item_articulo": "Mecanismos de comunicación",
+      "criterio": "Disponer de mecanismos eficaces para recibir y responder las comunicaciones internas y externas relativas a la Seguridad y Salud en el Trabajo, como por ejemplo autorreporte de condiciones de trabajo y de salud por parte de los trabajadores o contratistas.",
+      "modo_verificacion": "Constatar la existencia de mecanismos eficaces de comunicación interna y externa que tiene la empresa en materia de Seguridad y Salud en el Trabajo.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "2.9.1",
+      "estandar": "2.9 Adquisiciones",
+      "peso_estandar": 1,
+      "nombre": "Identificación, evaluación, para adquisición de productos y servicios en Sistema de Gestión de Seguridad y Salud en el Trabajo SG-SST",
+      "ciclo": "PLANEAR",
+      "componente": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso": 1,
+      "item_articulo": "Identificación y evaluación para la adquisición de bienes y servicios",
+      "criterio": "Establecer un procedimiento para la identificación y evaluación de las especificaciones en SST de las compras y adquisición de productos y servicios.",
+      "modo_verificacion": "Verificar la existencia de un procedimiento para la identificación y evaluación de las especificaciones en SST de las compras o adquisición de productos y servicios y constatar su cumplimiento.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "2.10.1",
+      "estandar": "2.10 Contratación",
+      "peso_estandar": 2,
+      "nombre": "Evaluación y selección de proveedores y contratistas",
+      "ciclo": "PLANEAR",
+      "componente": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso": 2,
+      "item_articulo": "Evaluación y selección de proveedores y contratistas",
+      "criterio": "Establecer los aspectos de SST que podrá tener en cuenta la empresa en la evaluación y selección de proveedores y contratistas.",
+      "modo_verificacion": "Solicitar el documento que señale los criterios relacionados con SST para la evaluación y selección de proveedores, cuando la empresa los haya establecido.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "2.11.1",
+      "estandar": "2.11 Gestión del cambio",
+      "peso_estandar": 1,
+      "nombre": "Evaluación del impacto de cambios internos y externos en el Sistema de Gestión de Seguridad y Salud en el Trabajo SG-SST",
+      "ciclo": "PLANEAR",
+      "componente": "Gestión integral del Sistema de Gestión de la Seguridad y Salud en el Trabajo",
+      "peso": 1,
+      "item_articulo": "Gestión del cambio",
+      "criterio": "Disponer de un procedimiento para evaluar el impacto sobre la Seguridad y Salud en el Trabajo que se pueda generar por cambios internos o externos.",
+      "modo_verificacion": "Solicitar el documento que contenga el procedimiento.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.1.1",
+      "estandar": "3.1 Condiciones de salud en el trabajo",
+      "peso_estandar": 9,
+      "nombre": "Descripción sociodemográfica - Diagnóstico de condiciones de salud",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Descripción sociodemográfica y Diagnóstico de las condiciones de salud de los trabajadores",
+      "criterio": "Recolectar la siguiente información actualizada de todos los trabajadores del último año: la descripción sociodemográfica de los trabajadores (edad, sexo, escolaridad, estado civil) y el diagnóstico de condiciones de salud que incluya la caracterización de sus condiciones de salud, la evaluación y análisis de las estadísticas sobre la salud de los trabajadores tanto de origen laboral como común y los resultados de las evaluaciones médicas ocupacionales.",
+      "modo_verificacion": "Solicitar el documento consolidado con la información sociodemográfica acorde con lo requerido en el criterio y el diagnóstico de condiciones de salud.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.1.2",
+      "estandar": "3.1 Condiciones de salud en el trabajo",
+      "peso_estandar": 9,
+      "nombre": "Actividades de Promoción y Prevención en Salud",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Actividades de medicina del trabajo y de prevención y promoción de la Salud.",
+      "criterio": "Desarrollar las actividades de medicina del trabajo, prevención y promoción de la salud y programas de vigilancia epidemiológica requeridos, de conformidad con las prioridades identificadas en el diagnóstico de condiciones de salud y con los peligros/riesgos prioritarios.",
+      "modo_verificacion": "Solicitar las evidencias que constaten la definición y ejecución de las actividades de medicina del trabajo, promoción y prevención y los programas de vigilancia epidemiológica, de conformidad con las prioridades que se identificaron con base en los resultados del diagnóstico de las condiciones de salud y los peligros/riesgos de intervención prioritarios.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.1.3",
+      "estandar": "3.1 Condiciones de salud en el trabajo",
+      "peso_estandar": 9,
+      "nombre": "Información al médico de los perfiles de cargo",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Perfiles de cargos",
+      "criterio": "Informar al médico que realiza las evaluaciones ocupacionales los perfiles de cargos con una descripción de las tareas y el medio en el cual se desarrollará la labor respectiva.",
+      "modo_verificacion": "Verificar que se le remitieron al médico que realiza las evaluaciones ocupacionales, los soportes documentales respecto de los perfiles de cargos, descripción de las tareas y el medio en el cual desarrollarán la labor los trabajadores.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.1.4",
+      "estandar": "3.1 Condiciones de salud en el trabajo",
+      "peso_estandar": 9,
+      "nombre": "Realización de Evaluaciones Médicas Ocupacionales - Peligros - Periodicidad - Comunicación al Trabajador",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Evaluaciones médicas ocupacionales",
+      "criterio": "Realizar las evaluaciones médicas de acuerdo con la normatividad y los peligros/riesgos a los cuales se encuentre expuesto el trabajador.\nDefinir la frecuencia de las evaluaciones médicas ocupacionales periódicas según tipo, magnitud, frecuencia de exposición a cada peligro, el estado de salud del trabajador, las recomendaciones de los sistemas de vigilancia epidemiológica y la legislación vigente.\nComunicar por escrito al trabajador los resultados de las evaluaciones médicas ocupacionales los cuales reposarán en su historia médica.",
+      "modo_verificacion": "Solicitar los conceptos de aptitud que demuestren la realización de las evaluaciones médicas. Solicitar el documento o registro que evidencie la definición de la frecuencia de las evaluaciones médicas periódicas.\nSolicitar el documento que evidencie la comunicación por escrito al trabajador de los resultados de las evaluaciones médicas ocupacionales.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.1.5",
+      "estandar": "3.1 Condiciones de salud en el trabajo",
+      "peso_estandar": 9,
+      "nombre": "Custodia de Historias Clínicas",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Custodia de las historias clínicas",
+      "criterio": "Tener la custodia de las historias clínicas a cargo de una institución prestadora de servicios en SST o del médico que practica las evaluaciones médicas ocupacionales.",
+      "modo_verificacion": "Evidenciar los soportes que demuestren que la custodia de las historias clínicas esté a cargo de una institución prestadora de servicios en SST o del médico que practica las evaluaciones médicas ocupacionales.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.1.6",
+      "estandar": "3.1 Condiciones de salud en el trabajo",
+      "peso_estandar": 9,
+      "nombre": "Restricciones y recomendaciones médico laborales",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Restricciones y recomendaciones médico laborales",
+      "criterio": "Cumplir las restricciones y recomendaciones médico laborales realizadas por parte de la Empresa Promotora de Salud (EPS) o Administradora de Riesgos Laborales (ARL) prescritas a los trabajadores para la realización de sus funciones.\nAdecuar el puesto de trabajo, reubicar al trabajador o realizar la readaptación laboral cuando se requiera.\nEntregar a quienes califican en primera oportunidad y/o a las Juntas de Calificación de Invalidez los documentos que son responsabilidad del empleador conforme a las normas, para la calificación de origen y pérdida de la capacidad laboral.",
+      "modo_verificacion": "Solicitar documento de recomendaciones y restricciones médico-laborales a trabajadores y constatar las evidencias de que la empresa las ha acatado ha realizado las acciones que se requieran en materia de reubicación o readaptación.\nSolicitar soporte de recibido por parte de quienes califican en primera oportunidad y/o a las Juntas de Calificación de Invalidez, de los documentos que corresponde remitir al empleador para efectos del proceso de calificación de origen y pérdida de capacidad laboral.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.1.7",
+      "estandar": "3.1 Condiciones de salud en el trabajo",
+      "peso_estandar": 9,
+      "nombre": "Estilos de vida y entornos saludables (controles tabaquismo, alcoholismo, farmacodependencia y otros)",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Estilos de vida y entorno saludable",
+      "criterio": "Elaborar y ejecutar un programa para promover entre los trabajadores, estilos de vida y entornos de trabajo saludable, incluyendo campañas específicas tendientes a la prevención y el control de la farmacodependencia, el alcoholismo y el tabaquismo, entre otros.",
+      "modo_verificacion": "Solicitar el programa respectivo y los documentos y registros que evidencien el cumplimiento del mismo.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.1.8",
+      "estandar": "3.1 Condiciones de salud en el trabajo",
+      "peso_estandar": 9,
+      "nombre": "Agua potable, servicios sanitarios y disposición de basuras",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Servicios de higiene",
+      "criterio": "Contar con un suministro permanente de agua potable, servicios sanitarios y mecanismos para disponer excretas y basuras.",
+      "modo_verificacion": "Verificar mediante observación directa si se cumple lo exigido en el criterio, dejando soporte fílmico o fotográfico al respecto.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.1.9",
+      "estandar": "3.1 Condiciones de salud en el trabajo",
+      "peso_estandar": 9,
+      "nombre": "Eliminación adecuada de residuos sólidos, líquidos o gaseosos",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Manejo de Residuos",
+      "criterio": "Eliminar los residuos sólidos, líquidos o gaseosos que se producen, así como los residuos peligrosos, de forma que no se ponga en riesgo a los trabajadores.",
+      "modo_verificacion": "Constatar mediante observación directa, las evidencias donde se dé cuenta de los procesos de eliminación de residuos conforme al criterio.\nSolicitar contrato de empresa que elimina y dispone de los residuos peligrosos cuando se requiera dicha disposición.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.2.1",
+      "estandar": "3.2 Registro, reporte e investigación de las enfermedades laborales, los incidentes y accidentes del trabajo",
+      "peso_estandar": 5,
+      "nombre": "Reporte de los accidentes de trabajo y enfermedad laboral a la ARL, EPS y Dirección Territorial del Ministerio de Trabajo",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 2,
+      "item_articulo": "Reporte de accidentes de trabajo y enfermedades laborales",
+      "criterio": "Reportar a la Administradora de Riesgos Laborales (ARL) y a la Entidad Promotora de Salud (EPS) todos los accidentes de trabajo y las enfermedades laborales diagnosticadas. Reportar a la Dirección Territorial del Ministerio del Trabajo que corresponda los accidentes graves y mortales, así como como las enfermedades diagnosticadas como laborales. Estos reportes se realizan dentro de los dos (2) días hábiles siguientes al evento o recibo del diagnóstico de la enfermedad.",
+      "modo_verificacion": "Indagar con los trabajadores si se han presentado accidentes de trabajo o enfermedades laborales (en caso afirmativo, tomar los datos de nombre y número de cédula y solicitar el reporte). Igualmente, realizar un muestreo del reporte de registro de accidente de trabajo (FURAT) y el registro de enfermedades laborales (FUREL) respectivo, verificando si el reporte a las Administradoras de Riesgos Laborales, Empresas Promotoras de Salud y Dirección Territorial se hizo dentro de los dos (2) días hábiles siguientes al evento o recibo del diagnóstico de la enfermedad.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.2.2",
+      "estandar": "3.2 Registro, reporte e investigación de las enfermedades laborales, los incidentes y accidentes del trabajo",
+      "peso_estandar": 5,
+      "nombre": "Investigación de incidentes, accidentes y enfermedades laborales",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 2,
+      "item_articulo": "Investigación de incidentes, accidentes de trabajo y las enfermedades cuando sean diagnosticadas como laborales",
+      "criterio": "Investigar los incidentes y todos los accidentes de trabajo y las enfermedades cuando sean diagnosticadas como laborales con la participación del COPASST, determinando las causas básicas e inmediatas y la posibilidade de que se presenten nuevos casos.",
+      "modo_verificacion": "Verificar por medio de un muestreo si se investigan los incidentes, accidentes de trabajo y las enfermedades laborales con la participación del COPASST, y si se definieron acciones para otros trabajadores potencialmente expuestos.\nConstatar que las investigaciones se hayan realizado dentro de los quince\n(15) días siguientes a su ocurrencia a través del equipo investigador y evidenciar que se hayan remitido los informes de las investigaciones de accidente de trabajo grave o mortal o de enfermedad laboral mortal.\nEn caso de accidente grave o se produzca la muerte, verificar la participación de un profesional con licencia en Seguridad y Salud en el Trabajo en la investigación (propio o contratado), así como del Comité Paritario de SST.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.2.3",
+      "estandar": "3.2 Registro, reporte e investigación de las enfermedades laborales, los incidentes y accidentes del trabajo",
+      "peso_estandar": 5,
+      "nombre": "Registro y análisis estadístico de accidentes y enfermedades laborales",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Registro y análisis estadístico de accidentes de trabajo y enfermedades laborales",
+      "criterio": "Llevar registro estadístico de los accidentes de trabajo que ocurren así como de las enfermedades laborales que se presentan; se analiza este registro y las conclusiones derivadas del estudio son usadas para el mejoramiento del Sistema de Gestión de SST.",
+      "modo_verificacion": "Solicitar el registro estadístico actualizado de lo corrido del año y el año inmediatamente anterior al de la visita, así como la evidencia que contiene el análisis y las conclusiones derivadas del estudio que son usadas para el mejoramiento del Sistema de Gestión de SST.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.3.1",
+      "estandar": "3.3 Mecanismos de vigilancia de las condiciones de salud de los trabajadores",
+      "peso_estandar": 6,
+      "nombre": "Medición de la frecuencia de la accidentalidad",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Frecuencia de accidentalidad",
+      "criterio": "Medir la frecuencia de los accidentes como mínimo una (1) vez al mes y realizar la clasificación del origen del peligro/riesgo que los generó (físicos, de químicos, biológicos, seguridad, públicos, psicosociales, entre otros.).",
+      "modo_verificacion": "Solicitar los resultados de la medición para lo corrido del año y/o el año inmediatamente anterior y constatar el comportamiento de la frecuencia de los accidentes y la relación del evento con los peligros/riesgos identificados.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.3.2",
+      "estandar": "3.3 Mecanismos de vigilancia de las condiciones de salud de los trabajadores",
+      "peso_estandar": 6,
+      "nombre": "Medición de la severidad de la accidentalidad",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Severidad de accidentalidad",
+      "criterio": "Medir la severidad de los accidentes de trabajo como mínimo una (1) vez al mes y realizar la clasificación del origen del peligro/riesgo que los generó (físicos, químicos, biológicos, de seguridad, públicos, psicosociales, entre otros).",
+      "modo_verificacion": "Solicitar los resultados de la medición para lo corrido del año y/o el año inmediatamente anterior y constatar el comportamiento de la severidad y la relación del evento con los peligros/riesgos identificados.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.3.3",
+      "estandar": "3.3 Mecanismos de vigilancia de las condiciones de salud de los trabajadores",
+      "peso_estandar": 6,
+      "nombre": "Medición de la mortalidad por accidentes de trabajo",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Proporción de accidentes de trabajo mortales",
+      "criterio": "Medir la mortalidad por accidentes como mínimo una (1) vez al año y realizar la clasificación del origen del peligro/riesgo que los generó (físicos, químicos, biológicos, de seguridad, públicos, psicosociales, entre otros).",
+      "modo_verificacion": "Solicitar los resultados de la medición para lo corrido del año y/o el año inmediatamente anterior y constatar el comportamiento de la mortalidad y la relación del evento con los peligros/riesgos identificados.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.3.4",
+      "estandar": "3.3 Mecanismos de vigilancia de las condiciones de salud de los trabajadores",
+      "peso_estandar": 6,
+      "nombre": "Medición de la prevalencia de enfermedad laboral",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Prevalencia de la enfermedad laboral.",
+      "criterio": "Medir la prevalencia de la enfermedad laboral como mínimo una (1) vez al año y realizar la clasificación del origen del peligro/riesgo que la generó (físico, químico, biológico, ergonómico o biomecánico, psicosocial, entre otros).",
+      "modo_verificacion": "Solicitar los resultados de la medición para lo corrido del año y/o el año inmediatamente anterior y constatar el comportamiento de la prevalencia de las enfermedades laborales y la relación del evento con los peligros/riesgos identificados.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.3.5",
+      "estandar": "3.3 Mecanismos de vigilancia de las condiciones de salud de los trabajadores",
+      "peso_estandar": 6,
+      "nombre": "Medición de la incidencia de enfermedad laboral",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Incidencia de la enfermedad laboral",
+      "criterio": "Medir la incidencia de la enfermedad laboral como mínimo una (1) vez al año y realizar la clasificación del origen del peligro/ riesgo que la generó (físicos, químicos, biológicos, ergonómicos o biomecánicos, psicosociales, entre otros).",
+      "modo_verificacion": "Solicitar los resultados de la medición para lo corrido del año y/o el año inmediatamente anterior y constatar el comportamiento de la incidencia de las enfermedades laborales y la relación del evento con los peligros/riesgos identificados.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "3.3.6",
+      "estandar": "3.3 Mecanismos de vigilancia de las condiciones de salud de los trabajadores",
+      "peso_estandar": 6,
+      "nombre": "Medición del ausentismo por causa médica",
+      "ciclo": "HACER",
+      "componente": "Gestión de la salud",
+      "peso": 1,
+      "item_articulo": "Ausentismo por causa médica",
+      "criterio": "Medir el ausentismo por incapacidad de origen laboral y común, como mínimo una (1) vez al mes y realizar la clasificación del origen del peligro/riesgo que lo generó (físicos, ergonómicos, o biomecánicos, químicos, de seguridad, públicos, psicosociales, entre otros).",
+      "modo_verificacion": "Solicitar los resultados de la medición para lo corrido del año y/o el año inmediatamente anterior y constatar el comportamiento del ausentismo y la relación del evento con los peligros/riesgos.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "4.1.1",
+      "estandar": "4.1 Identificación de peligros, evaluación y valoración de los riesgos",
+      "peso_estandar": 15,
+      "nombre": "Metodología para la identificación de peligros, evaluación y valoración de los riesgos",
+      "ciclo": "HACER",
+      "componente": "Gestión de peligros y riesgos",
+      "peso": 4,
+      "item_articulo": "Metodología para identificación de peligros, evaluación y valoración de riesgos",
+      "criterio": "Definir y aplicar una metodología para la identificación de peligros y evaluación y valoración de los riesgos de origen físico, ergonómico o biomecánico, biológico, químico, de seguridad, público, psicosocial, entre otros, con alcance sobre todos los procesos, actividades rutinarias y no rutinarias, maquinaria y equipos en todos los centros de trabajo y respecto de todos los trabajadores independientemente de su forma de vinculación y/o contratación.\nIdentificar con base en la valoración de los riesgos, aquellos que son prioritarios.",
+      "modo_verificacion": "Solicitar el documento que contiene la metodología.\nVerificar que se realiza la identificación de peligros, evaluación y valoración de los riesgos conforme a la metodología definida de acuerdo con el criterio y con la participación de los trabajadores, seleccionando de manera aleatoria algunas de las actividades identificadas.\nConfrontar mediante observación directa durante el recorrido a las instalaciones de la empresa la identificación de peligros.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "4.1.2",
+      "estandar": "4.1 Identificación de peligros, evaluación y valoración de los riesgos",
+      "peso_estandar": 15,
+      "nombre": "Identificación de peligros con participación de todos los niveles de la empresa",
+      "ciclo": "HACER",
+      "componente": "Gestión de peligros y riesgos",
+      "peso": 4,
+      "item_articulo": "Identificación de peligros y evaluación y valoración de riesgos con participación de todos los niveles de la empresa",
+      "criterio": "Realizar la identificación de peligros y evaluación y valoración de los riesgos con participación de los trabajadores de todos los niveles de la empresa y actualizarla como mínimo una (1) vez al año y cada vez que ocurra un accidente de trabajo mortal o un evento catastrófico en la empresa o cuando se presenten cambios en los procesos, en las instalaciones, o maquinaria o equipos.",
+      "modo_verificacion": "Solicitar las evidencias que den cuenta de la participación de los trabajadores en la identificación de peligros, evaluación y valoración de los riesgos, así como de la realización de dicha identificación con la periodicidad señalada en el criterio.\nSolicitar información acerca de si ha habido eventos mortales o catastróficos y validar que el peligro asociado al evento esté identificado, evaluado y valorado.\nEn los casos de que se encuentren valoraciones de riesgo no tolerable, verificar la implementación inmediata de las acciones de intervención y control.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "4.1.3",
+      "estandar": "4.1 Identificación de peligros, evaluación y valoración de los riesgos",
+      "peso_estandar": 15,
+      "nombre": "Identificación de sustancias catalogadas como carcinógenas o con toxicidad aguda",
+      "ciclo": "HACER",
+      "componente": "Gestión de peligros y riesgos",
+      "peso": 3,
+      "item_articulo": "Identificación de sustancias catalogadas como carcinógenas o con toxicidad aguda.",
+      "criterio": "En las empresas donde se procese, manipule o trabaje con sustancias o agentes catalogadas como carcinógenas o con toxicidad aguda, causantes de enfermedades, incluidas en la tabla de enfermedades laborales, priorizar los riesgos asociados a las mismas y realizar acciones de prevención e intervención al respecto.",
+      "modo_verificacion": "Revisar la lista de materias primas e insumos, productos intermedios o finales, subproductos y desechos y verificar si estas son o están compuestas por agentes o sustancias catalogadas como carcinógenas en el grupo 1 de la clasificación de la Agencia Internacional de Investigación sobre el Cáncer (International Agency for Research on Cancer, IARC) y con toxicidad aguda según los criterios del Sistema Globalmente Armonizado (categorías I y II).\nSe debe verificar que los riesgos asociados a estas sustancias o agentes carcinógenos o con toxicidad aguda son priorizados y se realizan acciones de prevención e intervención.\nAsí mismo se debe verificar la existencia de áreas destinadas para el almacenamiento de las materias primas e insumos y sustancias catalogadas como carcinógenas y con toxicidad aguda.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "4.1.4",
+      "estandar": "4.1 Identificación de peligros, evaluación y valoración de los riesgos",
+      "peso_estandar": 15,
+      "nombre": "Realización mediciones ambientales, químicos, físicos y biológicos",
+      "ciclo": "HACER",
+      "componente": "Gestión de peligros y riesgos",
+      "peso": 4,
+      "item_articulo": "Mediciones ambientales",
+      "criterio": "Realizar mediciones ambientales de los riesgos prioritarios, provenientes de peligros químicos, físicos y/o biológicos.",
+      "modo_verificacion": "Verificar los soportes documentales de las mediciones ambientales realizadas y la remisión de estos resultados al Comité Paritario de Seguridad y Salud en el Trabajo.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "4.2.1",
+      "estandar": "4.2 Medidas de prevención y control para intervenir los peligros/riesgos",
+      "peso_estandar": 15,
+      "nombre": "Implementación de medidas de prevención y control frente a peligros/riesgos identificados",
+      "ciclo": "HACER",
+      "componente": "Gestión de peligros y riesgos",
+      "peso": 2.5,
+      "item_articulo": "Medidas de prevención y control frente a peligros/riesgos identificados",
+      "criterio": "Ejecutar las medidas de prevención y control con base en el resultado de la identificación de peligros, la evaluación y valoración de los riesgos (físicos, ergonómicos, biológicos, químicos, de seguridad, públicos, psicosociales, entre otros), incluidos los prioritarios y estas se ejecutan acorde con el esquema de jerarquización, de ser factible priorizar la intervención en la fuente y en el medio.",
+      "modo_verificacion": "Solicitar evidencias de la ejecución de las medidas de prevención y control, de acuerdo con el esquema de jerarquización y la identificación de los peligros, la evaluación y valoración de los riesgos realizada.\nConstatar que estas medidas se encuentran programadas en el plan anual de trabajo.\nVerificar que efectivamente se dio prioridad a las medidas de prevención y control frente a los peligros/riesgos identificados como prioritarios.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "4.2.2",
+      "estandar": "4.2 Medidas de prevención y control para intervenir los peligros/riesgos",
+      "peso_estandar": 15,
+      "nombre": "Verificación de aplicación de medidas de prevención y control por parte de los trabajadores",
+      "ciclo": "HACER",
+      "componente": "Gestión de peligros y riesgos",
+      "peso": 2.5,
+      "item_articulo": "Aplicación de medidas de prevención y control por parte de los trabajadores",
+      "criterio": "Verificar la aplicación por parte de los trabajadores de las medidas de prevención y control de los peligros/riesgos (físicos, ergonómicos, biológicos, químicos, de seguridad, públicos, psicosociales, entre otros).",
+      "modo_verificacion": "Solicitar los soportes documentales implementados por la empresa donde se verifica el cumplimiento de las responsabilidades de los trabajadores frente a la aplicación de las medidas de prevención y control de los peligros/riesgos (físicos, ergonómicos, biológicos, químicos, de seguridad, públicos, psicosociales, entre otros).\nRealizar visita a las instalaciones para verificar el cumplimiento de las medidas de prevención y control por parte de los trabajadores.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "4.2.3",
+      "estandar": "4.2 Medidas de prevención y control para intervenir los peligros/riesgos",
+      "peso_estandar": 15,
+      "nombre": "Elaboración de procedimientos, instructivos, fichas, protocolos",
+      "ciclo": "HACER",
+      "componente": "Gestión de peligros y riesgos",
+      "peso": 2.5,
+      "item_articulo": "Procedimientos e instructivos internos de seguridad y salud en el trabajo",
+      "criterio": "Elaborar procedimientos, instructivos y fichas técnicas de seguridad y salud en el trabajo cuando se requiera y entregarlos a los trabajadores.",
+      "modo_verificacion": "Solicitar los procedimientos, instructivos, fichas técnicas cuando aplique y protocolos de SST y el soporte de entrega de los mismos a los trabajadores.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "4.2.4",
+      "estandar": "4.2 Medidas de prevención y control para intervenir los peligros/riesgos",
+      "peso_estandar": 15,
+      "nombre": "Realización de inspecciones a instalaciones, maquinaria o equipos con participación del COPASST",
+      "ciclo": "HACER",
+      "componente": "Gestión de peligros y riesgos",
+      "peso": 2.5,
+      "item_articulo": "Inspecciones a instalaciones, maquinaria o equipos",
+      "criterio": "Elaborar formatos de registro para la realización de las visitas de inspección.\nRealizar las visitas de inspección sistemática a las instalaciones, maquinaria o equipos, incluidos los relacionados con la prevención y atención de emergencias; con la participación del COPASST.",
+      "modo_verificacion": "Solicitar los formatos de registro de visitas de inspección elaborados.\nSolicitar la evidencia de las visitas de inspección realizadas a las instalaciones, maquinaria y equipos, incluidos los relacionados con la prevención y atención de emergencias y verificar la participación del COPASST en las mismas.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "4.2.5",
+      "estandar": "4.2 Medidas de prevención y control para intervenir los peligros/riesgos",
+      "peso_estandar": 15,
+      "nombre": "Mantenimiento periódico de instalaciones, equipos, máquinas, herramientas",
+      "ciclo": "HACER",
+      "componente": "Gestión de peligros y riesgos",
+      "peso": 2.5,
+      "item_articulo": "Mantenimiento periódico de las instalaciones, equipos, máquinas y herramientas",
+      "criterio": "Realizar el mantenimiento periódico de las instalaciones, equipos, máquinas y herramientas, de acuerdo con los informes de las visitas de inspección o reportes de condiciones inseguras y los manuales y/o las fichas técnicas de los mismos.",
+      "modo_verificacion": "Solicitar la evidencia del mantenimiento preventivo y/o correctivo en las instalaciones, equipos, máquinas y herramientas, de acuerdo con los manuales de uso de estos y los informes de las visitas de inspección o reportes de condiciones inseguras.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "4.2.6",
+      "estandar": "4.2 Medidas de prevención y control para intervenir los peligros/riesgos",
+      "peso_estandar": 15,
+      "nombre": "Entrega de Elementos de Protección Personal - EPP, se verifica con contratistas y subcontratistas",
+      "ciclo": "HACER",
+      "componente": "Gestión de peligros y riesgos",
+      "peso": 2.5,
+      "item_articulo": "Entrega de los Elementos de Protección Personal (EPP) y capacitación en uso adecuado",
+      "criterio": "Suministrar a los trabajadores los elementos de protección personal que se requieran y reponerlos oportunamente, conforme al desgaste y condiciones de uso de los mismos.\nVerificar que los contratistas y subcontratistas entregan los elementos de protección personal que se requiera a sus trabajadores y realizan la reposición de los mismos oportunamente, conforme al desgaste y condiciones de uso.\nRealizar la capacitación para el uso de los elementos de protección personal.",
+      "modo_verificacion": "Solicitar los soportes que evidencien la entrega y reposición de los elementos de protección personal a los trabajadores.\nVerificar los soportes del cumplimiento del criterio por parte de los contratistas y subcontratistas.\nVerificar los soportes que evidencian la realización de la capacitación en el uso de los elementos de protección personal.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "5.1.1",
+      "estandar": "5.1 Plan de prevención, preparación y respuesta ante emergencias",
+      "peso_estandar": 10,
+      "nombre": "Se cuenta con el Plan de Prevención, Preparación y Respuesta ante emergencias",
+      "ciclo": "HACER",
+      "componente": "Gestión de amenazas",
+      "peso": 5,
+      "item_articulo": "Plan de prevención, preparación y respuesta ante emergencias",
+      "criterio": "Elaborar un plan de prevención, preparación y respuesta ante emergencias que identifique las amenazas, evalúe y analice la vulnerabilidad.\nComo mínimo el plan debe incluir: planos de las instalaciones que identifican áreas y salidas de emergencia, así como la señalización, realización de simulacros como mínimo una (1) vez al año.\nEl plan debe tener en cuenta todas las jornadas de trabajo en todos los centros de trabajo y debe ser divulgado.",
+      "modo_verificacion": "Solicitar el plan de prevención, preparación y respuesta ante emergencias y constatar evidencias de su divulgación.\nVerificar si existen los planos de las instalaciones que identifican áreas y salidas de emergencia y verificar si existe la debida señalización de la empresa.\nVerificar los soportes que evidencien la realización de los simulacros y análisis de los mismos y validar que las recomendaciones emitidas con base en dicho análisis hayan sido tenidas en cuenta en el mejoramiento del plan de emergencias.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "5.1.2",
+      "estandar": "5.1 Plan de prevención, preparación y respuesta ante emergencias",
+      "peso_estandar": 10,
+      "nombre": "Brigada de prevención conformada, capacitada y dotada",
+      "ciclo": "HACER",
+      "componente": "Gestión de amenazas",
+      "peso": 5,
+      "item_articulo": "Brigada de prevención, preparación y respuesta ante emergencias",
+      "criterio": "Conformar, capacitar y dotar la brigada de prevención, preparación y respuesta ante emergencias (primeros auxilios, contra incendios, evacuación, etc.), según las necesidades y el tamaño de la empresa.",
+      "modo_verificacion": "Solicitar el documento de conformación de la brigada de prevención, preparación y respuesta ante emergencias y verificar los soportes de la capacitación y entrega de la dotación.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "6.1.1",
+      "estandar": "6.1 Gestión y resultados del SG-SST",
+      "peso_estandar": 5,
+      "nombre": "Definición de indicadores del SG-SST de acuerdo condiciones de la empresa",
+      "ciclo": "VERIFICAR",
+      "componente": "Verificación del SG-SST",
+      "peso": 1.25,
+      "item_articulo": "Definición de indicadores del Sistema de Gestión de Seguridad y Salud en el Trabajo",
+      "criterio": "Definir indicadores que permitan evaluar el Sistema de Gestión de SST de acuerdo con las condiciones de la empresa, teniendo en cuenta los indicadores mínimos señalados en el Capítulo IV de la presente resolución.\nTener disponibles los resultados de la evaluación del Sistema de Gestión de SST, de acuerdo con los indicadores mínimos de SST definidos en la presente resolución.",
+      "modo_verificacion": "Solicitar los indicadores del Sistema de Gestión de SST definidos por la empresa.\nSolicitar informe con los resultados de la evaluación del Sistema de Gestión de SST, de acuerdo con los indicadores mínimos señalados en el presente acto administrativo.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "6.1.2",
+      "estandar": "6.1 Gestión y resultados del SG-SST",
+      "peso_estandar": 5,
+      "nombre": "La empresa adelanta auditoría por lo menos una vez al año",
+      "ciclo": "VERIFICAR",
+      "componente": "Verificación del SG-SST",
+      "peso": 1.25,
+      "item_articulo": "Auditoría anual",
+      "criterio": "Realizar una auditoría anual, la cual será planificada con la participación del Comité Paritario de Seguridad y Salud en el Trabajo.",
+      "modo_verificacion": "Verificar soportes de la realización de auditorías internas al Sistema de Gestión de SST, con alcance a todas las áreas de la empresa, adelantadas por lo menos una (1) vez al año.\nSolicitar el programa de la auditoría que deberá incluir entre otros aspectos, la definición de la idoneidad de la persona que sea auditora, el alcance de la auditoría, la periodicidad, la metodología y la presentación de informes y verificar que se haya planificado con la participación del COPASST.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "6.1.3",
+      "estandar": "6.1 Gestión y resultados del SG-SST",
+      "peso_estandar": 5,
+      "nombre": "Revisión anual de la alta dirección, resultados de la auditoría",
+      "ciclo": "VERIFICAR",
+      "componente": "Verificación del SG-SST",
+      "peso": 1.25,
+      "item_articulo": "Revisión por la alta dirección. Alcance de la auditoría del Sistema de Gestión",
+      "criterio": "Revisar como mínimo una (1) vez al año, por parte de la alta dirección, el Sistema de Gestión de SST , resultados y el alcance de la auditoría de cumplimiento del Sistema de Gestión de Seguridad y Salud en el Trabajo, de acuerdo con los aspectos señalados en el artículo 2.2.4.6.30 del Decreto 1072 de 2015.",
+      "modo_verificacion": "Solicitar a la empresa los soportes que den cuenta del alcance de la auditoría, verificando el cumplimiento de los aspectos señalados en los numerales del artículo 2.2.4.6.30 del Decreto 1072 de 2015.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "6.1.4",
+      "estandar": "6.1 Gestión y resultados del SG-SST",
+      "peso_estandar": 5,
+      "nombre": "Planificación auditorías con el COPASST",
+      "ciclo": "VERIFICAR",
+      "componente": "Verificación del SG-SST",
+      "peso": 1.25,
+      "item_articulo": "Planificación de la auditoría con el COPASST",
+      "criterio": "Revisar como mínimo una (1) vez al año, por parte de la alta dirección, el Sistema de Gestión de SST y comunicar los resultados al COPASST y al responsable del Sistema de Gestión de SST.",
+      "modo_verificacion": "Solicitar el documento donde conste la revisión anual por la alta dirección y la comunicación de los resultados al COPASST y al responsable del Sistema de Gestión de SST.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "7.1.1",
+      "estandar": "7.1 Acciones preventivas y correctivas con base en los resultados del SG-SST",
+      "peso_estandar": 10,
+      "nombre": "Definición de acciones preventivas y correctivas con base en resultados del SG-SST",
+      "ciclo": "ACTUAR",
+      "componente": "Mejoramiento",
+      "peso": 2.5,
+      "item_articulo": "Acciones preventivas y/o correctivas",
+      "criterio": "Definir e implementar las acciones preventivas y/o correctivas necesarias con base en los resultados de la supervisión, inspecciones, medición de los indicadores del Sistema de Gestión de SST entre otros, y las recomendaciones del COPASST.",
+      "modo_verificacion": "Solicitar la evidencia documental de la implementación de las acciones preventivas y/o correctivas.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "7.1.2",
+      "estandar": "7.1 Acciones preventivas y correctivas con base en los resultados del SG-SST",
+      "peso_estandar": 10,
+      "nombre": "Acciones de mejora conforme a revisión de la Alta Dirección",
+      "ciclo": "ACTUAR",
+      "componente": "Mejoramiento",
+      "peso": 2.5,
+      "item_articulo": "Acciones de mejora conforme a revisión de la Alta Dirección",
+      "criterio": "Cuando después de la revisión por la Alta Dirección del Sistema de Gestión de SST se evidencie que las medidas de prevención y control relativas a los peligros y riesgos son inadecuadas o pueden dejar de ser eficaces, la empresa toma las medidas correctivas, preventivas y/o de mejora para subsanar lo detectado.",
+      "modo_verificacion": "Solicitar la evidencia documental de las acciones correctivas, preventivas y/o de mejora que se implementaron según lo detectado en la revisión por la Alta Dirección del Sistema de Gestión de Seguridad y Salud en el Trabajo.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "7.1.3",
+      "estandar": "7.1 Acciones preventivas y correctivas con base en los resultados del SG-SST",
+      "peso_estandar": 10,
+      "nombre": "Acciones de mejora con base en investigaciones de accidentes de trabajo y enfermedades laborales",
+      "ciclo": "ACTUAR",
+      "componente": "Mejoramiento",
+      "peso": 2.5,
+      "item_articulo": "Acciones de mejora con base en investigaciones de accidentes de trabajo y enfermedades laborales",
+      "criterio": "Definir e implementar las acciones preventivas y/o correctivas necesarias con base en los resultados de las investigaciones de los accidentes de trabajo y la determinación de sus causas básicas e inmediatas, así como de las enfermedades laborales.",
+      "modo_verificacion": "Solicitar la evidencia documental de las acciones de mejora planteadas conforme a los resultados de las investigaciones realizadas y verificar su efectividad.",
+      "articulo": "16"
+    },
+    {
+      "numeral": "7.1.4",
+      "estandar": "7.1 Acciones preventivas y correctivas con base en los resultados del SG-SST",
+      "peso_estandar": 10,
+      "nombre": "Elaboración Plan de mejoramiento - implementación de medidas y acciones correctivas solicitadas por autoridades y ARL",
+      "ciclo": "ACTUAR",
+      "componente": "Mejoramiento",
+      "peso": 2.5,
+      "item_articulo": "Plan de mejoramiento",
+      "criterio": "Implementar las medidas y acciones correctivas producto de requerimientos o recomendaciones de autoridades administrativas y de las administradoras de riesgos laborales.",
+      "modo_verificacion": "Solicitar las evidencias de las acciones correctivas realizadas en respuesta a los requerimientos o recomendaciones de las autoridades administrativas y de las administradoras de riesgos laborales.",
+      "articulo": "16"
+    }
+  ],
+  "requisitos": {
+    "AGRO_3": [
+      {
+        "orden": 1,
+        "nombre": "Identificar los peligros en el marco de los procesos productivos de la unidad de producción agropecuaria, evaluar y valorar los riesgos y establecer los respectivos controles.",
+        "numerales": [],
+        "criterio": "Identificar los peligros en el marco de los procesos productivos de la unidad de producción agropecuaria, evaluar y valorar los riesgos y establecer los respectivos controles.",
+        "modo_verificacion": null,
+        "articulo": "7",
+        "mapeo_verificado": true
+      },
+      {
+        "orden": 2,
+        "nombre": "Desarrollar actividades enfocadas a prevenir la presencia de accidentes de trabajo o enfermedades laborales.",
+        "numerales": [],
+        "criterio": "Desarrollar actividades enfocadas a prevenir la presencia de accidentes de trabajo o enfermedades laborales.",
+        "modo_verificacion": null,
+        "articulo": "7",
+        "mapeo_verificado": true
+      },
+      {
+        "orden": 3,
+        "nombre": "Proteger la seguridad y salud de todas las personas que desarrollan actividades productivas en la unidad de producción agropecuaria.",
+        "numerales": [],
+        "criterio": "Proteger la seguridad y salud de todas las personas que desarrollan actividades productivas en la unidad de producción agropecuaria.",
+        "modo_verificacion": null,
+        "articulo": "7",
+        "mapeo_verificado": true
+      }
+    ],
+    "MIN_7": [
+      {
+        "orden": 1,
+        "nombre": "Asignación de persona que diseña el Sistema de Gestión de SST",
+        "numerales": [
+          "1.1.1"
+        ],
+        "criterio": "Asignar una persona que cumpla con el siguiente perfil:\nEl diseño del Sistema de Gestión de Seguridad y Salud en el Trabajo, para empresas de menos de diez (10) trabajadores en clase de riesgo I, II y III puede ser realizado por un técnico en Seguridad y Salud en el Trabajo (SST) o en alguna de sus áreas, con licencia vigente en Seguridad y Salud en el Trabajo, que acredite mínimo un (1) año de experiencia certificada por las empresas o entidades en las que laboró en el desarrollo de actividades de Seguridad y Salud en el Trabajo y que acredite la aprobación del curso de capacitación virtual de cincuenta (50) horas.\nEsta actividad también podrá ser desarrollada por tecnólogos, profesionales y profesionales con posgrado en SST, que cuenten con licencia vigente en Seguridad y Salud en el Trabajo y el referido curso de capacitación virtual de cincuenta (50) horas.",
+        "modo_verificacion": "Solicitar documento soporte de la asignación y constatar la hoja de vida con soportes, de la persona asignada.",
+        "articulo": "3",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 2,
+        "nombre": "Afiliación al Sistema de Seguridad Social Integral",
+        "numerales": [
+          "1.1.4"
+        ],
+        "criterio": "Afiliación a los Sistemas de Seguridad Social en Salud, Pensión y Riesgos Laborales de acuerdo con la normatividad vigente.",
+        "modo_verificacion": "Solicitar documento soporte de afiliación y del pago correspondiente.",
+        "articulo": "3",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 3,
+        "nombre": "Capacitación en SST",
+        "numerales": [
+          "1.2.1"
+        ],
+        "criterio": "Elaborar y ejecutar programas o actividades de capacitación en promoción y prevención, que incluya como mínimo lo referente a los peligros/riesgos prioritarios y las medidas de prevención y control.",
+        "modo_verificacion": "Solicitar documento soporte de las acciones de capacitación realizadas /planillas, donde se evidencie la firma de los trabajadores.",
+        "articulo": "3",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 4,
+        "nombre": "Plan Anual de Trabajo",
+        "numerales": [
+          "2.4.1"
+        ],
+        "criterio": "Elaborar el Plan Anual de Trabajo del Sistema de Gestión de SST, firmado por el empleador o contratante, en el que se identifiquen como mínimo: objetivos, metas, responsabilidades, recursos y cronograma anual.",
+        "modo_verificacion": "Solicitar documento que contenga Plan Anual de Trabajo.",
+        "articulo": "3",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 5,
+        "nombre": "Evaluaciones médicas ocupacionales",
+        "numerales": [
+          "3.1.4"
+        ],
+        "criterio": "Realizar las evaluaciones médicas ocupacionales de acuerdo con la normatividad y los peligros / riesgos a los cuales se encuentre expuesto el trabajador.",
+        "modo_verificacion": "Conceptos emitidos por el médico evaluador en el cual informe recomendaciones y restricciones laborales.",
+        "articulo": "3",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 6,
+        "nombre": "Identificación de peligros; evaluación y valoración de riesgos",
+        "numerales": [
+          "4.1.2"
+        ],
+        "criterio": "Realizar la identificación de peligros y la evaluación y valoración de los riesgos con el acompañamiento de la ARL.",
+        "modo_verificacion": "Solicitar documento con la identificación de peligros; evaluación y valoración de los riesgos.\nConstancia de acompañamiento de la ARL - acta de visita ARL.",
+        "articulo": "3",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 7,
+        "nombre": "Medidas de prevención y control frente a peligros/riesgos identificados",
+        "numerales": [
+          "4.2.1"
+        ],
+        "criterio": "Ejecutar las actividades de prevención y control de peligros y/o riesgos, con base en el resultado de la identificación de peligros, la evaluación y valoración de los riesgos.",
+        "modo_verificacion": "Solicitar documento soporte con acciones ejecutadas",
+        "articulo": "3",
+        "mapeo_verificado": false
+      }
+    ],
+    "MED_21": [
+      {
+        "orden": 1,
+        "nombre": "Asignación de una persona que diseñe el Sistema de Gestión de SST",
+        "numerales": [
+          "1.1.1",
+          "1.2.3"
+        ],
+        "criterio": "Asignar una persona que cumpla con el siguiente perfil:\nEl diseño del Sistema de Gestión de SST puede ser realizado por un tecnólogo en Seguridad y Salud en el Trabajo o en alguna de sus áreas, con licencia vigente en SST, que acredite mínimo dos (2) años de experiencia certificada por las empresas o entidades en las que laboró en el desarrollo de actividades de seguridad y salud en el trabajo y que certifique la aprobación del curso de capacitación virtual de cincuenta (50) horas.\nEsta actividad también podrá ser desarrollada por profesionales en SST y profesionales con posgrado en SST, que cuenten con licencia vigente en SST y el referido curso de capacitación virtual de cincuenta (50) horas.",
+        "modo_verificacion": "Solicitar documento soporte de la asignación y constatar la hoja de vida con soportes, de la persona asignada.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 2,
+        "nombre": "Asignación de recursos para el Sistema de Gestión de SST.",
+        "numerales": [
+          "1.1.3"
+        ],
+        "criterio": "Asignar recursos económicos para desarrollar acciones de promoción de la salud y prevención de riesgos laborales.",
+        "modo_verificacion": "Solicitar documento soporte de asignación de recursos.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 3,
+        "nombre": "Afiliación al Sistema de Seguridad Social Integral",
+        "numerales": [
+          "1.1.4"
+        ],
+        "criterio": "Afiliación a los Sistemas de Seguridad Social en Salud, Pensión y Riesgos Laborales de acuerdo con la normatividad vigente. Pago de pensión de trabajadores de alto riesgo.",
+        "modo_verificacion": "Solicitar documento soporte de afiliación y del pago correspondiente.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 4,
+        "nombre": "Conformación y funcionamiento del COPASST",
+        "numerales": [
+          "1.1.6",
+          "1.1.7"
+        ],
+        "criterio": "Conformar, capacitar y verificar el cumplimiento de las responsabilidades del COPASST.",
+        "modo_verificacion": "Solicitar actas de conformación, actas de reuniones e informes.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 5,
+        "nombre": "Conformación y funcionamiento del Comité de Convivencia Laboral",
+        "numerales": [
+          "1.1.8"
+        ],
+        "criterio": "Conformar, capacitar y verificar el cumplimiento de las responsabilidades del Comité de Convivencia Laboral.",
+        "modo_verificacion": "Solicitar actas de reuniones e informes del Comité de Convivencia Laboral.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 6,
+        "nombre": "Programa de capacitación",
+        "numerales": [
+          "1.2.1"
+        ],
+        "criterio": "Elaborar y ejecutar el programa de capacitación en promoción y prevención, que incluye lo referente a los peligros/riesgos prioritarios y las medidas de prevención y control, extensivo a todos los niveles de la organización.",
+        "modo_verificacion": "Solicitar el programa de capacitación y los soportes de la ejecución del mismo / planillas donde se evidencie la firma de los trabajadores participantes.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 7,
+        "nombre": "Política de Seguridad y Salud en el Trabajo",
+        "numerales": [
+          "2.1.1"
+        ],
+        "criterio": "Elaborar política de SST escrita, firmada, fechada y comunicada al COPASST y a todos los trabajadores.",
+        "modo_verificacion": "Solicitar la política escrita y soportes de su divulgación.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 8,
+        "nombre": "Plan Anual de Trabajo",
+        "numerales": [
+          "2.4.1"
+        ],
+        "criterio": "Elaborar el Plan Anual de Trabajo firmado por el empleador o contratante, en el que se identifiquen como mínimo: objetivos, metas, responsabilidades, recursos y cronograma anual.",
+        "modo_verificacion": "Solicitar documento que contenga plan anual de trabajo.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 9,
+        "nombre": "Archivo y retención documental del Sistema de Gestión de SST",
+        "numerales": [
+          "2.5.1"
+        ],
+        "criterio": "Mantener el archivo de los siguientes documentos, por el término establecido en la normatividad vigente:\nPolítica en Seguridad y Salud en el Trabajo.\nIdentificación de peligros en todos los cargos/oficios y áreas.\nConceptos exámenes médicos ocupacionales.\nPlan de emergencias.\nEvidencias de actividades del COPASST.\nAfiliación a Seguridad Social.\nComunicaciones de trabajadores, ARL o autoridades en materia de Riesgos Laborales.",
+        "modo_verificacion": "Revisar el archivo con los documentos soporte de acuerdo con la normatividad vigente.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 10,
+        "nombre": "Descripción sociodemográfica y diagnóstico de condiciones de salud",
+        "numerales": [
+          "3.1.1"
+        ],
+        "criterio": "Identificar las características de la población trabajadora (edad, sexo, cargos, antigüedad, nivel escolaridad, etc.) y el diagnóstico de condiciones de salud que incluya la caracterización de sus condiciones de salud, recopilar, analizar e interpretar los datos del estado de salud de los trabajadores.",
+        "modo_verificacion": "Solicitar documento que contenga el perfil sociodemográfico y el diagnóstico de condiciones de salud.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 11,
+        "nombre": "Actividades de medicina del trabajo y de prevención y promoción de la salud",
+        "numerales": [
+          "3.1.2"
+        ],
+        "criterio": "Desarrollar las actividades de medicina del trabajo, prevención y promoción de la salud de conformidad con las prioridades identificadas en el diagnóstico de condiciones de salud y con los peligros/riesgos prioritarios.",
+        "modo_verificacion": "Solicitar las evidencias que constaten la definición y ejecución de las actividades de medicina del trabajo, promoción y prevención de conformidad con las prioridades que se identificaron con base en los resultados del diagnóstico de las condiciones de salud.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 12,
+        "nombre": "Evaluaciones médicas ocupacionales",
+        "numerales": [
+          "3.1.4"
+        ],
+        "criterio": "Realizar las evaluaciones médicas ocupacionales de acuerdo con la normatividad y los peligros / riesgos a los cuales se encuentre expuesto el trabajador.",
+        "modo_verificacion": "Conceptos emitidos por el médico evaluador en el cual informe recomendaciones y restricciones laborales.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 13,
+        "nombre": "Restricciones y recomendaciones médicas laborales",
+        "numerales": [
+          "3.1.6"
+        ],
+        "criterio": "Cumplir las recomendaciones y restricciones que realizan las Entidades Promotoras de Salud y/o Administradoras de Riesgos Laborales, emitidas por los médicos tratantes, de acuerdo con la normatividad vigente.\nEntregar a quienes califican en primera oportunidad y/o a las Juntas de Calificación de Invalidez los documentos que son responsabilidad del empleador conforme a las normas, para la calificación de origen y pérdida de la capacidad laboral.",
+        "modo_verificacion": "Solicitar las recomendaciones emitidas por la EPS, o ARL y el soporte de la actuación de la empresa frente a las mismas.\nSolicitar soporte de recibido por parte de quienes califican en primera oportunidad y/o a las Juntas de Calificación de Invalidez, de los documentos que corresponde remitir al empleador para efectos del proceso de calificación de origen y pérdida de capacidad laboral.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 14,
+        "nombre": "Reporte de accidentes de trabajo y enfermedades laborales",
+        "numerales": [
+          "3.2.1"
+        ],
+        "criterio": "Reportar a la Administradora de Riesgos Laborales (ARL) y a la Entidad Promotora de Salud (EPS) todos los accidentes y las enfermedades laborales diagnosticadas.\nReportar a la Dirección Territorial del Ministerio del Trabajo que corresponda los accidentes graves y mortales, así como como las enfermedades diagnosticadas como laborales.\nEstos reportes se realizan dentro de los dos (2) días hábiles siguientes al evento o recibo del diagnóstico de la enfermedad.",
+        "modo_verificacion": "Indagar con los trabajadores si se han presentado accidentes de trabajo o enfermedades laborales (en caso afirmativo, tomar los datos de nombre y número de cedula y solicitar el reporte). Igualmente, realizar un muestreo del reporte de registro de accidente de trabajo (FURAT) y el registro de enfermedades laborales (FUREL) respectivo, verificando si el reporte a las Administradoras de Riesgos Laborales, Empresas Promotoras de Salud y Dirección Territorial se hizo dentro de los dos (2) días hábiles siguientes al evento o recibo del diagnóstico de la enfermedad.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 15,
+        "nombre": "Investigación de incidentes, accidentes de trabajo y enfermedades cuando sean diagnosticadas como laborales",
+        "numerales": [
+          "3.2.2"
+        ],
+        "criterio": "Investigar los incidentes y todos los accidentes de trabajo y las enfermedades cuando sean diagnosticadas como laborales, con la participación del COPASST, previniendo la posibilidad de que se presenten nuevos casos.",
+        "modo_verificacion": "Verificar por medio de un muestreo si se investigan los incidentes, accidentes de trabajo y las enfermedades laborales con la participación del COPASST.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 16,
+        "nombre": "Identificación de peligros y evaluación y valoración de riesgos",
+        "numerales": [
+          "4.1.2"
+        ],
+        "criterio": "Identificar peligros, evaluar y valorar los riesgos y establecer controles que prevengan efectos adversos en la salud de los trabajadores.",
+        "modo_verificacion": "Solicitar documento donde se encuentre la identificación de peligros y valoración de riesgos.\nSolicitar evidencias de las medidas de control implementadas.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 17,
+        "nombre": "Mantenimiento periódico de instalaciones, equipos, máquinas y herramientas",
+        "numerales": [
+          "4.2.5"
+        ],
+        "criterio": "Realizar los mantenimientos periódicos de instalaciones, equipo, máquinas y herramientas, de acuerdo con los manuales y/o las fichas técnicas de los mismos.",
+        "modo_verificacion": "Solicitar documento con los reportes del mantenimiento de instalaciones, equipos, máquinas y herramientas realizado.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 18,
+        "nombre": "Entrega de los elementos de protección personal (EPP) y capacitación en uso adecuado",
+        "numerales": [
+          "4.2.6"
+        ],
+        "criterio": "Realizar la entrega de los elementos de protección personal, acorde con el oficio u ocupación que desempeñan los trabajadores y capacitar sobre el uso adecuado de los mismos.",
+        "modo_verificacion": "Solicitar la evidencia de la entrega de elementos de protección personal y de la ejecución de las correspondientes capacitaciones.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 19,
+        "nombre": "Plan de prevención, preparación y respuesta ante emergencias",
+        "numerales": [
+          "5.1.1"
+        ],
+        "criterio": "Elaborar el plan de prevención, preparación y respuesta ante emergencias.",
+        "modo_verificacion": "Solicitar el plan de prevención, preparación y respuesta ante emergencias y constatar evidencias de su divulgación.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 20,
+        "nombre": "Brigada de prevención, preparación y respuesta ante emergencias",
+        "numerales": [
+          "5.1.2"
+        ],
+        "criterio": "Conformar, capacitar y dotar la brigada de prevención, preparación y respuesta ante emergencias.",
+        "modo_verificacion": "Solicitar el documento de conformación de la brigada de prevención, preparación y respuesta ante emergencias y verificar los soportes de la capacitación y entrega de la dotación.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      },
+      {
+        "orden": 21,
+        "nombre": "Revisión por la alta dirección",
+        "numerales": [
+          "6.1.3"
+        ],
+        "criterio": "Revisar como mínimo una (1) vez al año, por parte de la alta dirección los resultados del Sistema de Gestión de SST.",
+        "modo_verificacion": "Solicitar a la empresa los soportes que den cuenta de la revisión por la alta dirección de los resultados del Sistema de Gestión de SST.",
+        "articulo": "9",
+        "mapeo_verificado": false
+      }
+    ]
+  },
+  "cargue_mintrabajo": [
+    {
+      "vigencia_anio": 2025,
+      "fecha_limite": "2026-07-31",
+      "norma_codigo": "CIR-027-2026",
+      "url": "https://sgrl.mintrabajo.gov.co/"
+    }
+  ],
+  "_nota_cargue": "La fecha de cargue la fija el Ministerio por circular cada anio: agregar una fila por vigencia cuando se publique.",
+  "_nota_no_aplica": "Art. 27: el item que no aplica (fuera del conjunto de 7/21 o justificado) se califica con el puntaje maximo del item."
+}

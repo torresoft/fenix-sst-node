@@ -1,0 +1,49 @@
+<%- include('../partials/cabecera') %>
+<%
+  var nombreTipo = {}; tipos.forEach(function (t) { nombreTipo[t.codigo] = t; });
+%>
+<form method="post" action="/peligros/<%= d.m.id %>/sugerir">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="barra-acciones">
+    <div class="small text-muted">Asocie cada cargo a un cargo tipo y el sistema propone sus peligros t&iacute;picos con la exposici&oacute;n habitual.
+      Quedan marcados como <strong>sugeridos</strong>: la matriz no se publica hasta revisar cada uno.</div>
+    <div>
+      <a href="/peligros/<%= d.m.id %>" class="btn btn-sm btn-default">Cancelar</a>
+      <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-magic mr-1"></i>Agregar peligros sugeridos</button>
+    </div>
+  </div>
+  <div class="card card-outline card-primary">
+    <div class="card-body p-0">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead><tr><th class="ancho-3"></th><th>Cargo</th><th class="text-center">Trabajadores</th><th>Cargo tipo *</th><th>Proceso en la matriz</th></tr></thead>
+        <tbody>
+          <% cargos.forEach(function (c) { var t = nombreTipo[c.cargo_tipo_codigo]; %>
+          <tr>
+            <td class="text-center"><input type="checkbox" name="cargos" value="<%= c.id %>"<%= t ? ' checked' : '' %> aria-label="Incluir <%= c.nombre %>"></td>
+            <td><strong><%= c.nombre %></strong><% if (t) { %><br><small class="text-muted"><%= t.peligros.length %> peligros t&iacute;picos</small><% } %></td>
+            <td class="text-center"><%= c.expuestos %></td>
+            <td>
+              <select name="tipo_<%= c.id %>" class="form-control form-control-sm">
+                <option value="">Sin asignar</option>
+                <% tipos.forEach(function (x) { %><option value="<%= x.codigo %>"<%= c.cargo_tipo_codigo === x.codigo ? ' selected' : '' %>><%= x.nombre %></option><% }) %>
+              </select>
+            </td>
+            <td><input type="text" name="proceso_<%= c.id %>" class="form-control form-control-sm" value="<%= c.nombre %>" maxlength="150"></td>
+          </tr>
+          <% }) %>
+          <% if (!cargos.length) { %><tr><td colspan="5" class="text-muted">No hay cargos activos. Cr&eacute;elos en <a href="/personas/cargos">Cargos</a>.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</form>
+
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title">Cargos tipo del cat&aacute;logo</h3></div>
+  <div class="card-body columnas-2 small">
+    <% tipos.forEach(function (t) { %>
+    <p class="mb-2"><strong><%= t.nombre %></strong><br><span class="text-muted"><%= t.descripcion %></span></p>
+    <% }) %>
+  </div>
+</div>
+<%- include('../partials/pie') %>

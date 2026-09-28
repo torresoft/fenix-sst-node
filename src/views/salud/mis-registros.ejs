@@ -1,0 +1,100 @@
+<%- include('../partials/cabecera') %>
+<%
+  var textoConcepto = { apto: 'Apto', apto_con_restricciones: 'Apto con restricciones', no_apto: 'No apto', aplazado: 'Aplazado' };
+  var textoEstado = { vigente: ['success', 'Autorizada'], desactualizado: ['warning', 'Texto actualizado: decida de nuevo'], revocado: ['secondary', 'Revocada'], negado: ['secondary', 'No autorizada'], sin_registro: ['light', 'Pendiente'] };
+  var tabs = [['salud', 'Salud'], ['formacion', 'Formaci&oacute;n'], ['epp', 'EPP'], ['documentos', 'Documentos'], ['autorizaciones', 'Autorizaciones'], ['denuncia', 'Denunciar acoso']];
+%>
+<% if (!m) { %>
+<div class="card card-outline card-secondary"><div class="card-body text-muted">Su usuario no est&aacute; vinculado a una persona de esta empresa. P&iacute;dale al responsable del SG-SST que lo vincule desde su ficha.</div></div>
+<% } else { %>
+<ul class="nav nav-tabs mb-3">
+  <% tabs.forEach(function (t) { %><li class="nav-item"><a class="nav-link<%= tab === t[0] ? ' active' : '' %>" href="?tab=<%= t[0] %>"><%- t[1] %></a></li><% }) %>
+</ul>
+
+<% if (tab === 'salud') { %>
+<p class="text-muted small">Derecho del trabajador a consultar los registros relativos a su salud (par. 3, art. 2.2.4.6.12 del D. 1072). Su historia cl&iacute;nica la custodia la IPS, no la empresa.</p>
+<div class="card card-outline card-primary"><div class="card-body p-0"><table class="table table-sm mb-0">
+  <thead><tr><th>Fecha</th><th>Examen</th><th>Concepto</th><th>Pr&oacute;ximo</th></tr></thead><tbody>
+  <% m.evaluaciones.forEach(function (e) { %><tr><td class="text-nowrap"><%= e.fecha_examen %></td><td><%= e.tipo %> &middot; <%= e.ips %></td><td><strong><%= textoConcepto[e.concepto] %></strong><% if (e.restricciones) { %><br><small><%= e.restricciones %></small><% } %></td><td class="small"><%= e.proximo_examen || '' %></td></tr><% }) %>
+  <% if (!m.evaluaciones.length) { %><tr><td colspan="4" class="text-muted">Sin conceptos registrados.</td></tr><% } %>
+</tbody></table></div></div>
+<% } %>
+
+<% if (tab === 'formacion') { %>
+<div class="card card-outline card-primary"><div class="card-body p-0"><table class="table table-sm mb-0">
+  <thead><tr><th>Competencia</th><th>Obtenida</th><th>Vence</th></tr></thead><tbody>
+  <% m.competencias.forEach(function (c) { %><tr><td><%= c.tipo %></td><td><%= c.fecha_obtencion %></td><td><%= c.fecha_vence || 'Sin vencimiento' %></td></tr><% }) %>
+  <% if (!m.competencias.length) { %><tr><td colspan="3" class="text-muted">Sin competencias registradas.</td></tr><% } %>
+</tbody></table></div></div>
+<% } %>
+
+<% if (tab === 'epp') { %>
+<p class="text-muted small">Elementos de protecci&oacute;n personal que la empresa le ha entregado. Firme el recibo de los pendientes con su contrase&ntilde;a.</p>
+<div class="card card-outline card-primary"><div class="card-body p-0"><table class="table table-sm mb-0">
+  <thead><tr><th>Fecha</th><th>Elemento</th><th class="text-right">Cant.</th><th>Reposici&oacute;n</th><th>Recibo</th></tr></thead><tbody>
+  <% epp.forEach(function (x) { %><tr>
+    <td class="text-nowrap"><%= x.fecha %></td><td><%= x.elemento %><% if (x.especificacion) { %><br><small class="text-muted"><%= x.especificacion %></small><% } %></td><td class="text-right"><%= x.cantidad %></td><td><%= x.fecha_reposicion || '' %></td>
+    <td><% if (x.estado === 'pendiente_firma') { %>
+      <form method="post" action="/mis-registros/epp/<%= x.id %>/firmar" class="form-inline">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="password" name="clave" class="form-control form-control-sm mr-1" placeholder="Contrase&ntilde;a" autocomplete="current-password" required>
+        <% if (acuerdoPendiente) { %><label class="small mr-1"><input type="checkbox" name="acepta_acuerdo" value="1" required class="mr-1">Acepto el acuerdo de firma electr&oacute;nica</label><% } %>
+        <button class="btn btn-sm btn-success"><i class="fas fa-signature mr-1"></i>Firmar recibido</button>
+      </form>
+    <% } else { %><span class="badge badge-success">Firmado</span><% } %></td>
+  </tr><% }) %>
+  <% if (!epp.length) { %><tr><td colspan="5" class="text-muted">Sin entregas registradas.</td></tr><% } %>
+</tbody></table></div></div>
+<% } %>
+
+<% if (tab === 'documentos') { %>
+<div class="card card-outline card-primary"><div class="card-body p-0"><table class="table table-sm mb-0">
+  <thead><tr><th>Tipo</th><th>Documento</th><th>Fecha</th></tr></thead><tbody>
+  <% m.documentos.forEach(function (d) { %><tr><td><%= d.tipo %></td><td><%= d.codigo %> v<%= d.version %></td><td><%= d.fecha_documento %></td></tr><% }) %>
+  <% if (!m.documentos.length) { %><tr><td colspan="3" class="text-muted">Sin documentos.</td></tr><% } %>
+</tbody></table></div></div>
+<% } %>
+
+<% if (tab === 'autorizaciones') { %>
+<p class="text-muted small">Tratamiento de sus datos personales (Ley 1581 de 2012). Autorizar datos sensibles es facultativo: puede negarse o revocar cuando quiera.</p>
+<% autorizaciones.forEach(function (a) { %>
+<div class="card card-outline card-<%= a.estado === 'vigente' ? 'success' : 'secondary' %>">
+  <div class="card-header"><h3 class="card-title"><%= a.nombre %><% if (a.es_dato_sensible) { %> <span class="badge badge-danger">Dato sensible</span><% } %></h3>
+    <div class="card-tools"><span class="badge badge-<%= textoEstado[a.estado][0] %>"><%= textoEstado[a.estado][1] %></span></div></div>
+  <div class="card-body">
+    <p class="small mb-2 pre-line"><%= a.texto %></p>
+    <p class="small text-muted mb-2">Versi&oacute;n <%= a.version %></p>
+    <div class="barra-acciones mb-0">
+      <span></span>
+      <div>
+        <% if (a.estado !== 'vigente') { %>
+        <form method="post" action="/mis-registros/autorizacion" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="finalidad" value="<%= a.codigo %>"><input type="hidden" name="otorgado" value="1"><button class="btn btn-sm btn-success"><i class="fas fa-check mr-1"></i>Autorizo</button></form>
+        <form method="post" action="/mis-registros/autorizacion" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="finalidad" value="<%= a.codigo %>"><input type="hidden" name="otorgado" value="0"><button class="btn btn-sm btn-default">No autorizo</button></form>
+        <% } else { %>
+        <form method="post" action="/mis-registros/autorizacion/<%= a.id %>/revocar" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-sm btn-outline-danger"><i class="fas fa-undo mr-1"></i>Revocar</button></form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+<% }) %>
+<% } %>
+
+<% if (tab === 'denuncia') { %>
+<div class="card card-outline card-danger">
+  <div class="card-body">
+    <p class="small">Su queja llega con reserva al Comit&eacute; de Convivencia Laboral: solo sus miembros ven los hechos y las personas implicadas. Si necesita medidas de protecci&oacute;n, m&aacute;rquelo: la empresa debe adoptarlas dentro de los 5 d&iacute;as h&aacute;biles siguientes (D. 1040 de 2026).</p>
+    <form method="post" action="/mis-registros/queja">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Tipo de conducta *</label><select name="tipo_conducta" class="form-control" required>
+        <option value="acoso_laboral">Acoso laboral</option><option value="acoso_sexual">Acoso sexual</option><option value="violencia">Violencia</option><option value="discriminacion">Discriminaci&oacute;n</option><option value="otra">Otra</option></select></div>
+      <div class="form-group"><label>Personas implicadas *</label><input type="text" name="implicados" class="form-control" maxlength="500" required></div>
+      <div class="form-group"><label>Hechos *</label><textarea name="hechos" class="form-control" rows="6" minlength="20" required placeholder="Qu&eacute; pas&oacute;, cu&aacute;ndo, d&oacute;nde y qui&eacute;n lo presenci&oacute;"></textarea></div>
+      <div class="form-check mb-3"><input class="form-check-input" type="checkbox" name="solicita_proteccion" value="1" id="proteccion"><label class="form-check-label" for="proteccion">Solicito medidas de protecci&oacute;n</label></div>
+      <button type="submit" class="btn btn-danger"><i class="fas fa-paper-plane mr-1"></i>Radicar queja</button>
+    </form>
+  </div>
+</div>
+<% } %>
+<% } %>
+<%- include('../partials/pie') %>

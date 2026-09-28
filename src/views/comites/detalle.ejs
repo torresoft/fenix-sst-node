@@ -1,0 +1,252 @@
+<%- include('../partials/cabecera') %>
+<%
+  var c = d.c, vig = c.estado === 'vigente';
+  var colorObl = { en_termino: 'success', por_vencer: 'warning', vencido: 'danger' };
+  var colorSesion = { realizada: 'warning', con_acta: 'success', anulada: 'dark' };
+  var textoSesion = { realizada: 'Sin acta', con_acta: 'Con acta', anulada: 'Anulada' };
+%>
+<div class="mb-3">
+  <a href="/comites" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Comit&eacute;s</a>
+  <% if (sesiones && vig) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-sesion"><i class="fas fa-plus mr-1"></i>Registrar sesi&oacute;n</button><% } %>
+  <% if (d.eventos.length && vig) { %><span class="badge badge-danger ml-2 p-2"><i class="fas fa-exclamation-triangle mr-1"></i><%= d.eventos.length %> accidente(s) grave(s) o mortal(es) esperan reuni&oacute;n extraordinaria</span><% } %>
+</div>
+
+<div class="card card-outline card-<%= vig ? 'primary' : 'secondary' %>">
+      <div class="card-body small">
+        <p class="mb-1"><strong>Periodo:</strong> <%= c.periodo_inicio %> a <%= c.periodo_fin %> <span class="badge badge-light"><%= c.estado %></span></p>
+        <p class="mb-1"><strong>Norma:</strong> <%= d.t.norma_codigo %> &middot; reuni&oacute;n cada <%= d.t.periodicidad_meses %> mes(es)</p>
+        <p class="mb-1"><strong>Conformaci&oacute;n requerida:</strong>
+          <%= d.regla ? (d.regla.total != null ? d.regla.total + ' principal(es)' : d.regla.por_parte + ' principal(es) y ' + d.regla.por_parte + ' suplente(s) por cada parte') : 'regla no cargada' %>
+          <small class="text-muted">(base: <%= c.trabajadores_base %> trabajadores)</small></p>
+        <p class="mb-2"><strong>Acta de conformaci&oacute;n:</strong> <% if (d.acta) { %><a href="/documentos/<%= d.acta.id %>"><%= d.acta.codigo %> v<%= d.acta.version %></a><% } else { %><span class="text-warning">sin asociar</span><% } %></p>
+        <% if (d.conformacion.aviso) { %><div class="alert alert-light py-1 mb-1"><%= d.conformacion.aviso %></div><% } %>
+        <% d.conformacion.faltas.forEach(function (f) { %><div class="text-warning"><i class="fas fa-user-plus mr-1"></i><%= f %></div><% }) %>
+        <% if (d.sinReunion.length) { %><div class="text-danger mt-1"><i class="fas fa-calendar-times mr-1"></i>Meses sin reuni&oacute;n: <%= d.sinReunion.join(', ') %></div><% } %>
+        <% if (gestionar && vig && !d.acta) { %>
+        <form method="post" action="/comites/<%= c.id %>/acta" class="form-row align-items-end mt-2">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="col-8"><select name="documento_id" class="form-control form-control-sm" required><option value="">Acta (<%= d.t.documento_tipo %>)</option><% d.actas.forEach(function (a) { %><option value="<%= a.id %>"><%= a.codigo %> v<%= a.version %></option><% }) %></select></div>
+          <div class="col-4"><button type="submit" class="btn btn-sm btn-default btn-block">Asociar</button></div>
+        </form>
+        <% } %>
+      </div>
+    </div>
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-miembros" role="tab">Miembros</a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-sesiones" role="tab">Sesiones <span class="badge badge-light"><%= d.sesiones.length %></span></a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-compromisos" role="tab">Compromisos</a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-plazos" role="tab">Plazos abiertos <% if (d.obligaciones.length) { %><span class="badge badge-danger"><%= d.obligaciones.length %></span><% } %></a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-periodos" role="tab">Periodos</a></li>
+</ul>
+<div class="tab-content pestanas">
+<div class="tab-pane fade show active" id="tab-miembros" role="tabpanel">
+<div class="card card-outline card-secondary">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Persona</th><th>Representa</th><th>Calidad</th><th>Cargo</th><th>Desde</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+          <tbody>
+            <% d.miembros.forEach(function (m) { %>
+            <tr class="<%= m.estado === 'retirado' ? 'text-muted' : '' %>">
+              <td><%= m.nombres %> <%= m.apellidos %></td>
+              <td><%= m.representacion === 'empleador' ? 'Empleador' : 'Trabajadores' %></td>
+              <td><%= m.calidad %></td>
+              <td><%= m.cargo_comite %></td>
+              <td class="text-nowrap"><%= m.fecha_ingreso %><% if (m.fecha_retiro) { %><br><small>Retiro <%= m.fecha_retiro %>: <%= m.motivo_retiro %></small><% } %></td>
+              <td class="text-center"><% if (gestionar && vig && m.estado === 'activo') { %><button type="button" class="btn btn-xs btn-default js-retirar" data-toggle="tooltip" title="Retirar" data-id="<%= m.id %>" data-nombre="<%= m.nombres %> <%= m.apellidos %>"><i class="fas fa-user-minus"></i></button><% } %></td>
+            </tr>
+            <% }) %>
+            <% if (!d.miembros.length) { %><tr><td colspan="6" class="text-muted">Sin miembros.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+      <% if (gestionar && vig) { %>
+      <div class="card-footer">
+        <form method="post" action="/comites/<%= c.id %>/miembros" class="form-row align-items-end">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group col-md-4 mb-1"><label class="small">Persona *</label><select name="persona_id" class="form-control form-control-sm" required><option value="">Seleccione</option><% d.personas.forEach(function (p) { %><option value="<%= p.id %>"><%= p.apellidos %> <%= p.nombres %></option><% }) %></select></div>
+          <div class="form-group col-md-2 mb-1"><label class="small">Representa *</label><select name="representacion" class="form-control form-control-sm"><option value="trabajadores">Trabajadores</option><option value="empleador">Empleador</option></select></div>
+          <div class="form-group col-md-2 mb-1"><label class="small">Calidad *</label><select name="calidad" class="form-control form-control-sm"><option value="principal">Principal</option><option value="suplente">Suplente</option></select></div>
+          <div class="form-group col-md-2 mb-1"><label class="small">Cargo</label><select name="cargo_comite" class="form-control form-control-sm"><option value="miembro">Miembro</option><option value="presidente">Presidente</option><option value="secretario">Secretario</option></select></div>
+          <div class="form-group col-md-2 mb-1"><button type="submit" class="btn btn-sm btn-default btn-block"><i class="fas fa-user-plus"></i></button></div>
+        </form>
+      </div>
+      <% } %>
+    </div>
+</div>
+<div class="tab-pane fade" id="tab-sesiones" role="tabpanel">
+<div class="card card-outline card-primary">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Fecha</th><th>Tipo</th><th>Asistencia</th><th>Temas</th><th>Acta</th><th class="text-center">Acciones</th></tr></thead>
+          <tbody>
+            <% d.sesiones.forEach(function (s) { %>
+            <tr class="<%= s.estado === 'anulada' ? 'text-muted' : '' %>">
+              <td class="text-nowrap"><%= s.fecha %></td>
+              <td><%= s.tipo %><% if (s.evento_codigo) { %><br><small>Por <%= s.evento_codigo %></small><% } %></td>
+              <td class="text-nowrap"><%= s.asistentes %>/<%= s.principales %><% if (s.quorum !== null) { %> <span class="badge badge-<%= Number(s.quorum) ? 'success' : 'danger' %>"><%= Number(s.quorum) ? 'quórum' : 'sin quórum' %></span><% } %></td>
+              <td><small><% if (d.reservado) { %><i class="text-muted">Reservado al comit&eacute;</i><% } else { %><%= s.temas %><% } %></small></td>
+              <td><span class="badge badge-<%= colorSesion[s.estado] %>"><%= textoSesion[s.estado] %></span><% if (s.acta_codigo) { %><br><a href="/documentos/<%= s.acta_documento_id %>"><small><%= s.acta_codigo %> v<%= s.acta_version %></small></a><% } %></td>
+              <td class="text-center text-nowrap">
+                <% if (sesiones && s.estado === 'realizada') { %>
+                <button type="button" class="btn btn-xs btn-success js-acta" data-toggle="tooltip" title="Asociar acta" data-id="<%= s.id %>" data-fecha="<%= s.fecha %>"><i class="fas fa-file-signature"></i></button>
+                <% } %>
+                <% if (sesiones && vig && s.estado !== 'anulada') { %>
+                <button type="button" class="btn btn-xs btn-default js-compromiso" data-toggle="tooltip" title="Agregar compromiso" data-id="<%= s.id %>" data-fecha="<%= s.fecha %>"><i class="fas fa-tasks"></i></button>
+                <% } %>
+                <% if (gestionar && s.estado !== 'anulada') { %>
+                <button type="button" class="btn btn-xs btn-outline-danger js-anular-sesion" data-toggle="tooltip" title="Anular" data-id="<%= s.id %>"><i class="fas fa-ban"></i></button>
+                <% } %>
+              </td>
+            </tr>
+            <% }) %>
+            <% if (!d.sesiones.length) { %><tr><td colspan="6" class="text-muted">Sin sesiones registradas.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+<div class="tab-pane fade" id="tab-compromisos" role="tabpanel">
+<div class="card card-outline card-info">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <tbody>
+            <% d.compromisos.forEach(function (x) { var vencido = x.estado === 'abierto' && x.fecha_limite < hoy; %>
+            <tr>
+              <td><% if (d.reservado) { %><i class="text-muted">Reservado al comit&eacute;</i><% } else { %><%= x.descripcion %><% } %><% if (x.observacion) { %><br><small><i class="fas fa-comment-alt mr-1"></i><%= x.observacion %></small><% } %></td>
+              <td><%= x.responsable %></td>
+              <td class="text-nowrap<%= vencido ? ' text-danger font-weight-bold' : '' %>"><%= x.fecha_limite %></td>
+              <td><span class="badge badge-<%= x.estado === 'cumplido' ? 'success' : (x.estado === 'anulado' ? 'dark' : (vencido ? 'danger' : 'info')) %>"><%= vencido ? 'vencido' : x.estado %></span></td>
+              <td class="text-center"><% if (sesiones && x.estado === 'abierto') { %><button type="button" class="btn btn-xs btn-success js-cerrar-compromiso" data-toggle="tooltip" title="Cerrar" data-id="<%= x.id %>" data-descripcion="<%= x.descripcion %>"><i class="fas fa-check"></i></button><% } %></td>
+            </tr>
+            <% }) %>
+            <% if (!d.compromisos.length) { %><tr><td class="text-muted">Sin compromisos.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+<div class="tab-pane fade" id="tab-plazos" role="tabpanel">
+<div class="card card-outline card-danger">
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          <% d.obligaciones.forEach(function (o) { %><tr><td><%= o.descripcion %></td><td class="text-nowrap"><%= o.fecha_limite %><br><span class="badge badge-<%= colorObl[o.estado] %>"><%= o.estado %></span></td></tr><% }) %>
+          <% if (!d.obligaciones.length) { %><tr><td class="text-muted">Sin plazos abiertos.</td></tr><% } %>
+        </tbody></table>
+      </div>
+    </div>
+</div>
+<div class="tab-pane fade" id="tab-periodos" role="tabpanel">
+<div class="card card-outline card-secondary">
+      <div class="card-header"><h3 class="card-title">Periodos</h3></div>
+      <div class="card-body p-0"><table class="table table-sm mb-0"><tbody>
+        <% d.historial.forEach(function (h) { %><tr class="<%= h.id === c.id ? 'table-active' : '' %>"><td><a href="/comites/<%= h.id %>"><%= h.periodo_inicio %> a <%= h.periodo_fin %></a></td><td><%= h.estado %></td></tr><% }) %>
+      </tbody></table></div>
+    </div>
+</div>
+</div>
+
+<div class="modal fade" id="modal-sesion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <form method="post" action="/comites/<%= c.id %>/sesiones" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Registrar sesi&oacute;n realizada</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-row">
+          <div class="form-group col-md-4"><label>Tipo *</label><select name="tipo" class="form-control js-tipo-sesion"><option value="ordinaria">Ordinaria</option><option value="extraordinaria">Extraordinaria</option></select></div>
+          <div class="form-group col-md-4"><label>Fecha *</label><input type="date" name="fecha" class="form-control" min="<%= c.periodo_inicio %>" max="<%= hoy %>" value="<%= hoy %>" required></div>
+          <% if (d.eventos.length) { %>
+          <div class="form-group col-md-4 js-evento d-none"><label>Por el accidente</label><select name="evento_id" class="form-control"><option value="">Ninguno</option><% d.eventos.forEach(function (e) { %><option value="<%= e.id %>"><%= e.codigo %> (<%= e.gravedad %>, vence <%= e.fecha_limite %>)</option><% }) %></select></div>
+          <% } %>
+        </div>
+        <div class="form-group"><label>Temas tratados *</label><textarea name="temas" class="form-control" rows="3" minlength="10" required></textarea></div>
+        <label>Asistentes *</label>
+        <% d.miembros.filter(function (m) { return m.estado === 'activo'; }).forEach(function (m) { %>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="as-<%= m.id %>" name="asistentes" value="<%= m.id %>">
+          <label class="custom-control-label font-weight-normal" for="as-<%= m.id %>"><%= m.nombres %> <%= m.apellidos %> <small class="text-muted">(<%= m.calidad %>, <%= m.representacion %>)</small></label>
+        </div>
+        <% }) %>
+        <p class="small text-muted mt-2 mb-0">El acta firmada se asocia despu&eacute;s (plazo de 8 d&iacute;as). La asistencia y los temas no se pueden modificar.</p>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-acta" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-acta">
+      <div class="modal-header"><h5 class="modal-title">Asociar acta de la sesi&oacute;n <span class="js-fecha"></span></h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <select name="documento_id" class="form-control" required><option value="">Acta vigente (<%= d.t.documento_tipo %>)</option><% d.actas.forEach(function (a) { %><option value="<%= a.id %>"><%= a.codigo %> v<%= a.version %> - <%= a.titulo %></option><% }) %></select>
+        <small class="text-muted">Cr&eacute;ela en <a href="/documentos/nuevo?tipo=<%= d.t.documento_tipo %>">Documentos</a> y f&iacute;rmela; debe estar vigente.</small>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success">Asociar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-compromiso" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-compromiso">
+      <div class="modal-header"><h5 class="modal-title">Compromiso</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group"><label>Compromiso *</label><textarea name="descripcion" class="form-control" rows="2" maxlength="1000" required></textarea></div>
+        <div class="form-row">
+          <div class="form-group col-7"><label>Responsable *</label><input type="text" name="responsable" class="form-control" maxlength="150" required></div>
+          <div class="form-group col-5"><label>Fecha l&iacute;mite *</label><input type="date" name="fecha_limite" class="form-control" required></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-info">Guardar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-cerrar-compromiso" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-cerrar-compromiso">
+      <div class="modal-header"><h5 class="modal-title">Cerrar compromiso</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="small js-titulo"></p>
+        <div class="form-row">
+          <div class="form-group col-6"><label>Resultado</label><select name="accion" class="form-control"><option value="cumplir">Cumplido</option><option value="anular">Anulado</option></select></div>
+          <div class="form-group col-6"><label>Fecha</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>"></div>
+        </div>
+        <div class="form-group mb-0"><label>Observaci&oacute;n *</label><textarea name="observacion" class="form-control" rows="2" minlength="5" maxlength="1000" required></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success">Guardar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-retirar" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-retirar">
+      <div class="modal-header"><h5 class="modal-title">Retirar a <span class="js-nombre"></span></h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group"><label>Fecha *</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+        <div class="form-group mb-0"><label>Motivo *</label><input type="text" name="motivo" class="form-control" maxlength="255" required placeholder="Renuncia al comit&eacute;, retiro de la empresa..."></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-warning">Retirar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-anular-sesion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-anular-sesion">
+      <div class="modal-header"><h5 class="modal-title">Anular sesi&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group mb-0"><label>Motivo *</label><textarea name="motivo" class="form-control" rows="2" minlength="10" maxlength="500" required></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger">Anular</button></div>
+    </form>
+  </div>
+</div>
+<%- include('../partials/pie') %>

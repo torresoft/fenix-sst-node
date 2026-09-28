@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.*
+!.env.example
+almacen/
+
+# Local de desarrollo
+.claude/
+prompts/
+README-KIT.md
+*.log
+npm-debug.log*
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

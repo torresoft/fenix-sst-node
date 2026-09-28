@@ -1,0 +1,133 @@
+<%- include('../partials/cabecera') %>
+<%
+  var textoEstado = { sin_entrega: ['danger', 'Sin entrega'], pendiente_firma: ['info', 'Pendiente de firma'], reponer: ['danger', 'Reponer'], por_reponer: ['warning', 'Por reponer'], al_dia: ['success', 'Al d&iacute;a'] };
+  var textoMotivo = { dotacion_inicial: 'Dotaci&oacute;n inicial', reposicion: 'Reposici&oacute;n', perdida: 'P&eacute;rdida', danio: 'Da&ntilde;o', cambio_talla: 'Cambio de talla' };
+  var textoEntrega = { pendiente_firma: ['info', 'Pendiente de firma'], entregada: ['success', 'Entregada'], anulada: ['secondary', 'Anulada'] };
+  var bajoStock = elementos.filter(function (e) { return e.estado === 'activo' && Number(e.stock) <= 0; }).length;
+  var tabs = [['matriz', 'Por trabajador', m.pendientes, 'warning'], ['entregas', 'Entregas', 0, ''], ['elementos', 'Elementos, stock y cargos', bajoStock, 'danger']];
+%>
+<ul class="nav nav-tabs mb-3">
+  <% tabs.forEach(function (t) { %><li class="nav-item"><a class="nav-link<%= tab === t[0] ? ' active' : '' %>" href="?tab=<%= t[0] %>"><%- t[1] %><% if (t[2]) { %> <span class="badge badge-<%= t[3] %>"><%= t[2] %></span><% } %></a></li><% }) %>
+</ul>
+
+<% if (gestionar && tab !== 'elementos') { %>
+<div class="barra-acciones">
+  <span class="small text-muted">Registro individual firmado, con tipo, cantidad, fecha y reposici&oacute;n (arts. 2.2.4.6.12 y .13, D. 1072). Se conserva 20 a&ntilde;os.</span>
+  <button type="button" class="btn btn-sm btn-primary js-entregar"><i class="fas fa-hand-holding mr-1"></i>Registrar entrega</button>
+</div>
+<% } %>
+
+<% if (tab === 'matriz') { %>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><div class="table-responsive">
+  <table class="table table-bordered table-hover table-sm mb-0">
+    <thead><tr><th>Persona</th><th>Cargo</th><th>Elemento</th><th>&Uacute;ltima entrega</th><th>Reposici&oacute;n</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+    <tbody>
+      <% m.filas.forEach(function (f) { var t = textoEstado[f.estado]; %><tr>
+        <td><a href="/personas/<%= f.id %>"><%= f.apellidos %> <%= f.nombres %></a></td><td><%= f.cargo %></td><td><%= f.elemento %> &times; <%= f.cantidad %></td>
+        <td><%= f.ultima ? f.ultima.fecha : '' %></td><td><%= f.ultima && f.ultima.fecha_reposicion ? f.ultima.fecha_reposicion : '' %></td>
+        <td><span class="badge badge-<%= t[0] %>"><%- t[1] %></span></td>
+        <td class="text-center"><% if (gestionar && f.estado !== 'al_dia' && f.estado !== 'pendiente_firma') { %><button type="button" class="btn btn-xs btn-default js-entregar" data-persona="<%= f.id %>" data-elemento="<%= f.elemento_id %>" data-cantidad="<%= f.cantidad %>" data-motivo="<%= f.ultima ? 'reposicion' : 'dotacion_inicial' %>" data-toggle="tooltip" title="Entregar"><i class="fas fa-hand-holding"></i></button><% } %></td>
+      </tr><% }) %>
+      <% if (!m.filas.length) { %><tr><td colspan="7" class="text-muted">Defina los EPP requeridos por cargo en la pesta&ntilde;a Elementos.</td></tr><% } %>
+    </tbody>
+  </table>
+</div></div></div>
+<% } %>
+
+<% if (tab === 'entregas') { %>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><div class="table-responsive">
+  <table class="table table-bordered table-hover table-sm mb-0">
+    <thead><tr><th>Fecha</th><th>Persona</th><th>Elemento</th><th class="text-right">Cant.</th><th>Motivo</th><th>Firma</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+    <tbody>
+      <% entregas.forEach(function (x) { %><tr class="<%= x.estado === 'anulada' ? 'text-muted' : '' %>">
+        <td class="text-nowrap"><%= x.fecha %></td><td><%= x.apellidos %> <%= x.nombres %></td><td><%= x.elemento %></td><td class="text-right"><%= x.cantidad %></td>
+        <td><%- textoMotivo[x.motivo] %></td><td><%= x.modalidad %></td><td><span class="badge badge-<%= textoEntrega[x.estado][0] %>"><%= textoEntrega[x.estado][1] %></span></td>
+        <td class="text-center"><% if (gestionar && x.estado === 'pendiente_firma') { %><form method="post" action="/epp/entregas/<%= x.id %>/anular" class="d-inline js-confirmar" data-confirmar="&iquest;Anular la entrega?"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="motivo" value="Anulada antes de la firma del trabajador"><button class="btn btn-xs btn-default" data-toggle="tooltip" title="Anular"><i class="fas fa-ban"></i></button></form><% } %></td>
+      </tr><% }) %>
+      <% if (!entregas.length) { %><tr><td colspan="8" class="text-muted">Sin entregas.</td></tr><% } %>
+    </tbody>
+  </table>
+</div></div></div>
+<% } %>
+
+<% if (tab === 'elementos') { %>
+<div class="barra-acciones">
+  <span></span>
+  <% if (gestionar) { %><div>
+    <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modal-requisito"><i class="fas fa-user-tie mr-1"></i>EPP por cargo</button>
+    <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modal-ingreso"><i class="fas fa-box mr-1"></i>Ingreso de inventario</button>
+    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-elemento"><i class="fas fa-plus mr-1"></i>Elemento</button>
+  </div><% } %>
+</div>
+<div class="row">
+  <div class="col-lg-7">
+    <div class="card card-outline card-secondary"><div class="card-header"><h3 class="card-title">Elementos y stock</h3></div><div class="card-body p-0">
+      <table class="table table-bordered table-sm mb-0">
+        <thead><tr><th>Elemento</th><th>Especificaci&oacute;n</th><th class="text-right">Vida &uacute;til</th><th class="text-right">Stock</th></tr></thead>
+        <tbody><% elementos.forEach(function (e) { %><tr class="<%= e.estado !== 'activo' ? 'text-muted' : '' %>"><td><%= e.nombre %></td><td class="small"><%= e.especificacion || '' %></td><td class="text-right"><%= e.vida_util_dias ? e.vida_util_dias + ' d' : '' %></td>
+          <td class="text-right"><span class="badge badge-<%= Number(e.stock) > 0 ? 'light' : 'danger' %>"><%= e.stock %></span></td></tr><% }) %>
+          <% if (!elementos.length) { %><tr><td colspan="4" class="text-muted">Sin elementos.</td></tr><% } %></tbody>
+      </table>
+    </div></div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card card-outline card-secondary"><div class="card-header"><h3 class="card-title">EPP requerido por cargo</h3></div><div class="card-body p-0">
+      <table class="table table-sm mb-0"><tbody>
+        <% m.requisitos.forEach(function (r) { %><tr><td><%= r.cargo %></td><td><%= r.elemento %> &times; <%= r.cantidad %></td>
+          <td class="text-right"><% if (gestionar) { %><form method="post" action="/epp/requisitos/<%= r.id %>/retirar" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-xs btn-default" data-toggle="tooltip" title="Quitar"><i class="fas fa-times"></i></button></form><% } %></td></tr><% }) %>
+        <% if (!m.requisitos.length) { %><tr><td class="text-muted">Sin requisitos por cargo.</td></tr><% } %>
+      </tbody></table>
+    </div></div>
+  </div>
+</div>
+<% } %>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-entrega" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/epp/entregas" class="modal-content" id="form-entrega">
+    <div class="modal-header"><h5 class="modal-title">Entrega de EPP</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Persona *</label><select name="persona_id" class="form-control" required><option value="">Seleccione</option><% personas.forEach(function (p) { %><option value="<%= p.id %>" data-usuario="<%= p.usuario_id ? 1 : 0 %>"><%= p.apellidos %> <%= p.nombres %></option><% }) %></select></div>
+      <div class="form-row"><div class="form-group col-8"><label>Elemento *</label><select name="elemento_id" class="form-control" required><option value="">Seleccione</option><% elementos.filter(function (e) { return e.estado === 'activo'; }).forEach(function (e) { %><option value="<%= e.id %>"><%= e.nombre %> (stock <%= e.stock %>)</option><% }) %></select></div>
+      <div class="form-group col-4"><label>Cantidad *</label><input type="number" name="cantidad" min="1" value="1" class="form-control" required></div></div>
+      <div class="form-row"><div class="form-group col-6"><label>Fecha *</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+      <div class="form-group col-6"><label>Motivo *</label><select name="motivo" class="form-control"><% motivos.forEach(function (k) { %><option value="<%= k %>"><%- textoMotivo[k] %></option><% }) %></select></div></div>
+      <div class="form-group"><label>Firma de recibido *</label><select name="modalidad" class="form-control js-modalidad"><option value="electronica">Electr&oacute;nica: el trabajador firma en Mis registros</option><option value="manuscrita">Manuscrita: planilla escaneada</option></select></div>
+      <div class="form-group mb-0 js-planilla d-none"><label>Planilla firmada (ENTREGA_EPP) *</label><select name="documento_id" class="form-control"><option value="">Seleccione</option><% planillas.forEach(function (d) { %><option value="<%= d.id %>"><%= d.codigo %> v<%= d.version %></option><% }) %></select>
+        <small><a href="/documentos/nuevo?tipo=ENTREGA_EPP">Subir planilla</a></small></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+
+<div class="modal fade" id="modal-elemento" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/epp/elementos" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Elemento de protecci&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Nombre *</label><input type="text" name="nombre" class="form-control" maxlength="150" required></div>
+      <div class="form-group"><label>Especificaci&oacute;n / norma t&eacute;cnica</label><input type="text" name="especificacion" class="form-control" maxlength="300"></div>
+      <div class="form-group mb-0"><label>Vida &uacute;til (d&iacute;as)</label><input type="number" name="vida_util_dias" min="1" class="form-control"><small class="text-muted">Define la fecha de reposici&oacute;n de cada entrega.</small></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Crear</button></div>
+  </form></div></div>
+
+<div class="modal fade" id="modal-ingreso" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/epp/ingresos" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Ingreso de inventario</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Elemento *</label><select name="elemento_id" class="form-control" required><option value="">Seleccione</option><% elementos.forEach(function (e) { %><option value="<%= e.id %>"><%= e.nombre %></option><% }) %></select></div>
+      <div class="form-row"><div class="form-group col-6"><label>Cantidad *</label><input type="number" name="cantidad" min="1" class="form-control" required></div>
+      <div class="form-group col-6"><label>Fecha *</label><input type="date" name="fecha" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div></div>
+      <div class="form-group mb-0"><label>Proveedor</label><input type="text" name="proveedor" class="form-control" maxlength="150"></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+
+<div class="modal fade" id="modal-requisito" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/epp/requisitos" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">EPP requerido por cargo</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group"><label>Cargo *</label><select name="cargo_id" class="form-control" required><option value="">Seleccione</option><% cargos.forEach(function (c) { %><option value="<%= c.id %>"><%= c.nombre %></option><% }) %></select></div>
+      <div class="form-row mb-0"><div class="form-group col-8 mb-0"><label>Elemento *</label><select name="elemento_id" class="form-control" required><option value="">Seleccione</option><% elementos.forEach(function (e) { %><option value="<%= e.id %>"><%= e.nombre %></option><% }) %></select></div>
+      <div class="form-group col-4 mb-0"><label>Cantidad *</label><input type="number" name="cantidad" min="1" value="1" class="form-control" required></div></div>
+      <small class="text-muted">Sugerencia: parta de los controles de EPP de la matriz de peligros para ese cargo.</small></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+  </form></div></div>
+<% } %>
+<%- include('../partials/pie') %>

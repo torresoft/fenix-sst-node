@@ -1,0 +1,26 @@
+<%- include('../partials/cabecera') %>
+<div class="barra-acciones">
+  <span class="small text-muted">Lo editado aqu&iacute; queda como <strong>manual</strong>: <code>npm run catalogos</code> ya no lo sobrescribe. Nada se borra: se inactiva.</span>
+</div>
+<div class="columnas-2">
+<% grupos.forEach(function (g) { %>
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title"><%= g.grupo %></h3></div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Cat&aacute;logo</th><th class="text-center">Activos</th><th class="text-center">Manuales</th></tr></thead>
+      <tbody>
+        <% g.catalogos.forEach(function (c) { %>
+        <tr>
+          <td><a href="/plataforma/catalogos/<%= c.tabla %>"><%= c.titulo %></a></td>
+          <td class="text-center"><%= c.activos %> / <%= c.total %></td>
+          <td class="text-center"><% if (c.manuales) { %><span class="badge badge-warning"><%= c.manuales %></span><% } else { %>0<% } %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% }) %>
+</div>
+<%- include('../partials/pie') %>

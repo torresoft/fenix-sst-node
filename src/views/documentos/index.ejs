@@ -1,0 +1,63 @@
+<%- include('../partials/cabecera') %>
+<%
+  var colorEstado = { borrador: 'secondary', en_firma: 'warning', vigente: 'success', reemplazado: 'light', anulado: 'dark' };
+  var textoEstado = { borrador: 'Borrador', en_firma: 'En firma', vigente: 'Vigente', reemplazado: 'Reemplazado', anulado: 'Anulado' };
+  var hoy = new Date().toISOString().slice(0, 10);
+%>
+<div class="card card-outline card-primary">
+  <div class="card-body py-2">
+    <form method="get" action="/documentos" class="form-row align-items-end" id="form-filtros">
+      <div class="form-group col-md-4 mb-2">
+        <label for="f-tipo">Tipo documental</label>
+        <select id="f-tipo" name="tipo" class="form-control form-control-sm js-autoenvio">
+          <option value="">Todos</option>
+          <% tipos.forEach(function (t) { %><option value="<%= t.codigo %>"<%= filtros.tipo === t.codigo ? ' selected' : '' %>><%= t.nombre %></option><% }) %>
+        </select>
+      </div>
+      <div class="form-group col-md-2 mb-2">
+        <label for="f-estado">Estado</label>
+        <select id="f-estado" name="estado" class="form-control form-control-sm js-autoenvio">
+          <option value="">Activos</option>
+          <% ['borrador', 'en_firma', 'vigente'].forEach(function (e) { %><option value="<%= e %>"<%= filtros.estado === e ? ' selected' : '' %>><%= textoEstado[e] %></option><% }) %>
+          <option value="historico"<%= filtros.estado === 'historico' ? ' selected' : '' %>>Hist&oacute;rico</option>
+        </select>
+      </div>
+      <div class="form-group col-md-3 mb-2">
+        <label for="f-q">C&oacute;digo o t&iacute;tulo</label>
+        <input type="text" id="f-q" name="q" class="form-control form-control-sm" value="<%= filtros.q %>" maxlength="60">
+      </div>
+      <div class="form-group col-md-3 mb-2 text-right">
+        <button type="submit" class="btn btn-sm btn-default"><i class="fas fa-search"></i></button>
+        <a href="/documentos/retencion" class="btn btn-sm btn-default" data-toggle="tooltip" title="Tabla de retenci&oacute;n"><i class="fas fa-archive"></i></a>
+        <% if (gestionar) { %><a href="/documentos/nuevo" class="btn btn-sm btn-primary"><i class="fas fa-plus mr-1"></i>Nuevo</a><% } %>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card card-outline card-secondary">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead><tr><th>C&oacute;digo</th><th>T&iacute;tulo</th><th>Tipo</th><th>Versi&oacute;n</th><th>Fecha</th><th>Vence</th><th>Estado</th><th>Firmas</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+        <tbody>
+          <% docs.forEach(function (d) { var vencido = d.fecha_vence && d.fecha_vence < hoy && d.estado === 'vigente'; %>
+          <tr>
+            <td class="text-nowrap"><strong><%= d.codigo %></strong></td>
+            <td><%= d.titulo %></td>
+            <td><small><%= d.tipo_nombre %></small></td>
+            <td><%= d.version %></td>
+            <td class="text-nowrap"><%= d.fecha_documento %></td>
+            <td class="text-nowrap<%= vencido ? ' text-danger font-weight-bold' : '' %>"><%= d.fecha_vence || '' %></td>
+            <td><span class="badge badge-<%= colorEstado[d.estado] %>"><%= textoEstado[d.estado] %></span></td>
+            <td><% if (Number(d.firmas_total)) { %><%= d.firmas_hechas %>/<%= d.firmas_total %><% } else if (d.modalidad_firma && d.modalidad_firma !== 'electronica') { %><small><%= d.modalidad_firma === 'manuscrita' ? 'Manuscrita' : 'Digital externa' %></small><% } %></td>
+            <td class="text-center"><a href="/documentos/<%= d.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Ver documento"><i class="fas fa-eye"></i></a></td>
+          </tr>
+          <% }) %>
+          <% if (!docs.length) { %><tr><td colspan="9" class="text-muted">No hay documentos con esos filtros.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/pie') %>

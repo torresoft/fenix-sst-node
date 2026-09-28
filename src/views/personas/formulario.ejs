@@ -1,0 +1,76 @@
+<%- include('../partials/cabecera') %>
+<% var v = valores || {}; %>
+<% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+<form method="post" action="<%= persona ? '/personas/' + persona.id + '/editar' : '/personas' %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="row">
+    <div class="col-lg-7">
+      <div class="card card-outline card-primary">
+        <div class="card-header"><h3 class="card-title">Datos de la persona</h3></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group col-md-5"><label for="p-td">Tipo de documento *</label>
+              <select id="p-td" name="tipo_documento" class="form-control" required>
+                <% Object.keys(tiposDocumento).forEach(function (k) { %><option value="<%= k %>"<%= v.tipo_documento === k ? ' selected' : '' %>><%= k %> - <%= tiposDocumento[k] %></option><% }) %>
+              </select></div>
+            <div class="form-group col-md-7"><label for="p-doc">N&uacute;mero *</label><input type="text" id="p-doc" name="numero_documento" class="form-control" value="<%= v.numero_documento || '' %>" maxlength="20" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6"><label for="p-nom">Nombres *</label><input type="text" id="p-nom" name="nombres" class="form-control" value="<%= v.nombres || '' %>" maxlength="100" required></div>
+            <div class="form-group col-md-6"><label for="p-ape">Apellidos *</label><input type="text" id="p-ape" name="apellidos" class="form-control" value="<%= v.apellidos || '' %>" maxlength="100" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4"><label for="p-sexo">Sexo</label>
+              <select id="p-sexo" name="sexo" class="form-control">
+                <option value="">No registrado</option>
+                <% [['F', 'Femenino'], ['M', 'Masculino'], ['NB', 'No binario']].forEach(function (x) { %><option value="<%= x[0] %>"<%= v.sexo === x[0] ? ' selected' : '' %>><%= x[1] %></option><% }) %>
+              </select></div>
+            <div class="form-group col-md-4"><label for="p-nac">Fecha de nacimiento</label><input type="date" id="p-nac" name="fecha_nacimiento" class="form-control" value="<%= v.fecha_nacimiento || '' %>" max="<%= hoy %>"></div>
+            <div class="form-group col-md-4"><label for="p-tel">Tel&eacute;fono</label><input type="text" id="p-tel" name="telefono" class="form-control" value="<%= v.telefono || '' %>" maxlength="30"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6"><label for="p-email">Correo</label><input type="email" id="p-email" name="email" class="form-control" value="<%= v.email || '' %>" maxlength="190"></div>
+            <div class="form-group col-md-3"><label for="p-eps">EPS</label><input type="text" id="p-eps" name="eps" class="form-control" value="<%= v.eps || '' %>" maxlength="100"></div>
+            <div class="form-group col-md-3"><label for="p-afp">AFP</label><input type="text" id="p-afp" name="afp" class="form-control" value="<%= v.afp || '' %>" maxlength="100"></div>
+          </div>
+          <small class="text-muted">Sexo y edad alimentan el perfil sociodemogr&aacute;fico y la informaci&oacute;n desagregada que exige el D. 0728 de 2025. Aqu&iacute; no se registran datos de salud.</small>
+        </div>
+      </div>
+    </div>
+
+    <% if (!persona) { %>
+    <div class="col-lg-5">
+      <div class="card card-outline card-secondary">
+        <div class="card-header">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="p-vincular" name="vincular" value="1" <%= v.vincular === '1' ? 'checked' : '' %>>
+            <label class="custom-control-label" for="p-vincular">Vincular a <%= empresaActiva.razonSocial %></label>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group col-md-6"><label for="p-tipo">Tipo *</label>
+              <select id="p-tipo" name="tipo" class="form-control">
+                <% Object.keys(tiposVinculacion).forEach(function (k) { %><option value="<%= k %>"<%= v.tipo === k ? ' selected' : '' %>><%= tiposVinculacion[k] %></option><% }) %>
+              </select></div>
+            <div class="form-group col-md-6"><label for="p-ing">Fecha de ingreso *</label><input type="date" id="p-ing" name="fecha_ingreso" class="form-control" value="<%= v.fecha_ingreso || hoy %>"></div>
+          </div>
+          <div class="form-group"><label for="p-cargo">Cargo</label>
+            <select id="p-cargo" name="cargo_id" class="form-control">
+              <option value="">Sin cargo</option>
+              <% cargos.forEach(function (c) { %><option value="<%= c.id %>"<%= String(v.cargo_id) === String(c.id) ? ' selected' : '' %>><%= c.nombre %></option><% }) %>
+            </select></div>
+          <div class="form-group mb-0"><label for="p-centro">Centro de trabajo</label>
+            <select id="p-centro" name="centro_trabajo_id" class="form-control">
+              <option value="">Sin centro</option>
+              <% centros.forEach(function (c) { %><option value="<%= c.id %>"<%= String(v.centro_trabajo_id) === String(c.id) ? ' selected' : '' %>><%= c.nombre %> (clase <%= c.clase_riesgo %>)</option><% }) %>
+            </select></div>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  </div>
+  <a href="<%= persona ? '/personas/' + persona.id : '/personas' %>" class="btn btn-default">Cancelar</a>
+  <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button>
+</form>
+<%- include('../partials/pie') %>

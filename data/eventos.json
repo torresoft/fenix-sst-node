@@ -1,0 +1,99 @@
+{
+  "_corte": "2026-08-31",
+  "_fuente": "Resolucion 1401 de 2007, arts. 3 y 7",
+  "_no_verificado": [
+    "Criterios de accidente grave y roles del equipo investigador transcritos de la Res. 1401 de 2007 sin cotejo literal contra el Diario Oficial: verificar antes de usar con efectos juridicos."
+  ],
+  "criterios_grave": [
+    {
+      "codigo": "AMPUTACION",
+      "descripcion": "Amputacion de cualquier segmento corporal",
+      "norma_codigo": "RES-1401-2007"
+    },
+    {
+      "codigo": "FRACTURA_HUESO_LARGO",
+      "descripcion": "Fractura de huesos largos (femur, tibia, perone, humero, radio y cubito)",
+      "norma_codigo": "RES-1401-2007"
+    },
+    {
+      "codigo": "TRAUMA_CRANEO",
+      "descripcion": "Trauma craneoencefalico",
+      "norma_codigo": "RES-1401-2007"
+    },
+    {
+      "codigo": "QUEMADURA_2_3",
+      "descripcion": "Quemaduras de segundo y tercer grado",
+      "norma_codigo": "RES-1401-2007"
+    },
+    {
+      "codigo": "LESION_MANO",
+      "descripcion": "Lesiones severas de mano, tales como aplastamiento o quemaduras",
+      "norma_codigo": "RES-1401-2007"
+    },
+    {
+      "codigo": "LESION_COLUMNA",
+      "descripcion": "Lesiones severas de columna vertebral con compromiso de medula espinal",
+      "norma_codigo": "RES-1401-2007"
+    },
+    {
+      "codigo": "LESION_OCULAR",
+      "descripcion": "Lesiones oculares que comprometan la agudeza o el campo visual",
+      "norma_codigo": "RES-1401-2007"
+    },
+    {
+      "codigo": "LESION_AUDITIVA",
+      "descripcion": "Lesiones que comprometan la capacidad auditiva",
+      "norma_codigo": "RES-1401-2007"
+    }
+  ],
+  "roles_investigacion": [
+    {
+      "codigo": "jefe_inmediato",
+      "nombre": "Jefe inmediato o supervisor del trabajador o del area",
+      "requerido_en": [
+        "incidente",
+        "at_leve",
+        "at_grave",
+        "at_mortal"
+      ],
+      "norma_codigo": "RES-1401-2007"
+    },
+    {
+      "codigo": "copasst",
+      "nombre": "Representante del COPASST o Vigia de SST",
+      "requerido_en": [
+        "incidente",
+        "at_leve",
+        "at_grave",
+        "at_mortal"
+      ],
+      "norma_codigo": "RES-1401-2007"
+    },
+    {
+      "codigo": "responsable_sst",
+      "nombre": "Responsable del desarrollo del SG-SST",
+      "requerido_en": [
+        "incidente",
+        "at_leve",
+        "at_grave",
+        "at_mortal"
+      ],
+      "norma_codigo": "RES-1401-2007"
+    },
+    {
+      "codigo": "profesional_licencia",
+      "nombre": "Profesional con licencia en SST (accidente grave o mortal)",
+      "requerido_en": [
+        "at_grave",
+        "at_mortal"
+      ],
+      "norma_codigo": "RES-1401-2007"
+    },
+    {
+      "codigo": "otro",
+      "nombre": "Otro participante",
+      "requerido_en": [],
+      "norma_codigo": "RES-1401-2007"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+<%- include('../partials/cabecera') %>
+<% var k = d.k; var nombreTipo = {}; tipos.forEach(function (t) { nombreTipo[t.codigo] = t.nombre; }); %>
+<div class="barra-acciones">
+  <div><a href="/formacion?tab=capacitaciones" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Capacitaciones</a>
+    <span class="badge badge-<%= k.estado === 'realizada' ? 'success' : (k.estado === 'anulada' ? 'dark' : 'info') %> ml-2"><%= k.estado %></span></div>
+  <% if (gestionar && k.estado === 'programada') { %>
+  <form method="post" action="/formacion/capacitaciones/<%= k.id %>/anular"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button type="submit" class="btn btn-sm btn-link text-danger">Anular</button></form>
+  <% } %>
+</div>
+<div class="card card-outline card-primary">
+  <div class="card-body small">
+    <dl class="row mb-0">
+      <dt class="col-sm-3">Fecha</dt><dd class="col-sm-9"><%= k.fecha %> &middot; <%= k.horas %> horas</dd>
+      <dt class="col-sm-3">Instructor</dt><dd class="col-sm-9"><%= k.instructor || '-' %></dd>
+      <dt class="col-sm-3">Acredita</dt><dd class="col-sm-9"><%= k.competencia ? nombreTipo[k.competencia] : 'Ninguna competencia' %></dd>
+      <% if (k.eficacia) { %><dt class="col-sm-3">Eficacia</dt><dd class="col-sm-9"><%= k.eficacia %></dd><% } %>
+    </dl>
+  </div>
+</div>
+
+<% if (k.estado === 'realizada') { %>
+<div class="card card-outline card-success">
+  <div class="card-header"><h3 class="card-title">Asistentes (<%= d.asistentes.length %>)</h3></div>
+  <div class="card-body p-0"><table class="table table-sm mb-0"><tbody>
+    <% d.asistentes.forEach(function (a) { %><tr><td><a href="/personas/<%= a.persona_id %>"><%= a.apellidos %> <%= a.nombres %></a></td><td><%= Number(a.aprobo) ? 'Aprobó' : 'No aprobó' %></td></tr><% }) %>
+  </tbody></table></div>
+</div>
+<% } else if (k.estado === 'programada' && gestionar) { %>
+<form method="post" action="/formacion/capacitaciones/<%= k.id %>/realizar">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="card card-outline card-warning">
+    <div class="card-header"><h3 class="card-title">Registrar realizaci&oacute;n</h3></div>
+    <div class="card-body">
+      <% if (k.fecha > hoy) { %><p class="text-muted small">Se registra a partir del <%= k.fecha %>.</p><% } %>
+      <table class="table table-sm table-bordered">
+        <thead><tr><th>Asisti&oacute;</th><th>Persona</th><% if (k.competencia) { %><th>No aprob&oacute;</th><% } %></tr></thead>
+        <tbody>
+          <% personas.forEach(function (p) { %>
+          <tr>
+            <td class="text-center"><input type="checkbox" name="asistentes" value="<%= p.id %>"></td>
+            <td><%= p.apellidos %> <%= p.nombres %></td>
+            <% if (k.competencia) { %><td class="text-center"><input type="checkbox" name="reprobados" value="<%= p.id %>"></td><% } %>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <div class="form-row">
+        <div class="form-group col-md-6"><label class="small">Registro de asistencia firmado (REG_CAPACITACION)</label>
+          <select name="registro_documento_id" class="form-control form-control-sm"><option value="">Sin asociar</option><% documentos.forEach(function (x) { %><option value="<%= x.id %>"><%= x.codigo %> v<%= x.version %></option><% }) %></select></div>
+        <div class="form-group col-md-6"><label class="small">Evaluaci&oacute;n de eficacia</label><input type="text" name="eficacia" class="form-control form-control-sm" maxlength="1000"></div>
+      </div>
+      <button type="submit" class="btn btn-sm btn-success" <%= k.fecha > hoy ? 'disabled' : '' %>><i class="fas fa-check mr-1"></i>Registrar</button>
+    </div>
+  </div>
+</form>
+<% } %>
+<%- include('../partials/pie') %>

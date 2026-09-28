@@ -1,0 +1,84 @@
+<%- include('../partials/cabecera') %>
+<% if (plan.plan) { %>
+<div class="barra-acciones">
+  <span class="small">Plan <strong><%= plan.plan.nombre %></strong>: <%= plan.uso.usuarios %> de <%= limite(plan.plan.max_usuarios) %> usuarios con acceso<% if (!plan.puedeUsuario) { %> &middot; <span class="text-danger">sin cupo para nuevos usuarios</span><% } %></span>
+</div>
+<% } %>
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card card-outline card-primary">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Usuario</th><th>Documento</th><th>Roles en esta empresa</th><th>&Uacute;ltimo acceso</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+          <tbody>
+            <% usuarios.forEach(function (u) { var nombresRol = u.roles.map(function (x) { var r = roles.find(function (y) { return y.codigo === x; }); return r ? r.nombre : x; }); %>
+            <tr class="<%= u.roles.length ? '' : 'text-muted' %>">
+              <td><%= u.nombres %> <%= u.apellidos %><br><small><%= u.email %></small></td>
+              <td><%= u.tipo_documento %> <%= u.numero_documento %></td>
+              <td><% if (u.roles.length) { %><% nombresRol.forEach(function (n) { %><span class="badge badge-info mr-1"><%= n %></span><% }) %><% } else { %><span class="badge badge-secondary">Sin acceso</span><% } %></td>
+              <td class="text-nowrap"><%= u.ultimo_acceso ? new Date(u.ultimo_acceso).toISOString().slice(0, 10) : 'Nunca' %></td>
+              <td class="text-center">
+                <button type="button" class="btn btn-xs btn-default js-roles" data-toggle="tooltip" title="Roles"
+                        data-id="<%= u.id %>" data-nombre="<%= u.nombres %> <%= u.apellidos %>" data-roles="<%= u.roles.join(',') %>" data-yo="<%= u.id === yo ? '1' : '0' %>">
+                  <i class="fas fa-user-tag"></i>
+                </button>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer"><a href="/empresa" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Empresa</a></div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card card-outline card-success">
+      <div class="card-header"><h3 class="card-title">Dar acceso</h3></div>
+      <form method="post" action="/empresa/usuarios">
+        <div class="card-body">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group"><label for="u-email">Correo *</label><input type="email" id="u-email" name="email" class="form-control" maxlength="190" required></div>
+          <p class="small text-muted">Si el correo ya tiene cuenta (p. ej. un consultor), solo se le asignan los roles. Si no, complete sus datos:</p>
+          <div class="form-row">
+            <div class="form-group col-6"><label for="u-nom">Nombres</label><input type="text" id="u-nom" name="nombres" class="form-control" maxlength="100"></div>
+            <div class="form-group col-6"><label for="u-ape">Apellidos</label><input type="text" id="u-ape" name="apellidos" class="form-control" maxlength="100"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-4"><label for="u-td">Tipo</label>
+              <select id="u-td" name="tipo_documento" class="form-control"><option>CC</option><option>CE</option><option>PA</option><option>PPT</option><option>PEP</option></select></div>
+            <div class="form-group col-8"><label for="u-doc">Documento</label><input type="text" id="u-doc" name="numero_documento" class="form-control" maxlength="20"></div>
+          </div>
+          <label>Roles *</label>
+          <% roles.forEach(function (r) { %>
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="nr-<%= r.codigo %>" name="roles" value="<%= r.codigo %>">
+            <label class="custom-control-label font-weight-normal" for="nr-<%= r.codigo %>"><%= r.nombre %></label>
+          </div>
+          <% }) %>
+        </div>
+        <div class="card-footer"><button type="submit" class="btn btn-success"><i class="fas fa-user-plus mr-1"></i>Dar acceso</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-roles" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" class="modal-content" id="form-roles">
+      <div class="modal-header"><h5 class="modal-title">Roles de <span class="js-nombre"></span></h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <% roles.forEach(function (r) { %>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="er-<%= r.codigo %>" name="roles" value="<%= r.codigo %>">
+          <label class="custom-control-label font-weight-normal" for="er-<%= r.codigo %>"><%= r.nombre %> <small class="text-muted">&middot; <%= r.descripcion || '' %></small></label>
+        </div>
+        <% }) %>
+        <p class="small text-muted mt-2 mb-0">Sin roles, el usuario pierde el acceso a esta empresa (no se borra: queda en la auditor&iacute;a).</p>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button></div>
+    </form>
+  </div>
+</div>
+<%- include('../partials/pie') %>

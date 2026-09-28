@@ -1,0 +1,25 @@
+{
+  "_fuente": "Ley 1581 de 2012 (arts. 5, 6 y 9), Decreto 1377 de 2013 (compilado en D. 1074 de 2015)",
+  "_nota": "Al cambiar el texto de una finalidad, subir su version: cada persona la autoriza de nuevo. Los datos sensibles (art. 5) exigen autorizacion expresa y facultativa.",
+  "_no_verificado": [
+    "Textos de producto: cada empresa debe ajustarlos a su politica de tratamiento de datos."
+  ],
+  "finalidades": [
+    {
+      "codigo": "gestion_sst", "nombre": "Gestion del SG-SST", "es_dato_sensible": false, "norma_codigo": "LEY-1581-2012", "version": "1.0",
+      "texto": "Autorizo el tratamiento de mis datos personales para la gestion del Sistema de Gestion de Seguridad y Salud en el Trabajo: registros de formacion, entrega de elementos de proteccion, participacion en comites, reporte de incidentes y comunicaciones del sistema."
+    },
+    {
+      "codigo": "salud_ocupacional", "nombre": "Conceptos de aptitud y ausentismo", "es_dato_sensible": true, "norma_codigo": "LEY-1581-2012", "version": "1.0",
+      "texto": "Autorizo de manera expresa y facultativa el tratamiento de datos sensibles relacionados con mi salud, limitado al concepto de aptitud, restricciones y recomendaciones emitidos por el medico, y a las incapacidades sin diagnostico, para la vigilancia de la salud en el trabajo. Se me informo que no estoy obligado a autorizar el tratamiento de datos sensibles."
+    },
+    {
+      "codigo": "evaluacion_psicosocial", "nombre": "Evaluacion de riesgo psicosocial", "es_dato_sensible": true, "norma_codigo": "RES-2764-2022", "version": "1.0",
+      "texto": "Autorizo de manera expresa y facultativa la aplicacion de la bateria de riesgo psicosocial. Los resultados individuales quedan bajo custodia del psicologo evaluador; la empresa solo recibe resultados consolidados por grupo. Se me informo que no estoy obligado a autorizar el tratamiento de datos sensibles."
+    },
+    {
+      "codigo": "imagen_evidencias", "nombre": "Uso de imagen en evidencias", "es_dato_sensible": true, "norma_codigo": "LEY-1581-2012", "version": "1.0",
+      "texto": "Autorizo el uso de mi imagen en fotografias y videos tomados como evidencia de capacitaciones, simulacros e inspecciones del SG-SST. Se me informo que no estoy obligado a autorizar el tratamiento de datos sensibles."
+    }
+  ]
+}

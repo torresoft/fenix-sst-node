@@ -1,0 +1,60 @@
+<%- include('../partials/cabecera') %>
+<%
+  var ruta = '/plataforma/catalogos/' + d.def.tabla;
+  var valor = function (f) {
+    var v = valores[f.nombre];
+    if (v == null) return '';
+    if (f.tipo === 'json' && typeof v === 'string') { try { return JSON.stringify(JSON.parse(v), null, 2); } catch (e) { return v; } }
+    if (f.tipo === 'json') return JSON.stringify(v, null, 2);
+    return String(v);
+  };
+  var requerido = function (f) { return f.clave || (!f.nulo && !f.conDefecto && f.tipo !== 'bool'); };
+%>
+<% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+<% if (d.fila && Number(d.fila.modificado_manual)) { %><div class="alert alert-warning small">Este registro ya fue editado manualmente: la carga del seed no lo actualiza.</div><% } %>
+<% Object.keys(d.refs).forEach(function (n) { %>
+<datalist id="dl-<%= n %>"><% d.refs[n].forEach(function (x) { %><option value="<%= x %>"><% }) %></datalist>
+<% }) %>
+<form method="post" action="<%= ruta %>/guardar">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <input type="hidden" name="c" value="<%= c || '' %>">
+  <div class="card card-outline card-primary">
+    <div class="card-body">
+      <div class="form-row">
+        <% d.campos.forEach(function (f) { var id = 'f-' + f.nombre, ancho = ['largo', 'json'].indexOf(f.tipo) !== -1 ? 'col-12' : 'col-md-4'; %>
+        <div class="form-group <%= ancho %>">
+          <% if (f.tipo === 'bool') { %>
+          <div class="custom-control custom-checkbox mt-4">
+            <input type="checkbox" class="custom-control-input" id="<%= id %>" name="<%= f.nombre %>" value="1"<%= ['1', 'true', 'on'].indexOf(valor(f)) !== -1 ? ' checked' : '' %>>
+            <label class="custom-control-label" for="<%= id %>"><%= f.nombre %></label>
+          </div>
+          <% } else { %>
+          <label for="<%= id %>"><%= f.nombre %><%= requerido(f) ? ' *' : '' %></label>
+          <% if (f.clave && c) { %>
+          <input type="text" id="<%= id %>" class="form-control" value="<%= c %>" readonly>
+          <% } else if (f.tipo === 'enum') { %>
+          <select id="<%= id %>" name="<%= f.nombre %>" class="form-control"<%= requerido(f) ? ' required' : '' %>>
+            <% if (f.nulo) { %><option value=""></option><% } %>
+            <% f.opciones.forEach(function (o) { %><option value="<%= o %>"<%= valor(f) === o ? ' selected' : '' %>><%= o %></option><% }) %>
+          </select>
+          <% } else if (f.tipo === 'json') { %>
+          <textarea id="<%= id %>" name="<%= f.nombre %>" class="form-control text-monospace small" rows="8"<%= requerido(f) ? ' required' : '' %>><%= valor(f) %></textarea>
+          <small class="text-muted">JSON</small>
+          <% } else if (f.tipo === 'largo') { %>
+          <textarea id="<%= id %>" name="<%= f.nombre %>" class="form-control" rows="3"<%= f.max ? ' maxlength="' + f.max + '"' : '' %><%= requerido(f) ? ' required' : '' %>><%= valor(f) %></textarea>
+          <% } else { %>
+          <input type="<%= f.tipo === 'fecha' ? 'date' : (f.tipo === 'entero' ? 'number' : 'text') %>" id="<%= id %>" name="<%= f.nombre %>" class="form-control" value="<%= valor(f) %>"
+                 <%= f.max ? 'maxlength=' + f.max : '' %> <%= f.tipo === 'decimal' ? 'inputmode=decimal' : '' %> <%= d.refs[f.nombre] ? 'list=dl-' + f.nombre + ' autocomplete=off' : '' %> <%= requerido(f) ? 'required' : '' %>>
+          <% } %>
+          <% } %>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="<%= ruta %>" class="btn btn-default">Cancelar</a>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button>
+    </div>
+  </div>
+</form>
+<%- include('../partials/pie') %>

@@ -1,0 +1,60 @@
+<%- include('../partials/cabecera') %>
+<%
+  var u = d.u, activa = u.estado === 'activo', propia = u.id === yo;
+%>
+<div class="barra-acciones">
+  <div><a href="/plataforma/usuarios" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Usuarios</a></div>
+  <div>
+    <% if (Number(u.bloqueado)) { %>
+    <form method="post" action="/plataforma/usuarios/<%= u.id %>/desbloquear" class="d-inline">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-sm btn-default"><i class="fas fa-unlock mr-1"></i>Desbloquear</button>
+    </form>
+    <% } %>
+    <% if (activa && !propia) { %>
+    <form method="post" action="/plataforma/usuarios/<%= u.id %>/clave" class="d-inline js-confirmar" data-confirmar="&iquest;Generar una contrase&ntilde;a temporal? Se cierran las sesiones abiertas de la cuenta.">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-sm btn-warning"><i class="fas fa-key mr-1"></i>Restablecer contrase&ntilde;a</button>
+    </form>
+    <% } %>
+    <% if (!propia) { %>
+    <form method="post" action="/plataforma/usuarios/<%= u.id %>/estado" class="d-inline<%= activa ? ' js-confirmar' : '' %>" data-confirmar="&iquest;Inactivar la cuenta? Pierde el acceso a todos los clientes.">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="activo" value="<%= activa ? '0' : '1' %>">
+      <button type="submit" class="btn btn-sm <%= activa ? 'btn-outline-danger' : 'btn-success' %>"><i class="fas <%= activa ? 'fa-user-slash' : 'fa-user-check' %> mr-1"></i><%= activa ? 'Inactivar' : 'Activar' %></button>
+    </form>
+    <% } %>
+  </div>
+</div>
+
+<div class="card card-outline card-primary">
+  <div class="card-body small">
+    <dl class="row mb-0">
+      <dt class="col-sm-2">Documento</dt><dd class="col-sm-4"><%= u.tipo_documento %> <%= u.numero_documento %></dd>
+      <dt class="col-sm-2">Estado</dt><dd class="col-sm-4"><%= u.estado %><%= Number(u.bloqueado) ? ' · bloqueada por intentos fallidos' : '' %><%= Number(u.debe_cambiar_password) ? ' · contraseña temporal' : '' %></dd>
+      <dt class="col-sm-2">&Uacute;ltimo acceso</dt><dd class="col-sm-4"><%= u.ultimo_acceso ? fh(u.ultimo_acceso) : 'Nunca' %></dd>
+      <dt class="col-sm-2">Creada</dt><dd class="col-sm-4"><%= fh(u.creado_en) %></dd>
+    </dl>
+  </div>
+</div>
+
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title">Acceso por cliente</h3></div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Cliente</th><th>Roles</th><th>Estado del cliente</th></tr></thead>
+      <tbody>
+        <% d.accesos.forEach(function (a) { %>
+        <tr class="<%= a.roles.length ? '' : 'text-muted' %>">
+          <td><%= a.nombre %></td>
+          <td><% if (a.roles.length) { a.roles.forEach(function (r) { %><span class="badge badge-info mr-1"><%= r %></span><% }) } else { %><span class="badge badge-secondary">Sin acceso</span><% } %></td>
+          <td><%= a.estado_tenant %></td>
+        </tr>
+        <% }) %>
+        <% if (!d.accesos.length) { %><tr><td colspan="3" class="text-muted">La cuenta no tiene acceso a ning&uacute;n cliente.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer small text-muted">Los roles los administra el administrador de cada cliente en Empresa &rsaquo; Usuarios.</div>
+</div>
+<%- include('../partials/pie') %>

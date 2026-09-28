@@ -1,0 +1,66 @@
+<%- include('../partials/cabecera') %>
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card card-outline card-warning">
+      <div class="card-header"><h3 class="card-title"><%= f.doc.codigo %> v<%= f.doc.version %>: <%= f.doc.titulo %></h3></div>
+      <div class="card-body">
+        <p>
+          <a href="/documentos/<%= f.doc.id %>/archivo" class="btn btn-sm btn-default"><i class="fas fa-download mr-1"></i>Descargar y revisar el documento</a>
+        </p>
+        <p class="small mb-1"><strong>Huella SHA-256 del contenido:</strong></p>
+        <p class="small text-monospace text-break"><%= f.doc.archivo_hash %></p>
+
+        <label>Texto que usted firma</label>
+        <div class="border rounded p-2 bg-light small mb-3"><%= f.manifiesto %></div>
+
+        <form method="post" action="/firmas/<%= f.solicitud.id %>" id="form-firmar">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <% if (f.acuerdoPendiente) { %>
+          <div class="card card-outline card-secondary">
+            <div class="card-header"><h3 class="card-title">Acuerdo de uso de firma electr&oacute;nica (versi&oacute;n <%= f.acuerdo.version %>)</h3></div>
+            <div class="card-body small">
+              <% f.acuerdo.texto.split('\n\n').forEach(function (p) { %><p><%= p %></p><% }) %>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="f-acuerdo" name="acepta_acuerdo" value="1" required>
+                <label class="custom-control-label" for="f-acuerdo">Acepto el acuerdo de uso de firma electr&oacute;nica *</label>
+              </div>
+            </div>
+          </div>
+          <% } %>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="f-clave">Su contrase&ntilde;a *</label>
+              <input type="password" id="f-clave" name="clave" class="form-control" required autocomplete="current-password">
+            </div>
+            <div class="form-group col-md-6">
+              <label for="f-codigo">C&oacute;digo de un solo uso *</label>
+              <div class="input-group">
+                <input type="text" id="f-codigo" name="codigo" class="form-control" inputmode="numeric" pattern="\d{6}" maxlength="6" required autocomplete="one-time-code">
+                <div class="input-group-append">
+                  <button type="button" class="btn btn-default js-codigo" data-url="/firmas/<%= f.solicitud.id %>/codigo">Enviar c&oacute;digo</button>
+                </div>
+              </div>
+              <small class="form-text js-codigo-estado text-muted"></small>
+            </div>
+          </div>
+          <div class="custom-control custom-checkbox mb-3">
+            <input type="checkbox" class="custom-control-input" id="f-manifiesto" name="acepta_manifiesto" value="1" required>
+            <label class="custom-control-label" for="f-manifiesto">Revis&eacute; el documento y acepto el texto de la firma *</label>
+          </div>
+          <a href="/firmas" class="btn btn-default">Cancelar</a>
+          <button type="submit" class="btn btn-warning"><i class="fas fa-signature mr-1"></i>Firmar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card card-outline card-secondary">
+      <div class="card-body small">
+        <p class="mb-1"><strong>Firmante:</strong> <%= f.firmante.nombre %> (<%= f.firmante.documento %>)</p>
+        <p class="mb-1"><strong>Rol:</strong> <%= f.solicitud.rol_firmante %></p>
+        <p class="mb-0 text-muted">Se registra el texto exacto, la huella del documento, la fecha y hora, su IP y su navegador. Cualquier cambio posterior del archivo invalida la verificaci&oacute;n de la firma.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/pie') %>

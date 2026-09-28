@@ -1,0 +1,84 @@
+<%- include('../partials/cabecera') %>
+<%
+  var c = p.cargo;
+  var colorNivel = { I: 'danger', II: 'warning', III: 'info', IV: 'success' };
+%>
+<div class="barra-acciones">
+  <div><a href="/personas/cargos" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Cargos</a></div>
+  <div>
+    <a href="/peligros" class="btn btn-sm btn-default"><i class="fas fa-exclamation-triangle mr-1"></i>Matriz de peligros</a>
+    <a href="/formacion" class="btn btn-sm btn-default"><i class="fas fa-graduation-cap mr-1"></i>Formaci&oacute;n</a>
+  </div>
+</div>
+
+<div class="card card-outline card-primary">
+  <div class="card-body small">
+    <dl class="row mb-0">
+      <dt class="col-sm-2">Cargo tipo</dt><dd class="col-sm-4"><%= p.tipo ? p.tipo.nombre : 'Sin asignar' %></dd>
+      <dt class="col-sm-2">Trabajadores</dt><dd class="col-sm-4"><%= p.trabajadores %></dd>
+      <dt class="col-sm-2">Funciones</dt><dd class="col-sm-10 pre-line"><%= c.descripcion || '-' %></dd>
+      <% if (c.perfil_riesgo) { %><dt class="col-sm-2">Observaciones</dt><dd class="col-sm-10 pre-line"><%= c.perfil_riesgo %></dd><% } %>
+    </dl>
+  </div>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-peligros" role="tab">Peligros <span class="badge badge-light"><%= p.peligros.length %></span></a></li>
+  <% if (p.tipo) { %><li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-brechas" role="tab">T&iacute;picos sin identificar <span class="badge badge-<%= p.brechas.length ? 'warning' : 'light' %>"><%= p.brechas.length %></span></a></li><% } %>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-requisitos" role="tab">Competencias y EPP</a></li>
+</ul>
+<div class="tab-content pestanas">
+  <div class="tab-pane fade show active" id="tab-peligros" role="tabpanel">
+    <div class="card card-outline card-secondary">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Peligro</th><th>Proceso / actividad</th><th class="text-center">NR</th><th>Nivel</th><th>Medidas</th></tr></thead>
+          <tbody>
+            <% p.peligros.forEach(function (i) { %>
+            <tr>
+              <td><small class="text-muted"><%= p.clases.get(i.clase_peligro) || i.clase_peligro %></small><br><%= i.peligro %><% if (i.efectos) { %><br><small><%= i.efectos %></small><% } %></td>
+              <td><small><%= i.proceso %><br><%= i.actividad %></small></td>
+              <td class="text-center"><strong><%= i.nr %></strong></td>
+              <td><span class="badge badge-<%= colorNivel[i.nivel_riesgo] %>"><%= i.nivel_riesgo %></span><br><small><%= i.aceptabilidad %></small></td>
+              <td class="small"><% i.controles.forEach(function (x) { %><div><span class="badge badge-light"><%= p.jerarquia.get(x.jerarquia_codigo) || x.jerarquia_codigo %></span> <%= x.descripcion %><% if (x.estado === 'implementado') { %> <i class="fas fa-check text-success"></i><% } %></div><% }) %></td>
+            </tr>
+            <% }) %>
+            <% if (!p.peligros.length) { %><tr><td colspan="5" class="text-muted">La matriz vigente no asocia peligros a este cargo.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <% if (p.tipo) { %>
+  <div class="tab-pane fade" id="tab-brechas" role="tabpanel">
+    <div class="card card-outline card-warning">
+      <div class="card-body p-0">
+        <table class="table table-bordered table-hover table-sm mb-0">
+          <thead><tr><th>Peligro t&iacute;pico de &laquo;<%= p.tipo.nombre %>&raquo;</th><th>Exposici&oacute;n habitual</th><th>Peor consecuencia</th></tr></thead>
+          <tbody>
+            <% p.brechas.forEach(function (b) { %>
+            <tr><td><small class="text-muted"><%= p.clases.get(b.clase_codigo) || b.clase_codigo %></small><br><%= b.nombre %></td><td><%= b.ne %></td><td><small><%= b.peor_consecuencia || '' %></small></td></tr>
+            <% }) %>
+            <% if (!p.brechas.length) { %><tr><td colspan="3" class="text-muted">La matriz vigente cubre todos los peligros t&iacute;picos del cargo tipo.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+      <% if (p.brechas.length && gestionar) { %><div class="card-footer small text-muted">Agr&eacute;guelos desde la matriz en borrador con <strong>Sugerir por cargo</strong>, o descarte los que no apliquen en su operaci&oacute;n.</div><% } %>
+    </div>
+  </div>
+  <% } %>
+
+  <div class="tab-pane fade" id="tab-requisitos" role="tabpanel">
+    <div class="card card-outline card-secondary">
+      <div class="card-body small">
+        <h6>Competencias exigibles</h6>
+        <% if (p.competencias.length) { %><ul class="mb-2"><% p.competencias.forEach(function (x) { %><li><%= x.nombre %></li><% }) %></ul><% } else { %><p class="text-muted">Sin competencias espec&iacute;ficas.</p><% } %>
+        <% if (p.sugeridasTipo.length) { %><p class="text-warning mb-3"><i class="fas fa-lightbulb mr-1"></i>El cargo tipo sugiere adem&aacute;s: <%= p.sugeridasTipo.join(', ') %>. Config&uacute;relas en Formaci&oacute;n.</p><% } %>
+        <h6>EPP requerido</h6>
+        <% if (p.epp.length) { %><ul class="mb-0"><% p.epp.forEach(function (x) { %><li><%= x.nombre %> (<%= x.cantidad %>)</li><% }) %></ul><% } else { %><p class="text-muted mb-0">Sin EPP asignado al cargo.</p><% } %>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/pie') %>

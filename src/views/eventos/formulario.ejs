@@ -1,0 +1,102 @@
+<%- include('../partials/cabecera') %>
+<% var v = valores || {}; var marcados = [].concat(v.criterios_grave || []); %>
+<% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+<form method="post" action="/eventos" id="form-evento">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card card-outline card-danger">
+        <div class="card-body">
+          <div class="form-group">
+            <label>Tipo de evento *</label><br>
+            <% [['incidente', 'Incidente (sin lesi&oacute;n)'], ['accidente', 'Accidente de trabajo'], ['enfermedad', 'Enfermedad laboral']].forEach(function (t) { %>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input type="radio" class="custom-control-input" id="t-<%= t[0] %>" name="tipo" value="<%= t[0] %>" <%= v.tipo === t[0] ? 'checked' : '' %> required>
+              <label class="custom-control-label" for="t-<%= t[0] %>"><%- t[1] %></label>
+            </div>
+            <% }) %>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6 js-persona">
+              <label for="e-persona">Persona afectada <span class="js-req">*</span></label>
+              <select id="e-persona" name="persona_id" class="form-control">
+                <option value="">Seleccione</option>
+                <% personas.forEach(function (p) { %><option value="<%= p.id %>"<%= String(v.persona_id) === String(p.id) ? ' selected' : '' %>><%= p.apellidos %> <%= p.nombres %> (<%= p.numero_documento %>)</option><% }) %>
+              </select>
+              <small class="text-muted">Solo personas con vinculaci&oacute;n activa. Registre antes a contratistas o visitantes en Personas.</small>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="e-centro">Centro de trabajo</label>
+              <select id="e-centro" name="centro_trabajo_id" class="form-control">
+                <option value="">Sin especificar</option>
+                <% centros.forEach(function (c) { %><option value="<%= c.id %>"<%= String(v.centro_trabajo_id) === String(c.id) ? ' selected' : '' %>><%= c.nombre %></option><% }) %>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row js-ocurrencia">
+            <div class="form-group col-md-6">
+              <label for="e-fecha">Fecha y hora de ocurrencia *</label>
+              <input type="datetime-local" id="e-fecha" name="fecha_ocurrencia" class="form-control" value="<%= v.fecha_ocurrencia || '' %>">
+            </div>
+            <div class="form-group col-md-6">
+              <label for="e-lugar">Lugar exacto</label>
+              <input type="text" id="e-lugar" name="lugar" class="form-control" value="<%= v.lugar || '' %>" maxlength="255">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="e-desc">&iquest;Qu&eacute; pas&oacute;? *</label>
+            <textarea id="e-desc" name="descripcion" class="form-control" rows="4" minlength="20" required><%= v.descripcion || '' %></textarea>
+          </div>
+
+          <div class="js-accidente">
+            <div class="form-row">
+              <div class="form-group col-md-4"><label for="e-lesion">Tipo de lesi&oacute;n</label><input type="text" id="e-lesion" name="tipo_lesion" class="form-control" value="<%= v.tipo_lesion || '' %>" maxlength="150" placeholder="Herida, contusi&oacute;n, fractura..."></div>
+              <div class="form-group col-md-4"><label for="e-parte">Parte del cuerpo</label><input type="text" id="e-parte" name="parte_cuerpo" class="form-control" value="<%= v.parte_cuerpo || '' %>" maxlength="150"></div>
+              <div class="form-group col-md-4"><label for="e-agente">Agente de la lesi&oacute;n</label><input type="text" id="e-agente" name="agente_lesion" class="form-control" value="<%= v.agente_lesion || '' %>" maxlength="150" placeholder="M&aacute;quina, herramienta..."></div>
+            </div>
+          </div>
+
+          <div class="js-enfermedad">
+            <div class="alert alert-danger small">
+              <i class="fas fa-user-shield mr-1"></i>No registre el diagn&oacute;stico: el empleador no puede custodiar datos de la historia cl&iacute;nica (Res. 1843 de 2025).
+              Solo la calificaci&oacute;n de origen, la entidad y el factor de riesgo asociado.
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-4"><label for="e-diag">Fecha de calificaci&oacute;n *</label><input type="date" id="e-diag" name="fecha_diagnostico" class="form-control" value="<%= v.fecha_diagnostico || '' %>"></div>
+              <div class="form-group col-md-4"><label for="e-ent">Entidad que calific&oacute;</label><input type="text" id="e-ent" name="entidad_calificadora" class="form-control" value="<%= v.entidad_calificadora || '' %>" maxlength="150" placeholder="EPS, ARL, Junta regional..."></div>
+              <div class="form-group col-md-4"><label for="e-riesgo">Agente o factor de riesgo</label><input type="text" id="e-riesgo" name="agente_riesgo" class="form-control" value="<%= v.agente_riesgo || '' %>" maxlength="255" placeholder="Ruido, carga f&iacute;sica, s&iacute;lice..."></div>
+            </div>
+          </div>
+
+          <div class="form-group mb-0 col-md-4 px-0"><label for="e-dias">D&iacute;as de incapacidad</label><input type="number" id="e-dias" name="dias_incapacidad" class="form-control" value="<%= v.dias_incapacidad || 0 %>" min="0"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 js-accidente">
+      <div class="card card-outline card-warning">
+        <div class="card-header"><h3 class="card-title">Gravedad</h3></div>
+        <div class="card-body">
+          <select name="gravedad" id="e-gravedad" class="form-control mb-3">
+            <% ['leve', 'grave', 'mortal'].forEach(function (g) { %><option value="<%= g %>"<%= v.gravedad === g ? ' selected' : '' %>><%= g.charAt(0).toUpperCase() + g.slice(1) %></option><% }) %>
+          </select>
+          <p class="small mb-1"><strong>Accidente grave (Res. 1401, art. 3):</strong> marque si hubo</p>
+          <% criterios.forEach(function (c) { %>
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input js-criterio" id="cg-<%= c.codigo %>" name="criterios_grave" value="<%= c.codigo %>" <%= marcados.indexOf(c.codigo) !== -1 ? 'checked' : '' %>>
+            <label class="custom-control-label font-weight-normal small" for="cg-<%= c.codigo %>"><%= c.descripcion %></label>
+          </div>
+          <% }) %>
+          <p class="small text-muted mt-2 mb-0">Grave o mortal: informe de investigaci&oacute;n a la ARL en 15 d&iacute;as y reuni&oacute;n extraordinaria del COPASST.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="alert alert-light small"><i class="fas fa-stopwatch mr-1"></i>Al registrar se calculan los plazos legales: reporte a ARL, EPS y MinTrabajo en <strong>2 d&iacute;as h&aacute;biles</strong> y la investigaci&oacute;n en <strong>15 d&iacute;as</strong>.</div>
+  <a href="/eventos" class="btn btn-default">Cancelar</a>
+  <button type="submit" class="btn btn-danger"><i class="fas fa-save mr-1"></i>Registrar</button>
+</form>
+<%- include('../partials/pie') %>

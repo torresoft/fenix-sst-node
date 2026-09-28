@@ -1,0 +1,42 @@
+<%- include('../partials/cabecera') %>
+<%
+  var textoEstado = { vigente: ['success', 'check', 'Autorizada'], desactualizado: ['warning', 'sync', 'Versi&oacute;n anterior'], revocado: ['secondary', 'undo', 'Revocada'], negado: ['secondary', 'times', 'No autoriz&oacute;'], sin_registro: ['light', 'minus', 'Pendiente'] };
+%>
+<div class="barra-acciones">
+  <span class="small text-muted">Ley 1581 de 2012: cada finalidad se autoriza por separado; los datos sensibles son facultativos. El titular decide desde <strong>Mis registros</strong>; aqu&iacute; se registran las autorizaciones en papel.</span>
+  <span><% if (m.pendientes) { %><span class="badge badge-warning"><%= m.pendientes %> pendiente(s)</span><% } else { %><span class="badge badge-success">Al d&iacute;a</span><% } %></span>
+</div>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><div class="table-responsive">
+  <table class="table table-bordered table-hover table-sm mb-0 tabla-matriz">
+    <thead><tr><th>Persona</th><% m.finalidades.forEach(function (f) { %><th class="text-center"><%= f.nombre %><br><small class="text-muted">v<%= f.version %><%= f.es_dato_sensible ? ' · sensible' : '' %></small></th><% }) %></tr></thead>
+    <tbody>
+      <% m.filas.forEach(function (p) { %>
+      <tr>
+        <td><a href="/personas/<%= p.id %>"><%= p.apellidos %> <%= p.nombres %></a><br><small class="text-muted"><%= p.numero_documento %></small></td>
+        <% m.finalidades.forEach(function (f) { var e = p.estados[f.codigo]; var t = textoEstado[e.estado]; %>
+        <td class="text-center">
+          <span class="badge badge-<%= t[0] %>"><i class="fas fa-<%= t[1] %> mr-1"></i><%- t[2] %></span>
+          <% if (gestionar && e.estado !== 'vigente') { %><button type="button" class="btn btn-xs btn-default js-registrar" data-persona="<%= p.id %>" data-nombre="<%= p.nombres %> <%= p.apellidos %>" data-finalidad="<%= f.codigo %>" data-finalidad-nombre="<%= f.nombre %>" data-toggle="tooltip" title="Registrar autorizaci&oacute;n en papel"><i class="fas fa-file-signature"></i></button><% } %>
+        </td>
+        <% }) %>
+      </tr>
+      <% }) %>
+      <% if (!m.filas.length) { %><tr><td colspan="<%= m.finalidades.length + 1 %>" class="text-muted">Sin personas vinculadas.</td></tr><% } %>
+    </tbody>
+  </table>
+</div></div></div>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-autorizacion" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/consentimientos" class="modal-content" id="form-autorizacion">
+    <div class="modal-header"><h5 class="modal-title">Autorizaci&oacute;n en papel</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="persona_id"><input type="hidden" name="finalidad"><input type="hidden" name="medio" value="fisico_escaneado">
+      <p class="font-weight-bold js-nombre"></p>
+      <div class="form-group"><label>Decisi&oacute;n *</label><select name="otorgado" class="form-control"><option value="1">Autoriza</option><option value="0">No autoriza</option></select></div>
+      <div class="form-group mb-0"><label>Formato firmado (AUTORIZACION_DATOS vigente) *</label>
+        <select name="documento_id" class="form-control" required><option value="">Seleccione</option><% soportes.forEach(function (d) { %><option value="<%= d.id %>" data-persona="<%= d.persona_id || '' %>"><%= d.codigo %> v<%= d.version %></option><% }) %></select>
+        <small><a href="/documentos/nuevo?tipo=AUTORIZACION_DATOS">Subir formato firmado</a></small></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+<% } %>
+<%- include('../partials/pie') %>

@@ -1,0 +1,142 @@
+<%- include('../partials/cabecera') %>
+<%
+  var textoCanal = { electronico: 'Electr&oacute;nico', fisico: 'F&iacute;sico', verbal: 'Verbal' };
+  var textoConducta = { acoso_laboral: 'Acoso laboral', acoso_sexual: 'Acoso sexual', violencia: 'Violencia', discriminacion: 'Discriminaci&oacute;n', otra: 'Otra' };
+  var textoEstado = { radicada: ['info', 'Radicada'], en_tramite: ['primary', 'En tr&aacute;mite'], cerrada: ['success', 'Cerrada'], anulada: ['secondary', 'Anulada'] };
+  var textoNivel = { sin_riesgo: ['success', 'Sin riesgo'], bajo: ['success', 'Bajo'], medio: ['warning', 'Medio'], alto: ['danger', 'Alto'], muy_alto: ['danger', 'Muy alto'] };
+  var tabs = [['quejas', 'Quejas y denuncias'], ['psicosocial', 'Riesgo psicosocial'], ['programas', 'Pol&iacute;tica y programa']];
+  var abiertas = quejas.filter(function (q) { return q.estado === 'radicada' || q.estado === 'en_tramite'; }).length;
+%>
+<ul class="nav nav-tabs mb-3">
+  <% tabs.forEach(function (t) { %><li class="nav-item"><a class="nav-link<%= tab === t[0] ? ' active' : '' %>" href="?tab=<%= t[0] %>"><%- t[1] %><% if (t[0] === 'quejas' && abiertas) { %> <span class="badge badge-warning"><%= abiertas %></span><% } %></a></li><% }) %>
+</ul>
+
+<% if (tab === 'quejas') { %>
+<div class="barra-acciones">
+  <span class="small text-muted"><i class="fas fa-user-lock mr-1"></i><% if (reserva) { %>Usted pertenece al Comit&eacute; de Convivencia: ve hechos y partes.<% } else { %>Reserva: solo el Comit&eacute; de Convivencia ve hechos y partes. Aqu&iacute; se controlan plazos y medidas de protecci&oacute;n.<% } %></span>
+  <% if (reserva) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-queja"><i class="fas fa-plus mr-1"></i>Radicar queja</button><% } %>
+</div>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><div class="table-responsive">
+  <table class="table table-bordered table-hover table-sm mb-0">
+    <thead><tr><th>Radicado</th><th>Fecha</th><th>Canal</th><th>Protecci&oacute;n (5 d&iacute;as h&aacute;biles)</th><th>Tr&aacute;mite (65 d&iacute;as)</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+    <tbody>
+      <% quejas.forEach(function (q) { %>
+      <tr>
+        <td class="text-nowrap"><%= q.radicado %></td>
+        <td class="text-nowrap"><%= q.fecha_radicacion %></td>
+        <td><%- textoCanal[q.canal] %></td>
+        <td><% if (!q.solicita_proteccion) { %><span class="text-muted small">No solicitada</span><% } else if (q.limite_proteccion) { %><span class="badge badge-danger">L&iacute;mite <%= q.limite_proteccion %></span><% } else { %><span class="badge badge-success">Medida adoptada</span><% } %></td>
+        <td><% if (q.limite_tramite) { %>L&iacute;mite <%= q.limite_tramite %><% } else if (q.fecha_cierre) { %><span class="small">Cerrada <%= q.fecha_cierre %></span><% } %></td>
+        <td><span class="badge badge-<%= textoEstado[q.estado][0] %>"><%- textoEstado[q.estado][1] %></span></td>
+        <td class="text-center"><a href="/convivencia/quejas/<%= q.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Ver"><i class="fas fa-eye"></i></a></td>
+      </tr>
+      <% }) %>
+      <% if (!quejas.length) { %><tr><td colspan="7" class="text-muted">Sin quejas radicadas.</td></tr><% } %>
+    </tbody>
+  </table>
+</div></div></div>
+
+<% if (reserva) { %>
+<div class="modal fade" id="modal-queja" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog modal-lg" role="document">
+  <form method="post" action="/convivencia/quejas" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Radicar queja</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row">
+        <div class="form-group col-md-4"><label>Canal *</label><select name="canal" class="form-control"><% r.CANALES.forEach(function (k) { %><option value="<%= k %>"><%- textoCanal[k] %></option><% }) %></select></div>
+        <div class="form-group col-md-4"><label>Conducta *</label><select name="tipo_conducta" class="form-control"><% r.CONDUCTAS.forEach(function (k) { %><option value="<%= k %>"><%- textoConducta[k] %></option><% }) %></select></div>
+        <div class="form-group col-md-4"><label>Fecha de radicaci&oacute;n *</label><input type="date" name="fecha_radicacion" class="form-control" max="<%= hoy %>" value="<%= hoy %>" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6"><label>Quien presenta la queja</label><select name="quejoso_persona_id" class="form-control"><option value="">Persona externa (escriba el nombre)</option><% personas.forEach(function (p) { %><option value="<%= p.id %>"><%= p.apellidos %> <%= p.nombres %></option><% }) %></select></div>
+        <div class="form-group col-md-6"><label>Nombre (si es externa)</label><input type="text" name="quejoso_nombre" class="form-control" maxlength="150"></div>
+      </div>
+      <div class="form-group"><label>Personas implicadas *</label><input type="text" name="implicados" class="form-control" maxlength="500" required></div>
+      <div class="form-group"><label>Hechos *</label><textarea name="hechos" class="form-control" rows="5" minlength="20" required></textarea><small class="text-muted">Una queja verbal se transcribe aqu&iacute;: el registro es obligatorio.</small></div>
+      <div class="form-check"><input class="form-check-input" type="checkbox" name="solicita_proteccion" value="1" id="q-proteccion"><label class="form-check-label" for="q-proteccion">La v&iacute;ctima solicita medidas de protecci&oacute;n</label></div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Radicar</button></div>
+  </form></div></div>
+<% } %>
+<% } %>
+
+<% if (tab === 'psicosocial') { %>
+<div class="barra-acciones">
+  <span class="small text-muted">Solo el consolidado por grupos (m&iacute;nimo <%= psico.minimo %> personas por grupo). Los resultados individuales los custodia el psic&oacute;logo (Res. 2764 de 2022).</span>
+  <% if (gestionar) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-psico"><i class="fas fa-plus mr-1"></i>Registrar aplicaci&oacute;n</button><% } %>
+</div>
+<% if (psico.vigente) { var v = psico.vigente; %>
+<div class="card card-outline card-primary">
+  <div class="card-header"><h3 class="card-title">Aplicaci&oacute;n vigente &middot; <%= v.fecha_aplicacion %></h3>
+    <div class="card-tools">Nivel general <span class="badge badge-<%= textoNivel[v.nivel_general][0] %>"><%= textoNivel[v.nivel_general][1] %></span> &middot; pr&oacute;xima <strong><%= v.proxima %></strong></div></div>
+  <div class="card-body p-0">
+    <p class="small px-3 pt-2 mb-2"><%= v.psicologo_nombre %> (licencia <%= v.psicologo_licencia %>) &middot; <%= v.evaluados %> de <%= v.poblacion %> evaluados &middot; informe <%= v.documento_codigo %></p>
+    <table class="table table-bordered table-sm mb-0">
+      <thead><tr><th>Grupo</th><th class="text-right">Evaluados</th><th>Intralaboral</th><th>Extralaboral</th><th>Estr&eacute;s</th></tr></thead>
+      <tbody><% psico.grupos.forEach(function (g) { %><tr><td><%= g.grupo %></td><td class="text-right"><%= g.evaluados %></td>
+        <% ['intralaboral', 'extralaboral', 'estres'].forEach(function (c) { %><td><span class="badge badge-<%= textoNivel[g[c]][0] %>"><%= textoNivel[g[c]][1] %></span></td><% }) %></tr><% }) %></tbody>
+    </table>
+  </div>
+</div>
+<% } else { %>
+<div class="callout callout-warning"><p class="mb-0">No hay aplicaci&oacute;n vigente de la bater&iacute;a de riesgo psicosocial.</p></div>
+<% } %>
+<% var historicas = psico.evaluaciones.filter(function (e) { return e.estado !== 'vigente'; }); if (historicas.length) { %>
+<div class="card card-outline card-secondary collapsed-card"><div class="card-header"><h3 class="card-title">Aplicaciones anteriores</h3><div class="card-tools"><button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button></div></div>
+  <div class="card-body p-0"><table class="table table-sm mb-0"><tbody><% historicas.forEach(function (e) { %><tr class="text-muted"><td><%= e.fecha_aplicacion %></td><td><%= textoNivel[e.nivel_general][1] %></td><td><%= e.estado %></td><td class="small"><%= e.motivo_estado || '' %></td></tr><% }) %></tbody></table></div></div>
+<% } %>
+<% if (gestionar && psico.vigente) { %>
+<form method="post" action="/convivencia/psicosocial/<%= psico.vigente.id %>/anular" class="form-inline js-confirmar" data-confirmar="&iquest;Anular la aplicaci&oacute;n vigente?">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="text" name="motivo" class="form-control form-control-sm mr-2" placeholder="Motivo de anulaci&oacute;n" minlength="10" required>
+  <button class="btn btn-sm btn-outline-danger">Anular aplicaci&oacute;n vigente</button></form>
+<% } %>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-psico" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog modal-xl" role="document">
+  <form method="post" action="/convivencia/psicosocial" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Aplicaci&oacute;n de la bater&iacute;a</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row">
+        <div class="form-group col-md-3"><label>Fecha de aplicaci&oacute;n *</label><input type="date" name="fecha_aplicacion" class="form-control" max="<%= hoy %>" required></div>
+        <div class="form-group col-md-5"><label>Psic&oacute;logo *</label><input type="text" name="psicologo_nombre" class="form-control" maxlength="150" required></div>
+        <div class="form-group col-md-4"><label>Licencia en SST *</label><input type="text" name="psicologo_licencia" class="form-control" maxlength="60" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-3"><label>Poblaci&oacute;n *</label><input type="number" name="poblacion" min="1" class="form-control" required></div>
+        <div class="form-group col-md-3"><label>Evaluados *</label><input type="number" name="evaluados" min="1" class="form-control" required></div>
+        <div class="form-group col-md-3"><label>Nivel general *</label><select name="nivel_general" class="form-control"><% r.NIVELES.forEach(function (k) { %><option value="<%= k %>"><%= textoNivel[k][1] %></option><% }) %></select></div>
+        <div class="form-group col-md-3"><label>Informe consolidado *</label><select name="documento_id" class="form-control" required><option value="">Seleccione</option><% informes.forEach(function (d) { %><option value="<%= d.id %>"><%= d.codigo %> v<%= d.version %></option><% }) %></select>
+          <small><a href="/documentos/nuevo?tipo=INFORME_PSICOSOCIAL">Subir informe</a></small></div>
+      </div>
+      <table class="table table-sm table-bordered mb-2">
+        <thead><tr><th>Grupo (&aacute;rea o cargo) *</th><th>Evaluados *</th><th>Intralaboral</th><th>Extralaboral</th><th>Estr&eacute;s</th><th></th></tr></thead>
+        <tbody class="js-grupos">
+          <tr class="js-grupo">
+            <td><input type="text" name="grupo" class="form-control form-control-sm" maxlength="120" required></td>
+            <td><input type="number" name="grupo_evaluados" min="<%= psico.minimo %>" class="form-control form-control-sm" required></td>
+            <% ['intralaboral', 'extralaboral', 'estres'].forEach(function (c) { %><td><select name="<%= c %>" class="form-control form-control-sm"><% r.NIVELES.forEach(function (k) { %><option value="<%= k %>"><%= textoNivel[k][1] %></option><% }) %></select></td><% }) %>
+            <td class="text-center"><button type="button" class="btn btn-xs btn-default js-quitar-grupo" data-toggle="tooltip" title="Quitar"><i class="fas fa-times"></i></button></td>
+          </tr>
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-sm btn-default js-agregar-grupo"><i class="fas fa-plus mr-1"></i>Grupo</button>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+<% } %>
+<% } %>
+
+<% if (tab === 'programas') { %>
+<div class="card card-outline card-secondary"><div class="card-body p-0">
+  <table class="table table-bordered table-sm mb-0">
+    <thead><tr><th>Documento exigido</th><th>Norma</th><th>Vigente</th><th>Vence</th><th class="text-center">Acciones</th></tr></thead>
+    <tbody><% documentos.forEach(function (d) { %><tr>
+      <td><%= d.nombre %></td><td class="small"><%= d.origen_articulo %></td>
+      <td><% if (d.id) { %><a href="/documentos/<%= d.id %>"><%= d.codigo %> v<%= d.version %></a> <small class="text-muted"><%= d.fecha_documento %></small><% } else { %><span class="badge badge-danger">Falta</span><% } %></td>
+      <td class="text-nowrap"><%= d.fecha_vence || '' %></td>
+      <td class="text-center"><% if (gestionar) { %><a href="/documentos/nuevo?tipo=<%= d.tipo %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="<%= d.id ? 'Nueva versi&oacute;n' : 'Cargar' %>"><i class="fas fa-upload"></i></a><% } %></td>
+    </tr><% }) %></tbody>
+  </table>
+</div></div>
+<p class="small text-muted">La pol&iacute;tica y el protocolo antiacoso se construyen con participaci&oacute;n de los trabajadores y se socializan cada a&ntilde;o (D. 1040 de 2026). El programa de salud mental incluye sensibilizaci&oacute;n, plan de intervenci&oacute;n e informaci&oacute;n desagregada por sexo, edad y ocupaci&oacute;n (D. 0728 de 2025): el perfil sociodemogr&aacute;fico est&aacute; en <a href="/salud?tab=perfil">Salud</a>.</p>
+<% } %>
+<%- include('../partials/pie') %>

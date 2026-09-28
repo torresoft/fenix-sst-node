@@ -1,0 +1,38 @@
+<%- include('../partials/cabecera') %>
+<p class="text-muted small">Empresa con <%= p.empresa.numero_trabajadores %> trabajadores declarados. Los comit&eacute;s que aplican salen de ese n&uacute;mero.</p>
+<div class="row">
+  <% p.tarjetas.forEach(function (x) { var c = x.comite, r = x.resumen; %>
+  <div class="col-lg-4">
+    <div class="card card-outline card-<%= !c ? 'danger' : (r.faltas.length || r.sinReunion.length || r.vencePeriodo ? 'warning' : 'success') %>">
+      <div class="card-header"><h3 class="card-title"><%= x.tipo.nombre %></h3><div class="card-tools"><small class="text-muted"><%= x.tipo.norma_codigo %></small></div></div>
+      <div class="card-body small">
+        <% if (!c) { %>
+        <p class="text-danger mb-2"><i class="fas fa-exclamation-circle mr-1"></i>Sin conformar.</p>
+        <% } else { %>
+        <p class="mb-1"><strong>Periodo:</strong> <%= c.periodo_inicio %> a <span class="<%= r.vencePeriodo ? 'text-danger font-weight-bold' : '' %>"><%= c.periodo_fin %></span></p>
+        <p class="mb-1"><strong>Miembros activos:</strong> <%= r.miembros %></p>
+        <% if (r.aviso) { %><p class="mb-1 text-muted"><i class="fas fa-info-circle mr-1"></i><%= r.aviso %></p><% } %>
+        <% r.faltas.forEach(function (f) { %><p class="mb-1 text-warning"><i class="fas fa-user-plus mr-1"></i><%= f %></p><% }) %>
+        <% if (r.sinReunion.length) { %><p class="mb-1 text-danger"><i class="fas fa-calendar-times mr-1"></i>Meses sin reuni&oacute;n: <%= r.sinReunion.join(', ') %></p><% } %>
+        <% if (r.sinActa) { %><p class="mb-1 text-warning"><i class="fas fa-file-signature mr-1"></i><%= r.sinActa %> sesi&oacute;n(es) sin acta</p><% } %>
+        <p class="mb-0"><strong>Compromisos abiertos:</strong> <%= r.compromisos %></p>
+        <% } %>
+        <% if (!x.aplica && c) { %><p class="text-muted mt-2 mb-0">Por el tama&ntilde;o actual de la empresa este comit&eacute; ya no aplica: revise la conformaci&oacute;n.</p><% } %>
+      </div>
+      <div class="card-footer">
+        <% if (c) { %><a href="/comites/<%= c.id %>" class="btn btn-sm btn-primary"><i class="fas fa-folder-open mr-1"></i>Abrir</a><% } %>
+        <% if (gestionar && x.aplica) { %>
+        <button type="button" class="btn btn-sm btn-default" data-toggle="collapse" data-target="#conf-<%= x.tipo.codigo %>"><%= c ? 'Nuevo periodo' : 'Conformar' %></button>
+        <form method="post" action="/comites" class="collapse mt-2" id="conf-<%= x.tipo.codigo %>">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="tipo" value="<%= x.tipo.codigo %>">
+          <div class="form-group mb-2"><label class="small">Inicio del periodo (2 a&ntilde;os) *</label><input type="date" name="periodo_inicio" class="form-control form-control-sm" max="<%= hoy %>" required></div>
+          <button type="submit" class="btn btn-sm btn-success">Registrar periodo</button>
+        </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>
+<%- include('../partials/pie') %>

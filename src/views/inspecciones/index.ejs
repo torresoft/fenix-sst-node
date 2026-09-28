@@ -1,0 +1,50 @@
+<%- include('../partials/cabecera') %>
+<%
+  var textoTipo = { locativa: 'Locativa', equipos: 'M&aacute;quinas y equipos', herramientas: 'Herramientas', epp: 'EPP', emergencias: 'Equipos de emergencia', orden_aseo: 'Orden y aseo', otra: 'Otra' };
+  var colorEstado = { programada: 'info', realizada: 'success', anulada: 'secondary' };
+  var programadas = filas.filter(function (f) { return f.estado === 'programada'; });
+  var atrasadas = programadas.filter(function (f) { return f.fecha_programada < hoy; }).length;
+  var abiertas = filas.reduce(function (s, f) { return s + Number(f.acciones_abiertas); }, 0);
+%>
+<div class="barra-acciones">
+  <form method="get" class="form-inline"><label class="small mr-2">A&ntilde;o</label><input type="number" name="anio" value="<%= anio %>" class="form-control form-control-sm js-autoenvio"></form>
+  <span class="small">
+    <span class="badge badge-info"><%= programadas.length %></span> programadas
+    <% if (atrasadas) { %>&middot; <span class="badge badge-danger"><%= atrasadas %></span> atrasadas<% } %>
+    &middot; <span class="badge badge-<%= abiertas ? 'warning' : 'success' %>"><%= abiertas %></span> acciones abiertas
+  </span>
+  <% if (gestionar) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-programar"><i class="fas fa-plus mr-1"></i>Programar</button><% } %>
+</div>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><div class="table-responsive">
+  <table class="table table-bordered table-hover table-sm mb-0">
+    <thead><tr><th>Fecha</th><th>Tipo</th><th>&Aacute;rea</th><th>Inspector</th><th class="text-center">Hallazgos</th><th class="text-center">Acciones abiertas</th><th>Estado</th><th class="text-center">Ver</th></tr></thead>
+    <tbody>
+      <% filas.forEach(function (f) { %><tr class="<%= f.estado === 'anulada' ? 'text-muted' : '' %>">
+        <td class="text-nowrap"><%= f.fecha_realizada || f.fecha_programada %><% if (f.estado === 'programada' && f.fecha_programada < hoy) { %> <span class="badge badge-danger">Atrasada</span><% } %></td>
+        <td><%- textoTipo[f.tipo] %><%= f.con_copasst ? ' · COPASST' : '' %></td>
+        <td><%= f.area %><% if (f.centro) { %><br><small class="text-muted"><%= f.centro %></small><% } %></td>
+        <td><%= f.inspector || '' %></td>
+        <td class="text-center"><%= f.estado === 'realizada' ? f.hallazgos : '' %></td>
+        <td class="text-center"><% if (Number(f.acciones_abiertas)) { %><span class="badge badge-warning"><%= f.acciones_abiertas %></span><% } %></td>
+        <td><span class="badge badge-<%= colorEstado[f.estado] %>"><%= f.estado %></span></td>
+        <td class="text-center"><a href="/inspecciones/<%= f.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="<%= f.estado === 'programada' ? 'Registrar resultado' : 'Ver' %>"><i class="fas fa-<%= f.estado === 'programada' ? 'clipboard-check' : 'eye' %>"></i></a></td>
+      </tr><% }) %>
+      <% if (!filas.length) { %><tr><td colspan="8" class="text-muted">Sin inspecciones en <%= anio %>.</td></tr><% } %>
+    </tbody>
+  </table>
+</div></div></div>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-programar" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/inspecciones" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Programar inspecci&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row"><div class="form-group col-6"><label>Tipo *</label><select name="tipo" class="form-control"><% tipos.forEach(function (k) { %><option value="<%= k %>"><%- textoTipo[k] %></option><% }) %></select></div>
+      <div class="form-group col-6"><label>Fecha *</label><input type="date" name="fecha_programada" class="form-control" value="<%= hoy %>" required></div></div>
+      <div class="form-group"><label>&Aacute;rea *</label><input type="text" name="area" class="form-control" maxlength="150" required></div>
+      <div class="form-group"><label>Centro de trabajo</label><select name="centro_trabajo_id" class="form-control"><option value="">&mdash;</option><% centros.forEach(function (c) { %><option value="<%= c.id %>"><%= c.nombre %></option><% }) %></select></div>
+      <div class="form-check"><input class="form-check-input" type="checkbox" name="con_copasst" value="1" id="con-copasst"><label class="form-check-label" for="con-copasst">Con participaci&oacute;n del COPASST</label></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Programar</button></div>
+  </form></div></div>
+<% } %>
+<%- include('../partials/pie') %>

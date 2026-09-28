@@ -1,0 +1,89 @@
+<%- include('../partials/cabecera') %>
+<%
+  var colorNivel = { I: 'danger', II: 'warning', III: 'info', IV: 'success' };
+  var nombreTipo = {}; tipos.forEach(function (t) { nombreTipo[t.codigo] = t.nombre; });
+%>
+<div class="barra-acciones">
+  <div><a href="/personas" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Personas</a></div>
+  <% if (gestionar) { %>
+  <div>
+    <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modal-catalogo"><i class="fas fa-list mr-1"></i>Desde cat&aacute;logo</button>
+    <button type="button" class="btn btn-sm btn-primary js-nuevo"><i class="fas fa-plus mr-1"></i>Nuevo cargo</button>
+  </div>
+  <% } %>
+</div>
+<div class="card card-outline card-secondary">
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Cargo</th><th>Cargo tipo</th><th>Peligros (matriz vigente)</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+      <tbody>
+        <% cargos.forEach(function (c) { var nv = niveles.get(c.id) || []; %>
+        <tr class="<%= c.estado === 'inactivo' ? 'text-muted' : '' %>">
+          <td><a href="/personas/cargos/<%= c.id %>"><strong><%= c.nombre %></strong></a><% if (c.descripcion) { %><br><small class="text-muted"><%= c.descripcion.slice(0, 120) %></small><% } %></td>
+          <td><small><%= nombreTipo[c.cargo_tipo_codigo] || '-' %></small></td>
+          <td>
+            <% ['I', 'II', 'III', 'IV'].forEach(function (n) { var k = nv.filter(function (x) { return x === n; }).length; if (k) { %><span class="badge badge-<%= colorNivel[n] %> mr-1"><%= n %>: <%= k %></span><% } }) %>
+            <% if (!nv.length) { %><small class="text-muted">Sin peligros asociados</small><% } %>
+          </td>
+          <td><span class="badge badge-<%= c.estado === 'activo' ? 'success' : 'secondary' %>"><%= c.estado %></span></td>
+          <td class="text-center text-nowrap">
+            <a href="/personas/cargos/<%= c.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Perfil de riesgo"><i class="fas fa-id-badge"></i></a>
+            <% if (gestionar) { %>
+            <button type="button" class="btn btn-xs btn-default js-editar" data-toggle="tooltip" title="Editar"
+                    data-id="<%= c.id %>" data-nombre="<%= c.nombre %>" data-tipo="<%= c.cargo_tipo_codigo || '' %>" data-descripcion="<%= c.descripcion || '' %>" data-perfil="<%= c.perfil_riesgo || '' %>"><i class="fas fa-edit"></i></button>
+            <form method="post" action="/personas/cargos/<%= c.id %>/estado" class="d-inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="activo" value="<%= c.estado === 'activo' ? '0' : '1' %>">
+              <button type="submit" class="btn btn-xs btn-default" data-toggle="tooltip" title="<%= c.estado === 'activo' ? 'Inactivar' : 'Activar' %>"><i class="fas <%= c.estado === 'activo' ? 'fa-toggle-on' : 'fa-toggle-off' %>"></i></button>
+            </form>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+        <% if (!cargos.length) { %><tr><td colspan="5" class="text-muted">Sin cargos registrados. Cr&eacute;elos desde el cat&aacute;logo para no digitarlos uno por uno.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-cargo" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <form method="post" action="/personas/cargos" class="modal-content" id="form-cargo" data-tipos="<%= JSON.stringify(tipos.map(function (t) { return { codigo: t.codigo, nombre: t.nombre, descripcion: t.descripcion }; })) %>">
+      <div class="modal-header"><h5 class="modal-title js-titulo">Cargo</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="id" value="">
+        <div class="form-row">
+          <div class="form-group col-md-6"><label for="c-tipo">Cargo tipo</label>
+            <select id="c-tipo" name="cargo_tipo_codigo" class="form-control js-tipo"><option value="">Ninguno</option><% tipos.forEach(function (t) { %><option value="<%= t.codigo %>"><%= t.nombre %></option><% }) %></select>
+            <small class="text-muted">Propone los peligros t&iacute;picos en la matriz y las competencias exigibles.</small></div>
+          <div class="form-group col-md-6"><label for="c-nombre">Nombre *</label><input type="text" id="c-nombre" name="nombre" class="form-control" maxlength="150" required></div>
+        </div>
+        <div class="form-group"><label for="c-desc">Descripci&oacute;n y funciones</label><textarea id="c-desc" name="descripcion" class="form-control" rows="3"></textarea></div>
+        <div class="form-group mb-0"><label for="c-perfil">Observaciones del perfil de riesgo</label><textarea id="c-perfil" name="perfil_riesgo" class="form-control" rows="2" placeholder="Condiciones particulares no cubiertas por la matriz (p. ej. ex&aacute;menes seg&uacute;n profesiograma)"></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-catalogo" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <form method="post" action="/personas/cargos/catalogo" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Crear cargos desde el cat&aacute;logo</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+      <div class="modal-body columnas-2">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <% tipos.forEach(function (t) { %>
+        <div class="custom-control custom-checkbox mb-1">
+          <input type="checkbox" class="custom-control-input" id="ct-<%= t.codigo %>" name="tipos" value="<%= t.codigo %>">
+          <label class="custom-control-label font-weight-normal" for="ct-<%= t.codigo %>"><%= t.nombre %><br><small class="text-muted"><%= t.descripcion %></small></label>
+        </div>
+        <% }) %>
+      </div>
+      <div class="modal-footer"><span class="small text-muted mr-auto">Los que ya existan con el mismo nombre se omiten.</span><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-plus mr-1"></i>Crear</button></div>
+    </form>
+  </div>
+</div>
+<% } %>
+<%- include('../partials/pie') %>

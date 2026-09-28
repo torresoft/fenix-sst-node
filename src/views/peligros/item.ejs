@@ -1,0 +1,86 @@
+<%- include('../partials/cabecera') %>
+<%
+  var v = valores || {}, esc = d.met.escalas;
+  var cargosSel = [].concat(v.cargos || []).map(String);
+  var nombreClase = {}; d.clases.forEach(function (c) { nombreClase[c.codigo] = c.nombre; });
+  var catalogo = {}; tipos.forEach(function (t) { catalogo[t.codigo] = { clase: t.clase_codigo, nombre: t.nombre, efectos: t.efectos, peor: t.peor_consecuencia, nc: t.nc_sugerido, norma: t.norma_codigo, controles: t.controles }; });
+  var jerarquia = {}; d.jerarquia.forEach(function (j) { jerarquia[j.codigo] = j.nivel + '. ' + j.nombre; });
+  var h = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var opciones = function (lista, actual) { return lista.map(function (x) { return '<option value="' + h(x.codigo) + '"' + (actual === x.codigo ? ' selected' : '') + '>' + h(x.codigo) + ' - ' + h(x.nombre) + ' (' + h(x.valor) + ')</option>'; }).join(''); };
+%>
+<% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+<% if (item && Number(item.sugerido)) { %><div class="alert alert-warning small mb-3"><i class="fas fa-magic mr-1"></i>Peligro sugerido desde el perfil del cargo: verifique el nivel de deficiencia, la exposici&oacute;n y los controles existentes en campo antes de guardar.</div><% } %>
+<datalist id="dl-procesos"><% previos.procesos.forEach(function (x) { %><option value="<%= x %>"><% }) %></datalist>
+<datalist id="dl-actividades"><% previos.actividades.forEach(function (x) { %><option value="<%= x %>"><% }) %></datalist>
+<datalist id="dl-tareas"><% previos.tareas.forEach(function (x) { %><option value="<%= x %>"><% }) %></datalist>
+<form method="post" action="/peligros/<%= d.m.id %>/items<%= item ? '/' + item.id : '' %>" id="form-item"
+      data-escalas="<%= JSON.stringify({ nd: esc.nd, ne: esc.ne, nc: esc.nc, np: esc.np, nr: esc.nr }) %>"
+      data-catalogo="<%= JSON.stringify(catalogo) %>" data-jerarquia="<%= JSON.stringify(jerarquia) %>" data-nuevo="<%= item ? '0' : '1' %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="card card-outline card-primary">
+    <div class="card-header"><h3 class="card-title">Identificaci&oacute;n</h3></div>
+    <div class="card-body">
+      <div class="form-group">
+        <label>Peligro del cat&aacute;logo (GTC 45)</label>
+        <select name="peligro_tipo_codigo" class="form-control js-tipo">
+          <option value="">Otro: descr&iacute;balo abajo</option>
+          <% d.clases.forEach(function (c) { var grupo = tipos.filter(function (t) { return t.clase_codigo === c.codigo; }); if (!grupo.length) return; %>
+          <optgroup label="<%= c.nombre %>"><% grupo.forEach(function (t) { %><option value="<%= t.codigo %>"<%= v.peligro_tipo_codigo === t.codigo ? ' selected' : '' %>><%= t.nombre %></option><% }) %></optgroup>
+          <% }) %>
+        </select>
+        <small class="text-muted">Llena la clasificaci&oacute;n, efectos, consecuencia, requisito legal y propone medidas. Todo es editable.</small>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-4"><label>Proceso *</label><input type="text" name="proceso" class="form-control" value="<%= v.proceso || '' %>" maxlength="150" list="dl-procesos" autocomplete="off" required></div>
+        <div class="form-group col-md-4"><label>Actividad *</label><input type="text" name="actividad" class="form-control" value="<%= v.actividad || '' %>" maxlength="255" list="dl-actividades" autocomplete="off" required></div>
+        <div class="form-group col-md-4"><label>Tarea</label><input type="text" name="tarea" class="form-control" value="<%= v.tarea || '' %>" maxlength="255" list="dl-tareas" autocomplete="off"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-4"><label>Centro de trabajo</label>
+          <select name="centro_trabajo_id" class="form-control"><option value="">Todos</option><% centros.forEach(function (c) { %><option value="<%= c.id %>"<%= String(v.centro_trabajo_id) === String(c.id) ? ' selected' : '' %>><%= c.nombre %></option><% }) %></select></div>
+        <div class="form-group col-md-2"><label>Rutinaria</label>
+          <select name="rutinaria" class="form-control"><option value="1"<%= String(v.rutinaria) !== '0' ? ' selected' : '' %>>S&iacute;</option><option value="0"<%= String(v.rutinaria) === '0' ? ' selected' : '' %>>No</option></select></div>
+        <div class="form-group col-md-3"><label>Clasificaci&oacute;n *</label>
+          <select name="clase_peligro" class="form-control" required><% d.clases.forEach(function (c) { %><option value="<%= c.codigo %>"<%= v.clase_peligro === c.codigo ? ' selected' : '' %> title="<%= c.ejemplos %>"><%= c.nombre %></option><% }) %></select></div>
+        <div class="form-group col-md-3"><label>Expuestos</label><input type="number" name="expuestos" class="form-control" value="<%= v.expuestos || 0 %>" min="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6"><label>Descripci&oacute;n del peligro *</label><input type="text" name="peligro" class="form-control" value="<%= v.peligro || '' %>" maxlength="255" required></div>
+        <div class="form-group col-md-6"><label>Efectos posibles</label><input type="text" name="efectos" class="form-control" value="<%= v.efectos || '' %>" maxlength="500"></div>
+      </div>
+      <label class="small text-muted">Controles existentes</label>
+      <div class="form-row">
+        <div class="form-group col-md-4"><input type="text" name="control_fuente" class="form-control form-control-sm" value="<%= v.control_fuente || '' %>" maxlength="500" placeholder="En la fuente"></div>
+        <div class="form-group col-md-4"><input type="text" name="control_medio" class="form-control form-control-sm" value="<%= v.control_medio || '' %>" maxlength="500" placeholder="En el medio"></div>
+        <div class="form-group col-md-4"><input type="text" name="control_individuo" class="form-control form-control-sm" value="<%= v.control_individuo || '' %>" maxlength="500" placeholder="En el individuo"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-outline card-warning">
+    <div class="card-header"><h3 class="card-title">Valoraci&oacute;n (<%= d.met.nombre %>)</h3></div>
+    <div class="card-body">
+      <div class="form-row align-items-end">
+        <div class="form-group col-md-3"><label>Nivel de deficiencia *</label><select name="nd" class="form-control js-valor"><%- opciones(esc.nd, v.nd) %></select></div>
+        <div class="form-group col-md-3"><label>Nivel de exposici&oacute;n *</label><select name="ne" class="form-control js-valor"><%- opciones(esc.ne, v.ne) %></select></div>
+        <div class="form-group col-md-3"><label>Nivel de consecuencia *</label><select name="nc" class="form-control js-valor"><%- opciones(esc.nc, v.nc) %></select></div>
+        <div class="form-group col-md-3"><div class="border rounded p-2 text-center js-resultado">&nbsp;</div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6"><label>Peor consecuencia</label><input type="text" name="peor_consecuencia" class="form-control" value="<%= v.peor_consecuencia || '' %>" maxlength="255"></div>
+        <div class="form-group col-md-6"><label>Requisito legal (c&oacute;digo de norma)</label><input type="text" name="norma_codigo" class="form-control" value="<%= v.norma_codigo || '' %>" maxlength="40" placeholder="RES-4272-2021"></div>
+      </div>
+      <div class="form-group mb-0"><label>Cargos expuestos</label>
+        <select name="cargos" class="form-control" multiple size="4"><% cargos.forEach(function (c) { %><option value="<%= c.id %>"<%= cargosSel.indexOf(String(c.id)) !== -1 ? ' selected' : '' %>><%= c.nombre %></option><% }) %></select>
+        <small class="text-muted">Alimenta las necesidades de formaci&oacute;n y el perfil de riesgo de cada cargo.</small></div>
+    </div>
+  </div>
+
+  <div class="card card-outline card-success d-none js-medidas-card">
+    <div class="card-header"><h3 class="card-title">Medidas de intervenci&oacute;n sugeridas</h3></div>
+    <div class="card-body js-medidas"></div>
+  </div>
+  <a href="/peligros/<%= d.m.id %>" class="btn btn-default">Cancelar</a>
+  <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar valoraci&oacute;n</button>
+</form>
+<%- include('../partials/pie') %>

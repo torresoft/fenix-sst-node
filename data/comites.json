@@ -1,0 +1,38 @@
+{
+  "_corte": "2026-08-31",
+  "_fuente": "Res. 2013 de 1986 (COPASST, arts. 2, 7 y 9), D.L. 1295 de 1994 art. 63 (periodo), Res. 3461 de 2025 (Convivencia)",
+  "_nota": "conformacion: rangos de trabajadores -> principales por cada parte (empleador y trabajadores), cada uno con su suplente. total: numero fijo de principales (vigia). null = regla no cargada: el sistema no valida y avisa.",
+  "_no_verificado": [
+    "Rangos de conformacion del COPASST (Res. 2013 art. 2), quorum de mitad mas uno y reunion mensual: transcritos sin cotejo literal.",
+    "Vigia de SST para empresas de menos de 10 trabajadores: confirmar la norma de soporte vigente.",
+    "Comite de Convivencia Laboral segun Res. 3461 de 2025: no se cargaron la regla de conformacion ni la de quorum. Transcribirlas del texto oficial."
+  ],
+  "tipos": [
+    {
+      "codigo": "copasst", "nombre": "COPASST", "norma_codigo": "RES-2013-1986",
+      "trabajadores_min": 10, "trabajadores_max": null,
+      "vencimiento_codigo": "PERIODO_COPASST", "documento_tipo": "ACTA_COPASST",
+      "quorum": "mitad_mas_uno", "periodicidad_meses": 1,
+      "conformacion": [
+        { "min": 10, "max": 49, "por_parte": 1 },
+        { "min": 50, "max": 499, "por_parte": 2 },
+        { "min": 500, "max": 999, "por_parte": 3 },
+        { "min": 1000, "max": null, "por_parte": 4 }
+      ]
+    },
+    {
+      "codigo": "vigia", "nombre": "Vigia de SST", "norma_codigo": "RES-2013-1986",
+      "trabajadores_min": 1, "trabajadores_max": 9,
+      "vencimiento_codigo": "PERIODO_COPASST", "documento_tipo": "ACTA_COPASST",
+      "quorum": null, "periodicidad_meses": 1,
+      "conformacion": [{ "min": 1, "max": 9, "total": 1 }]
+    },
+    {
+      "codigo": "convivencia", "nombre": "Comite de Convivencia Laboral", "norma_codigo": "RES-3461-2025",
+      "trabajadores_min": 1, "trabajadores_max": null,
+      "vencimiento_codigo": "PERIODO_CONVIVENCIA", "documento_tipo": "ACTA_CONVIVENCIA",
+      "quorum": null, "periodicidad_meses": 1,
+      "conformacion": null
+    }
+  ]
+}

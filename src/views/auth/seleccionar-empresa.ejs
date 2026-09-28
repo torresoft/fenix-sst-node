@@ -1,0 +1,42 @@
+<%- include('../partials/cabecera') %>
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card card-outline card-primary">
+      <div class="card-header">
+        <h3 class="card-title">&iquest;Con qu&eacute; empresa va a trabajar?</h3>
+      </div>
+      <div class="card-body p-0">
+        <% if (accesos.length === 0) { %>
+        <p class="p-3 mb-0 text-muted">Su usuario no tiene empresas asignadas. Solicite acceso al administrador.</p>
+        <% } else { %>
+        <form method="post" action="/empresa-activa">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <table class="table table-bordered table-hover table-sm mb-0">
+            <thead>
+              <tr><th>Raz&oacute;n social</th><th>NIT</th><th class="text-center">Acci&oacute;n</th></tr>
+            </thead>
+            <tbody>
+              <% accesos.forEach(function (a) { %>
+              <tr>
+                <td><%= a.razonSocial %></td>
+                <td><%= a.nit %></td>
+                <td class="text-center">
+                  <button type="submit" name="empresa_id" value="<%= a.empresaId %>" class="btn btn-xs btn-primary"
+                          data-toggle="tooltip" title="Trabajar con esta empresa">
+                    <i class="fas fa-sign-in-alt"></i>
+                  </button>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+<% if (usuario && usuario.esSuperadmin) { %>
+<p><a href="/plataforma" class="btn btn-sm btn-outline-dark"><i class="fas fa-server mr-1"></i>Administraci&oacute;n de la plataforma</a></p>
+<% } %>
+<%- include('../partials/pie') %>

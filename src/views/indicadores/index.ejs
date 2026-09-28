@@ -1,0 +1,74 @@
+<%- include('../partials/cabecera') %>
+<%
+  var grupos = [['resultado', 'Resultado (art. 30, Res. 0312)'], ['estructura', 'Estructura'], ['proceso', 'Proceso']];
+  var fmt = function (v) { return v == null ? '' : Number(v).toLocaleString('es-CO', { maximumFractionDigits: 2 }); };
+  var meses = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+%>
+<div class="barra-acciones">
+  <form method="get" class="form-inline"><label class="small mr-2">A&ntilde;o</label><input type="number" name="anio" value="<%= anio %>" class="form-control form-control-sm js-autoenvio"></form>
+  <% if (gestionar) { %>
+  <div>
+    <form method="post" action="/indicadores/calcular" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="anio" value="<%= anio %>">
+      <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-sync mr-1"></i>Recalcular</button></form>
+    <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modal-manual"><i class="fas fa-keyboard mr-1"></i>Registrar manual</button>
+  </div>
+  <% } %>
+</div>
+<p class="small text-muted">Se recalculan cada d&iacute;a con el estado real de los m&oacute;dulos. Pase el cursor sobre un valor para ver el m&eacute;todo. Cada cambio de valor queda como una medici&oacute;n nueva.</p>
+
+<% grupos.forEach(function (g) { var lista = filas.filter(function (f) { return f.tipo === g[0]; }); %>
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title"><%- g[1] %></h3></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-sm mb-0">
+        <thead><tr><th>Indicador</th><th class="text-right">&Uacute;ltimo</th><th class="text-right">Meta</th><th></th>
+          <% if (g[0] !== 'estructura') { meses.forEach(function (m) { %><th class="text-center small text-muted"><%= m %></th><% }); } %>
+          <th class="text-center">Ficha</th></tr></thead>
+        <tbody>
+          <% lista.forEach(function (f) { %>
+          <tr>
+            <td><%= f.nombre %><br><small class="text-muted"><%= f.formula_texto || f.codigo %><%= f.periodicidad ? ' · ' + f.periodicidad : '' %></small></td>
+            <td class="text-right text-nowrap">
+              <% if (f.ultima) { %><span data-toggle="tooltip" title="<%= f.ultima.periodo %> &middot; <%= f.ultima.numerador %>/<%= f.ultima.denominador %> &middot; <%= f.ultima.metodo || '' %> (<%= f.ultima.origen %>)"><strong><%= g[0] === 'estructura' ? (Number(f.ultima.valor) ? 'S&iacute;' : 'No') : fmt(f.ultima.valor) %></strong></span><% } else { %><span class="text-muted">-</span><% } %>
+            </td>
+            <td class="text-right small"><%= f.ficha && f.ficha.meta != null ? (f.ficha.sentido === 'menor' ? '≤ ' : '≥ ') + fmt(f.ficha.meta) : '' %></td>
+            <td class="text-center"><% if (f.cumple === true) { %><i class="fas fa-check-circle text-success"></i><% } else if (f.cumple === false) { %><i class="fas fa-exclamation-circle text-danger"></i><% } %></td>
+            <% if (g[0] !== 'estructura') { f.serie.forEach(function (v) { %><td class="text-center small"><%= v == null ? '' : fmt(v) %></td><% }); } %>
+            <td class="text-center"><% if (gestionar) { %><button type="button" class="btn btn-xs btn-default js-ficha" data-codigo="<%= f.codigo %>" data-nombre="<%= f.nombre %>"
+              data-meta="<%= f.ficha && f.ficha.meta != null ? f.ficha.meta : '' %>" data-sentido="<%= f.ficha ? f.ficha.sentido : 'mayor' %>" data-responsable="<%= f.ficha ? f.ficha.responsable || '' : '' %>" data-fuente="<%= f.ficha ? f.ficha.fuente || '' : '' %>" data-toggle="tooltip" title="Ficha t&eacute;cnica"><i class="fas fa-id-card"></i></button><% } %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<% }) %>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-ficha" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/indicadores/ficha" class="modal-content" id="form-ficha">
+    <div class="modal-header"><h5 class="modal-title">Ficha t&eacute;cnica</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="anio" value="<%= anio %>"><input type="hidden" name="indicador_codigo">
+      <p class="font-weight-bold js-nombre"></p>
+      <div class="form-row"><div class="form-group col-6"><label>Meta</label><input type="number" name="meta" class="form-control" step="0.0001"></div>
+      <div class="form-group col-6"><label>Se cumple si el valor es</label><select name="sentido" class="form-control"><option value="mayor">Mayor o igual a la meta</option><option value="menor">Menor o igual a la meta</option></select></div></div>
+      <div class="form-group"><label>Responsable</label><input type="text" name="responsable" class="form-control" maxlength="150"></div>
+      <div class="form-group mb-0"><label>Fuente de la informaci&oacute;n</label><input type="text" name="fuente" class="form-control" maxlength="255"></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+  </form></div></div>
+
+<div class="modal fade" id="modal-manual" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog" role="document">
+  <form method="post" action="/indicadores/manual" class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Registrar medici&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="anio" value="<%= anio %>">
+      <div class="form-group"><label>Indicador *</label><select name="indicador_codigo" class="form-control"><% filas.forEach(function (f) { %><option value="<%= f.codigo %>"><%= f.nombre %></option><% }) %></select></div>
+      <div class="form-row"><div class="form-group col-4"><label>Periodo *</label><input type="text" name="periodo" class="form-control" placeholder="AAAA-MM" value="<%= hoy.slice(0, 7) %>" required></div>
+      <div class="form-group col-4"><label>Ejecutado *</label><input type="number" name="numerador" class="form-control" min="0" step="0.0001" required></div>
+      <div class="form-group col-4"><label>Programado *</label><input type="number" name="denominador" class="form-control" min="0.0001" step="0.0001" required></div></div>
+      <div class="form-group mb-0"><label>Fuente o m&eacute;todo</label><input type="text" name="metodo" class="form-control" maxlength="500"></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
+  </form></div></div>
+<% } %>
+<%- include('../partials/pie') %>

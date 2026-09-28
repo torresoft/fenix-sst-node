@@ -1,0 +1,67 @@
+<%- include('../partials/cabecera') %>
+<%
+  var colorEstado = { emitido: 'primary', cerrado: 'success', suspendido: 'warning', anulado: 'secondary' };
+  var nombreTipo = {}; tipos.forEach(function (t) { nombreTipo[t.codigo] = t.nombre; });
+  var abiertos = filas.filter(function (f) { return f.estado === 'emitido' || f.estado === 'suspendido'; }).length;
+%>
+<div class="barra-acciones">
+  <span class="small text-muted">&Uacute;ltimos 90 d&iacute;as &middot; <span class="badge badge-primary"><%= abiertos %></span> abiertos. Antes de emitir se verifica certificaci&oacute;n vigente, aptitud m&eacute;dica e inducci&oacute;n de cada ejecutor.</span>
+  <% if (gestionar) { %><button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-permiso"><i class="fas fa-plus mr-1"></i>Emitir permiso</button><% } %>
+</div>
+<div class="card card-outline card-secondary"><div class="card-body p-0"><div class="table-responsive">
+  <table class="table table-bordered table-hover table-sm mb-0">
+    <thead><tr><th>N&uacute;mero</th><th>Tipo</th><th>Fecha</th><th>Lugar</th><th>Supervisor</th><th class="text-center">Ejecutores</th><th>Estado</th><th class="text-center">Ver</th></tr></thead>
+    <tbody>
+      <% filas.forEach(function (f) { %><tr>
+        <td class="text-nowrap"><%= f.numero %></td><td><%= nombreTipo[f.tipo_codigo] || f.tipo_codigo %></td>
+        <td class="text-nowrap"><%= f.fecha %> <small class="text-muted"><%= String(f.hora_inicio).slice(0, 5) %>&ndash;<%= String(f.hora_fin).slice(0, 5) %></small></td>
+        <td><%= f.lugar %></td><td><%= f.supervisor %></td><td class="text-center"><%= f.ejecutores %></td>
+        <td><span class="badge badge-<%= colorEstado[f.estado] %>"><%= f.estado %></span></td>
+        <td class="text-center"><a href="/permisos/<%= f.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Ver"><i class="fas fa-eye"></i></a></td>
+      </tr><% }) %>
+      <% if (!filas.length) { %><tr><td colspan="8" class="text-muted">Sin permisos recientes.</td></tr><% } %>
+    </tbody>
+  </table>
+</div></div></div>
+
+<% if (gestionar) { %>
+<div class="modal fade" id="modal-permiso" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog modal-xl" role="document">
+  <form method="post" action="/permisos" class="modal-content" id="form-permiso">
+    <div class="modal-header"><h5 class="modal-title">Emitir permiso de trabajo</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
+    <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row">
+        <div class="form-group col-md-3"><label>Tipo *</label><select name="tipo_codigo" class="form-control js-tipo"><% tipos.forEach(function (t) { %><option value="<%= t.codigo %>"><%= t.nombre %></option><% }) %></select></div>
+        <div class="form-group col-md-3"><label>Fecha *</label><input type="date" name="fecha" class="form-control js-fecha" min="<%= hoy %>" value="<%= hoy %>" required></div>
+        <div class="form-group col-md-3"><label>Desde *</label><input type="time" name="hora_inicio" class="form-control" required></div>
+        <div class="form-group col-md-3"><label>Hasta *</label><input type="time" name="hora_fin" class="form-control" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-5"><label>Lugar *</label><input type="text" name="lugar" class="form-control" maxlength="200" required></div>
+        <div class="form-group col-md-4"><label>Supervisor / coordinador *</label><input type="text" name="supervisor" class="form-control" maxlength="150" required></div>
+        <div class="form-group col-md-3"><label>Centro</label><select name="centro_trabajo_id" class="form-control"><option value="">&mdash;</option><% centros.forEach(function (c) { %><option value="<%= c.id %>"><%= c.nombre %></option><% }) %></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6"><label>Tarea *</label><textarea name="tarea" class="form-control" rows="3" required></textarea></div>
+        <div class="form-group col-md-6"><label>An&aacute;lisis de trabajo seguro (peligros y controles) *</label><textarea name="ats" class="form-control" rows="3" minlength="30" required></textarea></div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label>Verificaci&oacute;n previa *</label>
+          <% tipos.forEach(function (t) { %><div class="js-lista d-none" data-tipo="<%= t.codigo %>">
+            <% t.verificaciones.forEach(function (v, i) { %><div class="form-check"><input class="form-check-input" type="checkbox" name="verificacion" value="<%= i %>" id="v-<%= t.codigo %>-<%= i %>" disabled><label class="form-check-label" for="v-<%= t.codigo %>-<%= i %>"><%= v %></label></div><% }) %>
+            <small class="text-muted d-block mt-1"><%= t.norma_codigo %><%= t.competencia ? ' · exige ' + t.competencia : '' %></small>
+          </div><% }) %>
+          <div class="form-group mt-2"><label>Formato firmado</label><select name="documento_id" class="form-control form-control-sm"><option value="">&mdash;</option><% formatos.forEach(function (d) { %><option value="<%= d.id %>" data-tipo="<%= d.tipo_documental %>"><%= d.codigo %> v<%= d.version %></option><% }) %></select></div>
+        </div>
+        <div class="col-md-6">
+          <label>Ejecutores *</label>
+          <div class="input-group input-group-sm mb-2"><select class="form-control js-persona"><option value="">Agregar persona&hellip;</option><% personas.forEach(function (p) { %><option value="<%= p.id %>"><%= p.apellidos %> <%= p.nombres %><%= p.tipo === 'contratista' ? ' (contratista)' : '' %></option><% }) %></select></div>
+          <table class="table table-sm table-bordered mb-0"><tbody class="js-ejecutores"></tbody></table>
+          <small class="text-muted">Un ejecutor sin certificaci&oacute;n vigente, aptitud o inducci&oacute;n bloquea la emisi&oacute;n.</small>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary js-emitir">Emitir</button></div>
+  </form></div></div>
+<% } %>
+<%- include('../partials/pie') %>

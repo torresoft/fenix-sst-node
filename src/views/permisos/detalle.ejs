@@ -1,0 +1,50 @@
+<%- include('../partials/cabecera') %>
+<%
+  var p = permiso;
+  var abierto = p.estado === 'emitido' || p.estado === 'suspendido';
+  var marca = function (x) { return x.ok ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>'; };
+%>
+<div class="barra-acciones">
+  <a href="/permisos" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Permisos</a>
+  <div>
+    <% if (gestionar && abierto) { %>
+    <% if (p.estado === 'emitido') { %><button type="button" class="btn btn-sm btn-warning" data-toggle="collapse" data-target="#f-suspendido">Suspender</button><% } %>
+    <button type="button" class="btn btn-sm btn-success" data-toggle="collapse" data-target="#f-cerrado">Cerrar</button>
+    <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="collapse" data-target="#f-anulado">Anular</button>
+    <% } %>
+  </div>
+</div>
+<% if (gestionar && abierto) { ['cerrado', 'suspendido', 'anulado'].forEach(function (e) { %>
+<form method="post" action="/permisos/<%= p.id %>/<%= e %>" class="collapse mb-3" id="f-<%= e %>"><div class="input-group">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="text" name="observacion" class="form-control" placeholder="Observaci&oacute;n (<%= e %>)" required minlength="5">
+  <div class="input-group-append"><button class="btn btn-primary">Confirmar</button></div></div></form>
+<% }); } %>
+
+<div class="card card-outline card-primary">
+  <div class="card-header"><h3 class="card-title"><%= tipo.nombre %> &middot; <%= p.numero %></h3><div class="card-tools"><span class="badge badge-light"><%= p.estado %></span></div></div>
+  <div class="card-body">
+    <dl class="row mb-0">
+      <dt class="col-sm-3">Fecha y horario</dt><dd class="col-sm-9"><%= p.fecha %> &middot; <%= String(p.hora_inicio).slice(0, 5) %> a <%= String(p.hora_fin).slice(0, 5) %></dd>
+      <dt class="col-sm-3">Lugar</dt><dd class="col-sm-9"><%= p.lugar %></dd>
+      <dt class="col-sm-3">Supervisor</dt><dd class="col-sm-9"><%= p.supervisor %></dd>
+      <dt class="col-sm-3">Tarea</dt><dd class="col-sm-9 pre-line"><%= p.tarea %></dd>
+      <dt class="col-sm-3">ATS</dt><dd class="col-sm-9 pre-line"><%= p.ats %></dd>
+      <dt class="col-sm-3">Verificaci&oacute;n previa</dt><dd class="col-sm-9"><% p.verificaciones.forEach(function (v) { %><i class="fas fa-check text-success mr-1"></i><%= v.item %><br><% }) %></dd>
+      <% if (p.documento_id) { %><dt class="col-sm-3">Formato</dt><dd class="col-sm-9"><a href="/documentos/<%= p.documento_id %>">Ver formato firmado</a></dd><% } %>
+      <% if (p.cierre_observacion) { %><dt class="col-sm-3">Observaci&oacute;n</dt><dd class="col-sm-9"><%= p.cierre_observacion %></dd><% } %>
+    </dl>
+  </div>
+</div>
+<div class="card card-outline card-secondary">
+  <div class="card-header"><h3 class="card-title">Ejecutores y verificaci&oacute;n al emitir</h3></div>
+  <div class="card-body p-0"><table class="table table-bordered table-sm mb-0">
+    <thead><tr><th>Persona</th><th>Certificaci&oacute;n</th><th>Aptitud</th><th>Inducci&oacute;n</th></tr></thead>
+    <tbody><% ejecutores.forEach(function (x) { var v = x.verificacion; %><tr>
+      <td><%= x.apellidos %> <%= x.nombres %><br><small class="text-muted"><%= x.numero_documento %></small></td>
+      <td><%- marca(v.certificacion) %> <%= v.certificacion.detalle %></td>
+      <td><%- marca(v.aptitud) %> <%= v.aptitud.detalle %><% (v.advertencias || []).forEach(function (a) { %><br><small class="text-warning"><%= a %></small><% }) %></td>
+      <td><%- marca(v.induccion) %> <%= v.induccion.detalle %></td>
+    </tr><% }) %></tbody>
+  </table></div>
+</div>
+<%- include('../partials/pie') %>

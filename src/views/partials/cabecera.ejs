@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <title><%= textoPlano(locals.titulo || 'Inicio') %> | Fénix SST</title>
+  <link rel="icon" type="image/png" href="/img/brand.png">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="/vendor/adminlte/css/adminlte.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include('navbar') %>
+<%- include('sidebar') %>
+<div class="content-wrapper">
+  <section class="content-header pb-2">
+    <div class="container-fluid">
+      <div class="d-flex flex-wrap justify-content-between align-items-end">
+        <div>
+          <h1 class="mb-0"><%= textoPlano(locals.titulo || 'Inicio') %></h1>
+          <% if (locals.subtitulo) { %><p class="text-muted small mb-0"><%= textoPlano(subtitulo) %></p><% } %>
+        </div>
+        <% if (locals.miga && miga.grupo) { %>
+        <ol class="breadcrumb small mb-0 p-0 bg-transparent">
+          <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+          <li class="breadcrumb-item"><%= miga.grupo %></li>
+          <li class="breadcrumb-item<%= rutaActual === miga.ruta ? ' active' : '' %>"><% if (rutaActual === miga.ruta) { %><%= miga.texto %><% } else { %><a href="<%= miga.ruta %>"><%= miga.texto %></a><% } %></li>
+        </ol>
+        <% } %>
+      </div>
+    </div>
+  </section>
+  <section class="content">
+    <div class="container-fluid">
+      <% if (locals.aviso) { %>
+      <div class="alert alert-<%= aviso.tipo %> alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">&times;</button>
+        <%= aviso.texto %>
+      </div>
+      <% } %>

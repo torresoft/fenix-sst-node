@@ -1,0 +1,21 @@
+<%- include('../partials/cabecera') %>
+<div class="card card-outline card-warning">
+  <div class="card-body p-0">
+    <table class="table table-bordered table-hover table-sm mb-0">
+      <thead><tr><th>Documento</th><th>T&iacute;tulo</th><th>Firma como</th><th>Solicitada</th><th class="text-center">Acci&oacute;n</th></tr></thead>
+      <tbody>
+        <% pendientes.forEach(function (p) { %>
+        <tr>
+          <td class="text-nowrap"><strong><%= p.codigo %></strong> v<%= p.version %></td>
+          <td><%= p.titulo %></td>
+          <td><%= p.rol_firmante %></td>
+          <td class="text-nowrap"><%= new Date(p.creado_en).toISOString().slice(0, 10) %></td>
+          <td class="text-center"><a href="/firmas/<%= p.id %>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Revisar y firmar"><i class="fas fa-signature"></i></a></td>
+        </tr>
+        <% }) %>
+        <% if (!pendientes.length) { %><tr><td colspan="5" class="text-muted">No tiene documentos pendientes de firma.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/pie') %>

@@ -1,0 +1,26 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <a href="/" class="brand-link">
+    <img src="/img/brand.png" alt="F&eacute;nix SST" class="brand-image img-circle bg-white elevation-2">
+    <span class="brand-text font-weight-light">F&eacute;nix SST</span>
+  </a>
+  <div class="sidebar">
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column nav-compact" data-widget="treeview" role="menu" data-accordion="false">
+        <% (locals.menu || []).forEach(function (g) { %>
+          <% if (!g.titulo) { g.items.forEach(function (i) { %>
+          <li class="nav-item"><a href="<%= i.ruta %>" class="nav-link<%= i.activa ? ' active' : '' %>"><i class="nav-icon fas <%= i.icono %>"></i><p><%= i.texto %></p></a></li>
+          <% }); } else { %>
+          <li class="nav-item<%= g.abierto ? ' menu-open' : '' %>">
+            <a href="#" class="nav-link<%= g.abierto ? ' active' : '' %>"><i class="nav-icon fas <%= g.icono %>"></i><p><%= g.titulo %><i class="right fas fa-angle-left"></i></p></a>
+            <ul class="nav nav-treeview">
+              <% g.items.forEach(function (i) { %>
+              <li class="nav-item"><a href="<%= i.ruta %>" class="nav-link<%= i.activa ? ' active' : '' %>"><i class="nav-icon fas <%= i.icono %>"></i><p><%= i.texto %></p></a></li>
+              <% }) %>
+            </ul>
+          </li>
+          <% } %>
+        <% }) %>
+      </ul>
+    </nav>
+  </div>
+</aside>

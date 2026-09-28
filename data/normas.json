@@ -1,0 +1,1025 @@
+{
+  "_corte": "2026-08-31",
+  "_advertencia": "Verificar vigencias en el Gestor Normativo de Funcion Publica antes de usar con efectos juridicos.",
+  "total": 66,
+  "normas": [
+    {
+      "codigo": "LEY-9-1979",
+      "tipo": "ley",
+      "numero": "9",
+      "anio": 1979,
+      "emisor": "Congreso",
+      "objeto": "Codigo Sanitario Nacional, Titulo III: marco de salud ocupacional",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-2400-1979",
+      "tipo": "resolucion",
+      "numero": "2400",
+      "anio": 1979,
+      "emisor": "Mintrabajo",
+      "objeto": "Estatuto de Seguridad Industrial: vivienda, higiene y seguridad en establecimientos de trabajo",
+      "estado": "vigente_parcial",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M14"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DL-1295-1994",
+      "tipo": "decreto_ley",
+      "numero": "1295",
+      "anio": 1994,
+      "emisor": "Presidencia",
+      "objeto": "Organizacion y administracion del Sistema General de Riesgos Laborales; clases de riesgo I-V",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M01",
+        "M10"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "LEY-776-2002",
+      "tipo": "ley",
+      "numero": "776",
+      "anio": 2002,
+      "emisor": "Congreso",
+      "objeto": "Organizacion, administracion y prestaciones del SGRL",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M08",
+        "M09"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "LEY-1562-2012",
+      "tipo": "ley",
+      "numero": "1562",
+      "anio": 2012,
+      "emisor": "Congreso",
+      "objeto": "Modifica el SGRL; crea el SG-SST; define accidente de trabajo y enfermedad laboral",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-1477-2014",
+      "tipo": "decreto",
+      "numero": "1477",
+      "anio": 2014,
+      "emisor": "Mintrabajo",
+      "objeto": "Tabla de Enfermedades Laborales",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M08"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-1507-2014",
+      "tipo": "decreto",
+      "numero": "1507",
+      "anio": 2014,
+      "emisor": "Presidencia",
+      "objeto": "Manual Unico para la Calificacion de la Perdida de la Capacidad Laboral",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M08"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-1072-2015",
+      "tipo": "decreto",
+      "numero": "1072",
+      "anio": 2015,
+      "emisor": "Presidencia",
+      "objeto": "Decreto Unico Reglamentario del Sector Trabajo; Libro 2 Parte 2 Titulo 4 Cap. 6 = SG-SST",
+      "estado": "vigente",
+      "reemplaza_a": "DEC-1443-2014",
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-052-2017",
+      "tipo": "decreto",
+      "numero": "052",
+      "anio": 2017,
+      "emisor": "Mintrabajo",
+      "objeto": "Transicion por fases al SG-SST (art. 2.2.4.6.37)",
+      "estado": "efecto_agotado",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-0312-2019",
+      "tipo": "resolucion",
+      "numero": "0312",
+      "anio": 2019,
+      "emisor": "Mintrabajo",
+      "objeto": "Estandares Minimos del SG-SST",
+      "estado": "vigente",
+      "reemplaza_a": "RES-1111-2017",
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M11"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-1563-2016",
+      "tipo": "decreto",
+      "numero": "1563",
+      "anio": 2016,
+      "emisor": "Presidencia",
+      "objeto": "Afiliacion voluntaria al SGRL de trabajadores independientes",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M16"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-1273-2018",
+      "tipo": "decreto",
+      "numero": "1273",
+      "anio": 2018,
+      "emisor": "Minsalud",
+      "objeto": "Pago mes vencido y retencion de aportes de independientes",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M16"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-2013-1986",
+      "tipo": "resolucion",
+      "numero": "2013",
+      "anio": 1986,
+      "emisor": "Mintrabajo",
+      "objeto": "Organizacion y funcionamiento de los Comites Paritarios (COPASST)",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M10"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "LEY-1010-2006",
+      "tipo": "ley",
+      "numero": "1010",
+      "anio": 2006,
+      "emisor": "Congreso",
+      "objeto": "Prevencion y sancion del acoso laboral",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M17"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-3461-2025",
+      "tipo": "resolucion",
+      "numero": "3461",
+      "anio": 2025,
+      "emisor": "Mintrabajo",
+      "objeto": "Comite de Convivencia Laboral: conformacion, funcionamiento y medidas frente al acoso",
+      "estado": "vigente",
+      "reemplaza_a": "RES-652-2012,RES-1356-2012",
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M10",
+        "M17"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "LEY-2365-2024",
+      "tipo": "ley",
+      "numero": "2365",
+      "anio": 2024,
+      "emisor": "Congreso",
+      "objeto": "Prevencion y atencion del acoso sexual en el ambito laboral y educativo",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M17"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-405-2025",
+      "tipo": "decreto",
+      "numero": "405",
+      "anio": 2025,
+      "emisor": "Mintrabajo",
+      "objeto": "Multas por despido de la victima que denuncia acoso sexual",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M17"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-1040-2026",
+      "tipo": "decreto",
+      "numero": "1040",
+      "anio": 2026,
+      "emisor": "Mintrabajo",
+      "objeto": "Politica y protocolo contra acoso, violencia y discriminacion laboral",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M17"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-908-2025",
+      "tipo": "resolucion",
+      "numero": "908",
+      "anio": 2025,
+      "emisor": "Minsalud",
+      "objeto": "Licencias de Seguridad y Salud en el Trabajo: expedicion, renovacion, vigencia 10 anios",
+      "estado": "vigente",
+      "reemplaza_a": "RES-754-2021",
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M07"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-1843-2025",
+      "tipo": "resolucion",
+      "numero": "1843",
+      "anio": 2025,
+      "emisor": "Mintrabajo",
+      "objeto": "Evaluaciones medicas ocupacionales, historia clinica ocupacional y no discriminacion en seleccion",
+      "estado": "vigente",
+      "reemplaza_a": "RES-2346-2007,RES-1918-2009,RES-1075-1992,RES-4050-1994",
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M09"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-156-2005",
+      "tipo": "resolucion",
+      "numero": "156",
+      "anio": 2005,
+      "emisor": "Minproteccion",
+      "objeto": "Formatos FURAT y FUREL",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M08"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-2851-2015",
+      "tipo": "resolucion",
+      "numero": "2851",
+      "anio": 2015,
+      "emisor": "Mintrabajo",
+      "objeto": "Modifica art. 3 Res. 156/2005: reporte en 2 dias habiles a ARL, EPS y Direccion Territorial",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M08"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-1401-2007",
+      "tipo": "resolucion",
+      "numero": "1401",
+      "anio": 2007,
+      "emisor": "Minproteccion",
+      "objeto": "Investigacion de incidentes y accidentes de trabajo",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M08"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-2646-2008",
+      "tipo": "resolucion",
+      "numero": "2646",
+      "anio": 2008,
+      "emisor": "Minproteccion",
+      "objeto": "Factores de riesgo psicosocial y determinacion del origen de patologias por estres",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M17"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-2764-2022",
+      "tipo": "resolucion",
+      "numero": "2764",
+      "anio": 2022,
+      "emisor": "Mintrabajo",
+      "objeto": "Bateria de instrumentos para evaluacion de factores de riesgo psicosocial y 15 protocolos",
+      "estado": "vigente",
+      "reemplaza_a": "RES-2404-2019",
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M17"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-0728-2025",
+      "tipo": "decreto",
+      "numero": "0728",
+      "anio": 2025,
+      "emisor": "Mintrabajo",
+      "objeto": "Salud mental y prevencion del consumo de SPA en entornos laborales; Cap. 13 del D.1072",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M17"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-4272-2021",
+      "tipo": "resolucion",
+      "numero": "4272",
+      "anio": 2021,
+      "emisor": "Mintrabajo",
+      "objeto": "Requisitos minimos de seguridad para trabajo en alturas",
+      "estado": "vigente",
+      "reemplaza_a": "RES-1409-2012,RES-1903-2013,RES-3368-2014,RES-1178-2017,RES-1248-2020",
+      "derogada_por": null,
+      "ambito": "alturas",
+      "modulos": [
+        "M15",
+        "M07"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-0491-2020",
+      "tipo": "resolucion",
+      "numero": "0491",
+      "anio": 2020,
+      "emisor": "Mintrabajo",
+      "objeto": "Requisitos minimos de seguridad para trabajos en espacios confinados",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "espacios_confinados",
+      "modulos": [
+        "M15",
+        "M07"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-5018-2019",
+      "tipo": "resolucion",
+      "numero": "5018",
+      "anio": 2019,
+      "emisor": "Mintrabajo",
+      "objeto": "Lineamientos de SST en procesos de energia electrica",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "riesgo_electrico",
+      "modulos": [
+        "M15",
+        "M07"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-1496-2018",
+      "tipo": "decreto",
+      "numero": "1496",
+      "anio": 2018,
+      "emisor": "Mintrabajo",
+      "objeto": "Adopta el Sistema Globalmente Armonizado (SGA) de clasificacion y etiquetado de quimicos",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "quimicos",
+      "modulos": [
+        "M18"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-0773-2021",
+      "tipo": "resolucion",
+      "numero": "0773",
+      "anio": 2021,
+      "emisor": "Mintrabajo",
+      "objeto": "Aplicacion del SGA en lugares de trabajo: inventario, FDS, etiquetas, capacitacion anual",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "quimicos",
+      "modulos": [
+        "M18"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "LEY-1503-2011",
+      "tipo": "ley",
+      "numero": "1503",
+      "anio": 2011,
+      "emisor": "Congreso",
+      "objeto": "Promocion de habitos y conductas seguras en la via; base del PESV",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "pesv",
+      "modulos": [
+        "M18"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-40595-2022",
+      "tipo": "resolucion",
+      "numero": "40595",
+      "anio": 2022,
+      "emisor": "Mintransporte",
+      "objeto": "Metodologia para diseno, implementacion y verificacion del PESV",
+      "estado": "vigente",
+      "reemplaza_a": "RES-1565-2014",
+      "derogada_por": null,
+      "ambito": "pesv",
+      "modulos": [
+        "M18"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "LEY-1523-2012",
+      "tipo": "ley",
+      "numero": "1523",
+      "anio": 2012,
+      "emisor": "Congreso",
+      "objeto": "Politica Nacional de Gestion del Riesgo de Desastres; art. 42 plan de emergencia",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M13"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-2157-2017",
+      "tipo": "decreto",
+      "numero": "2157",
+      "anio": 2017,
+      "emisor": "Presidencia",
+      "objeto": "Plan de Gestion del Riesgo de Desastres de Entidades Publicas y Privadas (PGRDEPP)",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M13"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-1857-2024",
+      "tipo": "resolucion",
+      "numero": "1857",
+      "anio": 2024,
+      "emisor": "Mintrabajo",
+      "objeto": "Requisitos SST para trabajo en calderas",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "calderas",
+      "modulos": [
+        "M15"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-5492-2024",
+      "tipo": "resolucion",
+      "numero": "5492",
+      "anio": 2024,
+      "emisor": "Mintrabajo",
+      "objeto": "Sistema de Gestion de Seguridad para la Prevencion de Accidentes Mayores (SGSPAM)",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "accidentes_mayores",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "LEY-2466-2025",
+      "tipo": "ley",
+      "numero": "2466",
+      "anio": 2025,
+      "emisor": "Congreso",
+      "objeto": "Reforma laboral: jornada, recargos, aprendices, plataformas digitales",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-0223-2026",
+      "tipo": "decreto",
+      "numero": "0223",
+      "anio": 2026,
+      "emisor": "Mintrabajo",
+      "objeto": "Reglamenta el contrato de aprendizaje; aprendices con ARL e inclusion en COPASST",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M02",
+        "M10"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "CIR-027-2026",
+      "tipo": "circular",
+      "numero": "027",
+      "anio": 2026,
+      "emisor": "Mintrabajo",
+      "objeto": "Registro de autoevaluacion 2025 y plan de mejoramiento en aplicativo SGRL; plazo 31-jul-2026",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M11"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "CIR-047-2025",
+      "tipo": "circular",
+      "numero": "047",
+      "anio": 2025,
+      "emisor": "Mintrabajo",
+      "objeto": "Contenido del curso de actualizacion de 20 horas; obligatorio cada 3 anios",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [
+        "M07"
+      ],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-472-2015",
+      "tipo": "decreto",
+      "numero": "472",
+      "anio": 2015,
+      "emisor": "Mintrabajo",
+      "objeto": "Criterios de graduacion de multas y clausura del lugar de trabajo",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "LEY-1610-2013",
+      "tipo": "ley",
+      "numero": "1610",
+      "anio": 2013,
+      "emisor": "Congreso",
+      "objeto": "Inspeccion del trabajo, acuerdos de formalizacion y clausura",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "LEY-1581-2012",
+      "tipo": "ley",
+      "numero": "1581",
+      "anio": 2012,
+      "emisor": "Congreso",
+      "objeto": "Regimen general de proteccion de datos personales",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-1377-2013",
+      "tipo": "decreto",
+      "numero": "1377",
+      "anio": 2013,
+      "emisor": "Presidencia",
+      "objeto": "Reglamenta la Ley 1581: autorizacion, aviso de privacidad, politicas",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "LEY-527-1999",
+      "tipo": "ley",
+      "numero": "527",
+      "anio": 1999,
+      "emisor": "Congreso",
+      "objeto": "Comercio electronico, mensajes de datos y firmas digitales",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-2364-2012",
+      "tipo": "decreto",
+      "numero": "2364",
+      "anio": 2012,
+      "emisor": "Mincomercio",
+      "objeto": "Firma electronica: confiabilidad y efectos juridicos",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-1995-1999",
+      "tipo": "resolucion",
+      "numero": "1995",
+      "anio": 1999,
+      "emisor": "Minsalud",
+      "objeto": "Normas para el manejo de la historia clinica",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "RES-839-2017",
+      "tipo": "resolucion",
+      "numero": "839",
+      "anio": 2017,
+      "emisor": "Minsalud",
+      "objeto": "Retencion y conservacion de historias clinicas: 15 anios (5 gestion + 10 central)",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": null
+    },
+    {
+      "codigo": "DEC-1443-2014",
+      "tipo": "decreto",
+      "numero": "1443",
+      "anio": 2014,
+      "emisor": "Mintrabajo",
+      "objeto": "Implementacion del SG-SST",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "DEC-1072-2015",
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": "Referencia invalida: su contenido fue compilado en el Decreto 1072 de 2015"
+    },
+    {
+      "codigo": "RES-1016-1989",
+      "tipo": "resolucion",
+      "numero": "1016",
+      "anio": 1989,
+      "emisor": "Mintrabajo",
+      "objeto": "Programas de Salud Ocupacional",
+      "estado": "sustituida",
+      "reemplaza_a": null,
+      "derogada_por": "DEC-1072-2015",
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": "Habla de Programa de Salud Ocupacional, figura extinta desde junio de 2017"
+    },
+    {
+      "codigo": "RES-1111-2017",
+      "tipo": "resolucion",
+      "numero": "1111",
+      "anio": 2017,
+      "emisor": "Mintrabajo",
+      "objeto": "Estandares Minimos anteriores",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-0312-2019",
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": "Tabla de estandares minimos y ponderacion equivocadas"
+    },
+    {
+      "codigo": "RES-2346-2007",
+      "tipo": "resolucion",
+      "numero": "2346",
+      "anio": 2007,
+      "emisor": "Minproteccion",
+      "objeto": "Evaluaciones medicas ocupacionales e historia clinica ocupacional",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-1843-2025",
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": "Faltan tipos de examen, perfil de cargo y el plazo de 20 dias habiles para adaptar el puesto"
+    },
+    {
+      "codigo": "RES-1918-2009",
+      "tipo": "resolucion",
+      "numero": "1918",
+      "anio": 2009,
+      "emisor": "Minproteccion",
+      "objeto": "Modifica arts. 11 y 17 de la Res. 2346/2007",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-1843-2025",
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": "Custodia de la historia clinica ocupacional desactualizada"
+    },
+    {
+      "codigo": "RES-652-2012",
+      "tipo": "resolucion",
+      "numero": "652",
+      "anio": 2012,
+      "emisor": "Mintrabajo",
+      "objeto": "Comite de Convivencia Laboral",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-3461-2025",
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": "Comite de Convivencia mal conformado; reuniones trimestrales en vez de mensuales"
+    },
+    {
+      "codigo": "RES-1356-2012",
+      "tipo": "resolucion",
+      "numero": "1356",
+      "anio": 2012,
+      "emisor": "Mintrabajo",
+      "objeto": "Modifica la Res. 652/2012",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-3461-2025",
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": "Comite de Convivencia mal conformado; reuniones trimestrales en vez de mensuales"
+    },
+    {
+      "codigo": "RES-2404-2019",
+      "tipo": "resolucion",
+      "numero": "2404",
+      "anio": 2019,
+      "emisor": "Mintrabajo",
+      "objeto": "Bateria de riesgo psicosocial anterior",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-2764-2022",
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": "Bateria psicosocial y protocolos desactualizados"
+    },
+    {
+      "codigo": "RES-1409-2012",
+      "tipo": "resolucion",
+      "numero": "1409",
+      "anio": 2012,
+      "emisor": "Mintrabajo",
+      "objeto": "Reglamento de seguridad para proteccion contra caidas",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-4272-2021",
+      "ambito": "alturas",
+      "modulos": [],
+      "impacto_derogacion": "Horas de formacion y permisos de trabajo en alturas incorrectos"
+    },
+    {
+      "codigo": "RES-1903-2013",
+      "tipo": "resolucion",
+      "numero": "1903",
+      "anio": 2013,
+      "emisor": "Mintrabajo",
+      "objeto": "Modifica normas de trabajo en alturas",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-4272-2021",
+      "ambito": "alturas",
+      "modulos": [],
+      "impacto_derogacion": "Bloque anterior de trabajo en alturas, derogado por la Res. 4272 de 2021 art. 68"
+    },
+    {
+      "codigo": "RES-3368-2014",
+      "tipo": "resolucion",
+      "numero": "3368",
+      "anio": 2014,
+      "emisor": "Mintrabajo",
+      "objeto": "Modifica formacion en trabajo en alturas",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-4272-2021",
+      "ambito": "alturas",
+      "modulos": [],
+      "impacto_derogacion": "Bloque anterior de trabajo en alturas, derogado por la Res. 4272 de 2021 art. 68"
+    },
+    {
+      "codigo": "RES-1178-2017",
+      "tipo": "resolucion",
+      "numero": "1178",
+      "anio": 2017,
+      "emisor": "Mintrabajo",
+      "objeto": "Requisitos para proveedores de capacitacion en alturas",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-4272-2021",
+      "ambito": "alturas",
+      "modulos": [],
+      "impacto_derogacion": "Bloque anterior de trabajo en alturas, derogado por la Res. 4272 de 2021 art. 68"
+    },
+    {
+      "codigo": "RES-1248-2020",
+      "tipo": "resolucion",
+      "numero": "1248",
+      "anio": 2020,
+      "emisor": "Mintrabajo",
+      "objeto": "Modifica trabajo en alturas",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-4272-2021",
+      "ambito": "alturas",
+      "modulos": [],
+      "impacto_derogacion": "Bloque anterior de trabajo en alturas, derogado por la Res. 4272 de 2021 art. 68"
+    },
+    {
+      "codigo": "RES-4502-2012",
+      "tipo": "resolucion",
+      "numero": "4502",
+      "anio": 2012,
+      "emisor": "Minsalud",
+      "objeto": "Licencias de salud ocupacional",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-754-2021",
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": "Requisitos y vigencia de las licencias en SST desactualizados"
+    },
+    {
+      "codigo": "RES-754-2021",
+      "tipo": "resolucion",
+      "numero": "754",
+      "anio": 2021,
+      "emisor": "Minsalud",
+      "objeto": "Licencias de SST",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-908-2025",
+      "ambito": "general",
+      "modulos": [],
+      "impacto_derogacion": "Requisitos y vigencia de las licencias en SST desactualizados"
+    },
+    {
+      "codigo": "RES-1565-2014",
+      "tipo": "resolucion",
+      "numero": "1565",
+      "anio": 2014,
+      "emisor": "Mintransporte",
+      "objeto": "Guia metodologica del PESV anterior",
+      "estado": "derogada",
+      "reemplaza_a": null,
+      "derogada_por": "RES-40595-2022",
+      "ambito": "pesv",
+      "modulos": [],
+      "impacto_derogacion": "Metodologia del PESV anterior"
+    },
+    {
+      "codigo": "LEY-769-2002",
+      "tipo": "ley",
+      "numero": "769",
+      "anio": 2002,
+      "emisor": "Congreso de la Republica",
+      "objeto": "Codigo Nacional de Transito: licencias de conduccion, SOAT y revision tecnico-mecanica",
+      "estado": "vigente",
+      "reemplaza_a": null,
+      "derogada_por": null,
+      "ambito": "pesv",
+      "modulos": [
+        "M18"
+      ],
+      "impacto_derogacion": null
+    }
+  ],
+  "desinformacion": [
+    {
+      "codigo": "DEC-0312-2026",
+      "referencia": "Decreto 0312 de 2026",
+      "explicacion": "No existe. Confusion entre la Resolucion 0312 de 2019 (estandares minimos, vigente) y la Circular 027 de 2026",
+      "norma_correcta": "RES-0312-2019"
+    },
+    {
+      "codigo": "DEC-1507-2022",
+      "referencia": "Decreto 1507 de 2022",
+      "explicacion": "No modifica la tabla de enfermedades laborales: trata de empleo publico. La tabla es el Decreto 1477 de 2014",
+      "norma_correcta": "DEC-1477-2014"
+    }
+  ],
+  "_nota_desinformacion": "Referencias que circulan pero son falsas o no corresponden al SG-SST. El auditor de matriz legal las marca aparte."
+}

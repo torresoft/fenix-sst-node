@@ -1,0 +1,1796 @@
+{
+  "_corte": "2026-08-31",
+  "_fuente": "GTC 45 de 2012 (tablas de valoracion y Anexo A de clasificacion de peligros); D. 1072 de 2015 art. 2.2.4.6.15 y 2.2.4.6.24 (jerarquia de controles)",
+  "_no_verificado": [
+    "Escalas ND, NE, NC, rangos de NP y NR y aceptabilidad de la GTC 45 transcritos sin cotejo contra el texto de ICONTEC.",
+    "Clasificacion y descripcion de peligros del Anexo A de la GTC 45: lista resumida, verificar.",
+    "MATRIZ_AT_MORTAL: la norma exige actualizar la matriz ante AT mortal o evento catastrofico pero no fija plazo; los 30 dias son configuracion del producto.",
+    "peligros_tipo: descripciones basadas en el Anexo A de la GTC 45; efectos, NC sugerido y medidas son sugerencias editables, no una valoracion.",
+    "cargos_tipo: perfiles de exposicion tipicos para sugerir; la exposicion real se valida en campo."
+  ],
+  "metodologias": [
+    {
+      "codigo": "GTC45",
+      "nombre": "GTC 45 de 2012",
+      "norma_codigo": null,
+      "escalas": {
+        "nd": [
+          {
+            "codigo": "MA",
+            "nombre": "Muy alto",
+            "valor": 10
+          },
+          {
+            "codigo": "A",
+            "nombre": "Alto",
+            "valor": 6
+          },
+          {
+            "codigo": "M",
+            "nombre": "Medio",
+            "valor": 2
+          },
+          {
+            "codigo": "B",
+            "nombre": "Bajo",
+            "valor": 0
+          }
+        ],
+        "ne": [
+          {
+            "codigo": "EC",
+            "nombre": "Continua",
+            "valor": 4
+          },
+          {
+            "codigo": "EF",
+            "nombre": "Frecuente",
+            "valor": 3
+          },
+          {
+            "codigo": "EO",
+            "nombre": "Ocasional",
+            "valor": 2
+          },
+          {
+            "codigo": "EE",
+            "nombre": "Esporadica",
+            "valor": 1
+          }
+        ],
+        "nc": [
+          {
+            "codigo": "M",
+            "nombre": "Mortal o catastrofico",
+            "valor": 100
+          },
+          {
+            "codigo": "MG",
+            "nombre": "Muy grave",
+            "valor": 60
+          },
+          {
+            "codigo": "G",
+            "nombre": "Grave",
+            "valor": 25
+          },
+          {
+            "codigo": "L",
+            "nombre": "Leve",
+            "valor": 10
+          }
+        ],
+        "np": [
+          {
+            "codigo": "MA",
+            "nombre": "Muy alto",
+            "min": 24,
+            "max": 40
+          },
+          {
+            "codigo": "A",
+            "nombre": "Alto",
+            "min": 10,
+            "max": 20
+          },
+          {
+            "codigo": "M",
+            "nombre": "Medio",
+            "min": 6,
+            "max": 8
+          },
+          {
+            "codigo": "B",
+            "nombre": "Bajo",
+            "min": 0,
+            "max": 4
+          }
+        ],
+        "nr": [
+          {
+            "codigo": "I",
+            "min": 600,
+            "max": 4000,
+            "aceptabilidad": "No aceptable",
+            "significado": "Situacion critica: suspender actividades hasta que el riesgo este bajo control",
+            "critico": true
+          },
+          {
+            "codigo": "II",
+            "min": 150,
+            "max": 500,
+            "aceptabilidad": "No aceptable o aceptable con control especifico",
+            "significado": "Corregir y adoptar medidas de control de inmediato",
+            "critico": true
+          },
+          {
+            "codigo": "III",
+            "min": 40,
+            "max": 120,
+            "aceptabilidad": "Mejorable",
+            "significado": "Mejorar si es posible; justificar la intervencion y su rentabilidad",
+            "critico": false
+          },
+          {
+            "codigo": "IV",
+            "min": 0,
+            "max": 39,
+            "aceptabilidad": "Aceptable",
+            "significado": "Mantener las medidas de control existentes",
+            "critico": false
+          }
+        ]
+      }
+    }
+  ],
+  "clases_peligro": [
+    {
+      "codigo": "BIOLOGICO",
+      "nombre": "Biologico",
+      "ejemplos": "Virus, bacterias, hongos, parasitos, picaduras, mordeduras, fluidos o excrementos"
+    },
+    {
+      "codigo": "FISICO",
+      "nombre": "Fisico",
+      "ejemplos": "Ruido, iluminacion, vibracion, temperaturas extremas, presion atmosferica, radiaciones ionizantes y no ionizantes"
+    },
+    {
+      "codigo": "QUIMICO",
+      "nombre": "Quimico",
+      "ejemplos": "Polvos, fibras, liquidos, gases y vapores, humos, material particulado"
+    },
+    {
+      "codigo": "PSICOSOCIAL",
+      "nombre": "Psicosocial",
+      "ejemplos": "Gestion organizacional, caracteristicas del grupo, condiciones de la tarea, jornada de trabajo"
+    },
+    {
+      "codigo": "BIOMECANICO",
+      "nombre": "Biomecanico",
+      "ejemplos": "Postura, esfuerzo, movimiento repetitivo, manipulacion manual de cargas"
+    },
+    {
+      "codigo": "SEGURIDAD",
+      "nombre": "Condiciones de seguridad",
+      "ejemplos": "Mecanico, electrico, locativo, tecnologico, accidentes de transito, publicos, trabajo en alturas, espacios confinados"
+    },
+    {
+      "codigo": "NATURAL",
+      "nombre": "Fenomenos naturales",
+      "ejemplos": "Sismo, terremoto, vendaval, inundacion, derrumbe, precipitaciones"
+    }
+  ],
+  "jerarquia_controles": [
+    {
+      "nivel": 1,
+      "codigo": "eliminacion",
+      "nombre": "Eliminacion"
+    },
+    {
+      "nivel": 2,
+      "codigo": "sustitucion",
+      "nombre": "Sustitucion"
+    },
+    {
+      "nivel": 3,
+      "codigo": "ingenieria",
+      "nombre": "Controles de ingenieria"
+    },
+    {
+      "nivel": 4,
+      "codigo": "administrativo",
+      "nombre": "Controles administrativos, senalizacion y advertencia"
+    },
+    {
+      "nivel": 5,
+      "codigo": "epp",
+      "nombre": "Equipos y elementos de proteccion personal"
+    }
+  ],
+  "peligros_tipo": [
+    {
+      "codigo": "BIO_VIRUS_BACT",
+      "clase": "BIOLOGICO",
+      "nombre": "Virus, bacterias y hongos (contacto con personas, superficies o ambientes contaminados)",
+      "efectos": "Infecciones respiratorias, gastrointestinales o dérmicas",
+      "peor_consecuencia": "Enfermedad infecciosa grave",
+      "nc": "G",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Ventilación natural o mecánica y barreras físicas en puntos de atención"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Protocolo de limpieza y desinfección, lavado de manos y esquema de vacunación"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Tapabocas o respirador y guantes según la exposición"
+        }
+      ]
+    },
+    {
+      "codigo": "BIO_FLUIDOS",
+      "clase": "BIOLOGICO",
+      "nombre": "Fluidos corporales y material cortopunzante contaminado",
+      "efectos": "Hepatitis B y C, VIH, infecciones",
+      "peor_consecuencia": "Enfermedad infecciosa crónica",
+      "nc": "MG",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "sustitucion",
+          "descripcion": "Dispositivos cortopunzantes con mecanismo de seguridad"
+        },
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Guardianes rígidos en el punto de uso"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Protocolo de bioseguridad y de atención de exposición; vacunación contra hepatitis B"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Guantes, bata, careta o gafas de protección"
+        }
+      ]
+    },
+    {
+      "codigo": "BIO_PICADURAS",
+      "clase": "BIOLOGICO",
+      "nombre": "Picaduras y mordeduras (insectos, arácnidos, ofidios, animales)",
+      "efectos": "Reacciones alérgicas, infecciones, envenenamiento",
+      "peor_consecuencia": "Shock anafiláctico o envenenamiento",
+      "nc": "MG",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Control de plagas, inspección de áreas y protocolo de primeros auxilios"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Botas de caña alta, polainas, ropa de manga larga y repelente"
+        }
+      ]
+    },
+    {
+      "codigo": "BIO_RESIDUOS",
+      "clase": "BIOLOGICO",
+      "nombre": "Excrementos, residuos orgánicos y aguas residuales",
+      "efectos": "Infecciones gastrointestinales, dermatitis",
+      "peor_consecuencia": "Leptospirosis o infección grave",
+      "nc": "G",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Rutas y horarios de recolección, protocolo de limpieza y vacunación"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Guantes de caucho, botas y tapabocas"
+        }
+      ]
+    },
+    {
+      "codigo": "FIS_RUIDO",
+      "clase": "FISICO",
+      "nombre": "Ruido (continuo, intermitente o de impacto)",
+      "efectos": "Hipoacusia, tinnitus, estrés, interferencia en la comunicación",
+      "peor_consecuencia": "Hipoacusia neurosensorial inducida por ruido",
+      "nc": "MG",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Encerramiento, aislamiento o mantenimiento de la fuente de ruido"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Mediciones de ruido, rotación y programa de conservación auditiva"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Protección auditiva (inserción o copa) según la atenuación requerida"
+        }
+      ]
+    },
+    {
+      "codigo": "FIS_ILUMINACION",
+      "clase": "FISICO",
+      "nombre": "Iluminación deficiente o en exceso",
+      "efectos": "Fatiga visual, cefalea, disconfort",
+      "peor_consecuencia": "Accidente por baja visibilidad",
+      "nc": "L",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Rediseño o mantenimiento de luminarias y aprovechamiento de luz natural"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Medición de niveles de iluminación y pausas visuales"
+        }
+      ]
+    },
+    {
+      "codigo": "FIS_VIBRACION",
+      "clase": "FISICO",
+      "nombre": "Vibración (cuerpo entero o segmentaria)",
+      "efectos": "Lumbalgia, lesiones osteomusculares, alteraciones circulatorias en manos",
+      "peor_consecuencia": "Lesión osteomuscular crónica",
+      "nc": "G",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Mantenimiento de equipos, amortiguadores y asientos antivibración"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Pausas y rotación de tareas"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Guantes antivibración"
+        }
+      ]
+    },
+    {
+      "codigo": "FIS_CALOR",
+      "clase": "FISICO",
+      "nombre": "Temperaturas extremas: calor",
+      "efectos": "Estrés térmico, deshidratación, agotamiento",
+      "peor_consecuencia": "Golpe de calor",
+      "nc": "MG",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Ventilación, extracción y apantallamiento de fuentes de calor"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Hidratación, pausas de recuperación y aclimatación"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Ropa de trabajo ligera y transpirable"
+        }
+      ]
+    },
+    {
+      "codigo": "FIS_FRIO",
+      "clase": "FISICO",
+      "nombre": "Temperaturas extremas: frío (cuartos fríos, congeladores)",
+      "efectos": "Hipotermia, afecciones respiratorias, entumecimiento",
+      "peor_consecuencia": "Hipotermia",
+      "nc": "G",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Limitar tiempos de permanencia y pausas en zona templada"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Ropa térmica, guantes y gorro"
+        }
+      ]
+    },
+    {
+      "codigo": "FIS_RAD_NO_ION",
+      "clase": "FISICO",
+      "nombre": "Radiación no ionizante (UV solar, soldadura, infrarroja)",
+      "efectos": "Quemaduras, lesiones oculares, envejecimiento de la piel",
+      "peor_consecuencia": "Cáncer de piel o pérdida visual",
+      "nc": "MG",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Pantallas y cabinas de soldadura; zonas de sombra en puestos a la intemperie"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Programar tareas al aire libre fuera de las horas de mayor radiación"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Bloqueador solar, ropa de manga larga y sombrero; careta de soldador con filtro adecuado"
+        }
+      ]
+    },
+    {
+      "codigo": "FIS_RAD_ION",
+      "clase": "FISICO",
+      "nombre": "Radiación ionizante (rayos X, gamma, fuentes radiactivas)",
+      "efectos": "Quemaduras, alteraciones hematológicas",
+      "peor_consecuencia": "Cáncer",
+      "nc": "M",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Blindajes y señalización de zonas controladas"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Dosimetría personal y licencia de la autoridad competente"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Delantal y protectores plomados"
+        }
+      ]
+    },
+    {
+      "codigo": "QUI_POLVOS",
+      "clase": "QUIMICO",
+      "nombre": "Polvos orgánicos e inorgánicos y material particulado",
+      "efectos": "Irritación respiratoria y ocular, neumoconiosis",
+      "peor_consecuencia": "Silicosis o enfermedad pulmonar crónica",
+      "nc": "MG",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Humectación y extracción localizada"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Mediciones ambientales, orden y aseo"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Respirador con filtro para partículas"
+        }
+      ]
+    },
+    {
+      "codigo": "QUI_GASES_VAPORES",
+      "clase": "QUIMICO",
+      "nombre": "Gases y vapores (solventes, combustibles, productos de limpieza)",
+      "efectos": "Irritación, cefalea, mareo, intoxicación",
+      "peor_consecuencia": "Intoxicación aguda",
+      "nc": "MG",
+      "norma_codigo": "RES-0773-2021",
+      "controles": [
+        {
+          "jerarquia": "sustitucion",
+          "descripcion": "Sustituir por productos de menor toxicidad"
+        },
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Ventilación y extracción localizada"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Inventario, fichas de datos de seguridad y etiquetado SGA; almacenamiento por compatibilidad"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Respirador con cartucho para vapores orgánicos, guantes de nitrilo y monogafas"
+        }
+      ]
+    },
+    {
+      "codigo": "QUI_LIQUIDOS",
+      "clase": "QUIMICO",
+      "nombre": "Líquidos, nieblas y rocíos (sustancias corrosivas, irritantes o plaguicidas)",
+      "efectos": "Dermatitis, quemaduras químicas, lesión ocular, intoxicación",
+      "peor_consecuencia": "Quemadura química grave o intoxicación",
+      "nc": "MG",
+      "norma_codigo": "RES-0773-2021",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Ducha y lavaojos de emergencia"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Fichas de datos de seguridad disponibles y etiquetado SGA"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Guantes, delantal y gafas resistentes al producto"
+        }
+      ]
+    },
+    {
+      "codigo": "QUI_HUMOS",
+      "clase": "QUIMICO",
+      "nombre": "Humos metálicos y no metálicos (soldadura, combustión)",
+      "efectos": "Fiebre de humos metálicos, irritación respiratoria",
+      "peor_consecuencia": "Enfermedad pulmonar crónica",
+      "nc": "MG",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Extracción localizada en el punto de soldadura"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Respirador para humos metálicos"
+        }
+      ]
+    },
+    {
+      "codigo": "QUI_FIBRAS",
+      "clase": "QUIMICO",
+      "nombre": "Fibras (fibra de vidrio, textiles, lana mineral)",
+      "efectos": "Irritación de piel y vías respiratorias",
+      "peor_consecuencia": "Enfermedad pulmonar crónica",
+      "nc": "G",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Extracción y humectación"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Respirador para partículas, guantes y ropa de manga larga"
+        }
+      ]
+    },
+    {
+      "codigo": "PSI_GESTION",
+      "clase": "PSICOSOCIAL",
+      "nombre": "Gestión organizacional (estilo de mando, pago, contratación, evaluación del desempeño, manejo de cambios)",
+      "efectos": "Estrés, desmotivación, conflictos",
+      "peor_consecuencia": "Trastorno de ansiedad o depresión",
+      "nc": "G",
+      "norma_codigo": "RES-2646-2008",
+      "controles": [
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Aplicación de la batería de riesgo psicosocial e intervención según resultados"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Programa de bienestar y comunicación organizacional"
+        }
+      ]
+    },
+    {
+      "codigo": "PSI_TAREA",
+      "clase": "PSICOSOCIAL",
+      "nombre": "Condiciones de la tarea (carga mental, demandas emocionales, monotonía, sistemas de control)",
+      "efectos": "Estrés, fatiga mental, trastornos del sueño",
+      "peor_consecuencia": "Trastorno relacionado con el estrés",
+      "nc": "G",
+      "norma_codigo": "RES-2646-2008",
+      "controles": [
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Distribución de cargas, pausas activas y aplicación de la batería de riesgo psicosocial"
+        }
+      ]
+    },
+    {
+      "codigo": "PSI_JORNADA",
+      "clase": "PSICOSOCIAL",
+      "nombre": "Jornada de trabajo (trabajo nocturno, turnos, horas extras, falta de pausas)",
+      "efectos": "Fatiga, alteraciones del sueño, estrés",
+      "peor_consecuencia": "Trastorno relacionado con el estrés",
+      "nc": "G",
+      "norma_codigo": "RES-2646-2008",
+      "controles": [
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Planeación de turnos, control de horas extras y pausas"
+        }
+      ]
+    },
+    {
+      "codigo": "PSI_ATENCION",
+      "clase": "PSICOSOCIAL",
+      "nombre": "Atención al público y relaciones interpersonales (usuarios difíciles, conflictos)",
+      "efectos": "Estrés, agotamiento emocional",
+      "peor_consecuencia": "Síndrome de agotamiento laboral",
+      "nc": "G",
+      "norma_codigo": "RES-2646-2008",
+      "controles": [
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Protocolo de atención de usuarios y manejo de conflictos; capacitación en servicio"
+        }
+      ]
+    },
+    {
+      "codigo": "BM_POSTURA",
+      "clase": "BIOMECANICO",
+      "nombre": "Postura prolongada, mantenida o forzada (sedente o bípeda)",
+      "efectos": "Dolor lumbar y cervical, fatiga, lesiones osteomusculares",
+      "peor_consecuencia": "Desorden musculoesquelético",
+      "nc": "G",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Puesto de trabajo ajustable (silla, superficie, soporte de pantalla)"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Pausas activas, inspección de puestos de trabajo y vigilancia osteomuscular"
+        }
+      ]
+    },
+    {
+      "codigo": "BM_REPETITIVO",
+      "clase": "BIOMECANICO",
+      "nombre": "Movimiento repetitivo de miembros superiores",
+      "efectos": "Síndrome de túnel carpiano, tendinitis, epicondilitis",
+      "peor_consecuencia": "Desorden musculoesquelético",
+      "nc": "G",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Herramientas y accesorios ergonómicos"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Pausas activas, rotación de tareas y vigilancia osteomuscular"
+        }
+      ]
+    },
+    {
+      "codigo": "BM_CARGAS",
+      "clase": "BIOMECANICO",
+      "nombre": "Manipulación manual de cargas",
+      "efectos": "Lumbalgia, hernia discal, lesiones musculares",
+      "peor_consecuencia": "Hernia discal",
+      "nc": "MG",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Ayudas mecánicas (carretillas, estibadores, montacargas)"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Capacitación en higiene postural y límites de peso por persona"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Guantes y calzado de seguridad"
+        }
+      ]
+    },
+    {
+      "codigo": "BM_ESFUERZO",
+      "clase": "BIOMECANICO",
+      "nombre": "Esfuerzo (fuerza aplicada con herramientas o equipos)",
+      "efectos": "Lesiones musculares y tendinosas",
+      "peor_consecuencia": "Desorden musculoesquelético",
+      "nc": "G",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Herramientas motorizadas o con mejor ventaja mecánica"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Pausas y rotación"
+        }
+      ]
+    },
+    {
+      "codigo": "SEG_MECANICO",
+      "clase": "SEGURIDAD",
+      "nombre": "Mecánico (partes en movimiento de máquinas, proyección de partículas)",
+      "efectos": "Golpes, cortes, atrapamientos, amputaciones",
+      "peor_consecuencia": "Amputación",
+      "nc": "MG",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Guardas de seguridad y paradas de emergencia"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Procedimiento de bloqueo y etiquetado y mantenimiento preventivo"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Gafas de seguridad, guantes y calzado con puntera"
+        }
+      ]
+    },
+    {
+      "codigo": "SEG_HERRAMIENTAS",
+      "clase": "SEGURIDAD",
+      "nombre": "Herramientas manuales y elementos cortopunzantes",
+      "efectos": "Cortes, golpes, heridas",
+      "peor_consecuencia": "Herida con lesión de tendón",
+      "nc": "G",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Inspección y mantenimiento de herramientas"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Guantes anticorte"
+        }
+      ]
+    },
+    {
+      "codigo": "SEG_ELECTRICO",
+      "clase": "SEGURIDAD",
+      "nombre": "Eléctrico (alta y baja tensión, electricidad estática)",
+      "efectos": "Quemaduras, electrocución, paro cardiorrespiratorio",
+      "peor_consecuencia": "Muerte por electrocución",
+      "nc": "M",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Tableros cerrados y señalizados, polo a tierra e instalaciones conforme al reglamento técnico"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Procedimiento de trabajo seguro y personal habilitado para tareas eléctricas"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Guantes y calzado dieléctricos"
+        }
+      ]
+    },
+    {
+      "codigo": "SEG_LOCATIVO",
+      "clase": "SEGURIDAD",
+      "nombre": "Locativo (superficies irregulares o deslizantes, escaleras, almacenamiento, orden y aseo)",
+      "efectos": "Caídas al mismo nivel, golpes, esguinces",
+      "peor_consecuencia": "Fractura",
+      "nc": "G",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Pisos antideslizantes, pasamanos y cintas antideslizantes en escaleras"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Programa de orden y aseo, inspecciones locativas y señalización"
+        }
+      ]
+    },
+    {
+      "codigo": "SEG_ALTURAS",
+      "clase": "SEGURIDAD",
+      "nombre": "Trabajo en alturas (1,50 m o más sobre un nivel inferior)",
+      "efectos": "Caídas de distinto nivel, fracturas, trauma",
+      "peor_consecuencia": "Muerte",
+      "nc": "M",
+      "norma_codigo": "RES-4272-2021",
+      "controles": [
+        {
+          "jerarquia": "eliminacion",
+          "descripcion": "Ejecutar la tarea desde el nivel del piso cuando sea posible"
+        },
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Barandas, líneas de vida y puntos de anclaje certificados"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Programa de protección contra caídas, permiso de trabajo, coordinador y trabajadores certificados"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Arnés de cuerpo completo, eslinga con absorbedor y casco con barbuquejo"
+        }
+      ]
+    },
+    {
+      "codigo": "SEG_CONFINADOS",
+      "clase": "SEGURIDAD",
+      "nombre": "Espacios confinados",
+      "efectos": "Asfixia, intoxicación, atrapamiento",
+      "peor_consecuencia": "Muerte",
+      "nc": "M",
+      "norma_codigo": "RES-0491-2020",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Ventilación forzada"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Permiso de trabajo, medición de atmósferas, vigía y plan de rescate"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Protección respiratoria y arnés con línea de recuperación"
+        }
+      ]
+    },
+    {
+      "codigo": "SEG_TRANSITO",
+      "clase": "SEGURIDAD",
+      "nombre": "Accidentes de tránsito (desplazamientos en vehículo, moto o a pie por la vía pública)",
+      "efectos": "Politraumatismos, fracturas",
+      "peor_consecuencia": "Muerte",
+      "nc": "M",
+      "norma_codigo": "LEY-1503-2011",
+      "controles": [
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Plan Estratégico de Seguridad Vial, mantenimiento de vehículos e inspección preoperacional"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Casco certificado y prendas reflectivas (motociclistas)"
+        }
+      ]
+    },
+    {
+      "codigo": "SEG_EQUIPO_MOVIL",
+      "clase": "SEGURIDAD",
+      "nombre": "Vehículos y maquinaria en movimiento dentro de las instalaciones (montacargas, estibadores)",
+      "efectos": "Atropellamiento, atrapamiento, golpes",
+      "peor_consecuencia": "Muerte",
+      "nc": "M",
+      "norma_codigo": "RES-2400-1979",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Demarcación de vías peatonales y vehiculares, alarmas de reversa"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Operadores autorizados, límites de velocidad e inspección preoperacional"
+        },
+        {
+          "jerarquia": "epp",
+          "descripcion": "Chaleco reflectivo y calzado de seguridad"
+        }
+      ]
+    },
+    {
+      "codigo": "SEG_PUBLICO",
+      "clase": "SEGURIDAD",
+      "nombre": "Públicos (robos, atracos, asaltos, desorden público)",
+      "efectos": "Lesiones, estrés postraumático",
+      "peor_consecuencia": "Lesión grave o muerte",
+      "nc": "MG",
+      "norma_codigo": null,
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Cámaras, alarmas, cajas fuertes y control de acceso"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Protocolos de seguridad, manejo de dinero y rutas variables"
+        }
+      ]
+    },
+    {
+      "codigo": "SEG_TECNOLOGICO",
+      "clase": "SEGURIDAD",
+      "nombre": "Tecnológico (incendio, explosión, fuga, derrame)",
+      "efectos": "Quemaduras, intoxicación, trauma",
+      "peor_consecuencia": "Muerte",
+      "nc": "M",
+      "norma_codigo": "DEC-1072-2015",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Detección y extinción de incendios; almacenamiento seguro de inflamables"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Plan de prevención, preparación y respuesta ante emergencias y brigada entrenada"
+        }
+      ]
+    },
+    {
+      "codigo": "NAT_SISMO",
+      "clase": "NATURAL",
+      "nombre": "Sismo o terremoto",
+      "efectos": "Atrapamiento, golpes, trauma",
+      "peor_consecuencia": "Muerte",
+      "nc": "M",
+      "norma_codigo": "DEC-2157-2017",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Anclaje de estanterías y elementos en altura; revisión estructural"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Plan de emergencias, simulacros, rutas de evacuación y puntos de encuentro"
+        }
+      ]
+    },
+    {
+      "codigo": "NAT_TORMENTA",
+      "clase": "NATURAL",
+      "nombre": "Vendaval, tormenta eléctrica o precipitaciones",
+      "efectos": "Golpes por objetos, descarga eléctrica",
+      "peor_consecuencia": "Lesión grave",
+      "nc": "MG",
+      "norma_codigo": "DEC-2157-2017",
+      "controles": [
+        {
+          "jerarquia": "ingenieria",
+          "descripcion": "Sistema de apantallamiento y revisión de cubiertas"
+        },
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Suspender tareas a la intemperie durante tormentas; plan de emergencias"
+        }
+      ]
+    },
+    {
+      "codigo": "NAT_INUNDACION",
+      "clase": "NATURAL",
+      "nombre": "Inundación, derrumbe o deslizamiento",
+      "efectos": "Atrapamiento, ahogamiento, trauma",
+      "peor_consecuencia": "Muerte",
+      "nc": "M",
+      "norma_codigo": "DEC-2157-2017",
+      "controles": [
+        {
+          "jerarquia": "administrativo",
+          "descripcion": "Análisis de vulnerabilidad, alertas tempranas y plan de evacuación"
+        }
+      ]
+    }
+  ],
+  "cargos_tipo": [
+    {
+      "codigo": "ADMINISTRATIVO",
+      "nombre": "Auxiliar administrativo",
+      "descripcion": "Labores de oficina con computador, archivo y atención telefónica",
+      "peligros": [
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_REPETITIVO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "FIS_ILUMINACION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "PSI_TAREA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_LOCATIVO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "SEG_ELECTRICO",
+          "ne": "EE"
+        },
+        {
+          "peligro": "NAT_SISMO",
+          "ne": "EE"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "DIRECTIVO",
+      "nombre": "Gerente o directivo",
+      "descripcion": "Dirección, reuniones, desplazamientos y toma de decisiones",
+      "peligros": [
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "PSI_TAREA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "PSI_JORNADA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_TRANSITO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "SEG_PUBLICO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "NAT_SISMO",
+          "ne": "EE"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "RECEPCION",
+      "nombre": "Recepcionista o auxiliar de servicio al cliente",
+      "descripcion": "Atención presencial y telefónica de usuarios",
+      "peligros": [
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "PSI_ATENCION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BIO_VIRUS_BACT",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_PUBLICO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "SEG_LOCATIVO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "NAT_SISMO",
+          "ne": "EE"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "CAJERO",
+      "nombre": "Cajero",
+      "descripcion": "Recaudo, manejo de efectivo y atención de clientes",
+      "peligros": [
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_REPETITIVO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "SEG_PUBLICO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "PSI_ATENCION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BIO_VIRUS_BACT",
+          "ne": "EF"
+        },
+        {
+          "peligro": "NAT_SISMO",
+          "ne": "EE"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "CALL_CENTER",
+      "nombre": "Agente de contact center",
+      "descripcion": "Atención telefónica y digital con diadema y computador",
+      "peligros": [
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_REPETITIVO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "PSI_ATENCION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "PSI_TAREA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "FIS_RUIDO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "NAT_SISMO",
+          "ne": "EE"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "SISTEMAS",
+      "nombre": "Técnico de sistemas o soporte",
+      "descripcion": "Soporte a usuarios, instalación de equipos y cableado",
+      "peligros": [
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_REPETITIVO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "SEG_ELECTRICO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "PSI_TAREA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_CARGAS",
+          "ne": "EE"
+        },
+        {
+          "peligro": "SEG_TRANSITO",
+          "ne": "EO"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "VENDEDOR_EXTERNO",
+      "nombre": "Asesor comercial externo",
+      "descripcion": "Visitas a clientes con desplazamiento por la ciudad",
+      "peligros": [
+        {
+          "peligro": "SEG_TRANSITO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "FIS_RAD_NO_ION",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_PUBLICO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "PSI_ATENCION",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EF"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "MENSAJERO",
+      "nombre": "Mensajero motorizado",
+      "descripcion": "Entrega de documentos y paquetes en motocicleta",
+      "peligros": [
+        {
+          "peligro": "SEG_TRANSITO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "FIS_RAD_NO_ION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "SEG_PUBLICO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "FIS_VIBRACION",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "NAT_TORMENTA",
+          "ne": "EO"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "CONDUCTOR",
+      "nombre": "Conductor",
+      "descripcion": "Conducción de vehículo de carga o de pasajeros",
+      "peligros": [
+        {
+          "peligro": "SEG_TRANSITO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "FIS_VIBRACION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "PSI_JORNADA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_PUBLICO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "BM_CARGAS",
+          "ne": "EO"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "ASEO",
+      "nombre": "Auxiliar de servicios generales",
+      "descripcion": "Aseo y desinfección de instalaciones, manejo de residuos",
+      "peligros": [
+        {
+          "peligro": "QUI_LIQUIDOS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "QUI_GASES_VAPORES",
+          "ne": "EO"
+        },
+        {
+          "peligro": "BIO_VIRUS_BACT",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BIO_RESIDUOS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_LOCATIVO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_REPETITIVO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_CARGAS",
+          "ne": "EO"
+        }
+      ],
+      "competencias": [
+        "SGA"
+      ]
+    },
+    {
+      "codigo": "COCINA",
+      "nombre": "Auxiliar de cocina o cocinero",
+      "descripcion": "Preparación de alimentos con estufas, hornos y utensilios cortantes",
+      "peligros": [
+        {
+          "peligro": "FIS_CALOR",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_HERRAMIENTAS",
+          "ne": "EC"
+        },
+        {
+          "peligro": "SEG_LOCATIVO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_TECNOLOGICO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_CARGAS",
+          "ne": "EO"
+        },
+        {
+          "peligro": "QUI_LIQUIDOS",
+          "ne": "EO"
+        },
+        {
+          "peligro": "FIS_FRIO",
+          "ne": "EE"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "MESERO",
+      "nombre": "Mesero",
+      "descripcion": "Servicio a la mesa y transporte de bandejas",
+      "peligros": [
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_CARGAS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_LOCATIVO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "PSI_ATENCION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "PSI_JORNADA",
+          "ne": "EF"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "VIGILANTE",
+      "nombre": "Vigilante o guarda de seguridad",
+      "descripcion": "Control de acceso y rondas en turnos rotativos",
+      "peligros": [
+        {
+          "peligro": "SEG_PUBLICO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "PSI_JORNADA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "SEG_LOCATIVO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "NAT_SISMO",
+          "ne": "EE"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "OPERARIO_PRODUCCION",
+      "nombre": "Operario de producción",
+      "descripcion": "Operación de máquinas y líneas de producción",
+      "peligros": [
+        {
+          "peligro": "SEG_MECANICO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "FIS_RUIDO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_REPETITIVO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_CARGAS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_ELECTRICO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "QUI_POLVOS",
+          "ne": "EO"
+        },
+        {
+          "peligro": "SEG_EQUIPO_MOVIL",
+          "ne": "EO"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "BODEGA",
+      "nombre": "Auxiliar de bodega",
+      "descripcion": "Recibo, almacenamiento y despacho de mercancía",
+      "peligros": [
+        {
+          "peligro": "BM_CARGAS",
+          "ne": "EC"
+        },
+        {
+          "peligro": "SEG_EQUIPO_MOVIL",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_LOCATIVO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "NAT_SISMO",
+          "ne": "EE"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "MONTACARGAS",
+      "nombre": "Operador de montacargas",
+      "descripcion": "Movimiento de carga con montacargas dentro de las instalaciones",
+      "peligros": [
+        {
+          "peligro": "SEG_EQUIPO_MOVIL",
+          "ne": "EC"
+        },
+        {
+          "peligro": "FIS_VIBRACION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "FIS_RUIDO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "QUI_GASES_VAPORES",
+          "ne": "EO"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "MANTENIMIENTO",
+      "nombre": "Técnico de mantenimiento",
+      "descripcion": "Mantenimiento locativo, eléctrico y de equipos",
+      "peligros": [
+        {
+          "peligro": "SEG_ALTURAS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_ELECTRICO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_HERRAMIENTAS",
+          "ne": "EC"
+        },
+        {
+          "peligro": "SEG_MECANICO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_CARGAS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "QUI_GASES_VAPORES",
+          "ne": "EO"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "FIS_RUIDO",
+          "ne": "EO"
+        }
+      ],
+      "competencias": [
+        "ALTURAS",
+        "ELECTRICO"
+      ]
+    },
+    {
+      "codigo": "ELECTRICISTA",
+      "nombre": "Electricista",
+      "descripcion": "Instalación y mantenimiento de redes eléctricas",
+      "peligros": [
+        {
+          "peligro": "SEG_ELECTRICO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "SEG_ALTURAS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_HERRAMIENTAS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "FIS_RAD_NO_ION",
+          "ne": "EO"
+        }
+      ],
+      "competencias": [
+        "ELECTRICO",
+        "ALTURAS"
+      ]
+    },
+    {
+      "codigo": "SOLDADOR",
+      "nombre": "Soldador",
+      "descripcion": "Soldadura y corte de metales",
+      "peligros": [
+        {
+          "peligro": "FIS_RAD_NO_ION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "QUI_HUMOS",
+          "ne": "EC"
+        },
+        {
+          "peligro": "FIS_CALOR",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_TECNOLOGICO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "SEG_MECANICO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "FIS_RUIDO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EF"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "OBRA",
+      "nombre": "Oficial o ayudante de obra",
+      "descripcion": "Construcción, demolición y acabados",
+      "peligros": [
+        {
+          "peligro": "SEG_ALTURAS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_CARGAS",
+          "ne": "EC"
+        },
+        {
+          "peligro": "QUI_POLVOS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "FIS_RUIDO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "FIS_RAD_NO_ION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "SEG_HERRAMIENTAS",
+          "ne": "EC"
+        },
+        {
+          "peligro": "SEG_LOCATIVO",
+          "ne": "EC"
+        },
+        {
+          "peligro": "FIS_VIBRACION",
+          "ne": "EO"
+        },
+        {
+          "peligro": "SEG_MECANICO",
+          "ne": "EO"
+        }
+      ],
+      "competencias": [
+        "ALTURAS"
+      ]
+    },
+    {
+      "codigo": "ASISTENCIAL",
+      "nombre": "Auxiliar de enfermería o personal asistencial",
+      "descripcion": "Atención directa de pacientes y procedimientos",
+      "peligros": [
+        {
+          "peligro": "BIO_FLUIDOS",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BIO_VIRUS_BACT",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_CARGAS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "PSI_TAREA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "PSI_JORNADA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "QUI_LIQUIDOS",
+          "ne": "EO"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "AGRICOLA",
+      "nombre": "Trabajador agrícola",
+      "descripcion": "Labores de cultivo, cosecha y aplicación de agroquímicos",
+      "peligros": [
+        {
+          "peligro": "FIS_RAD_NO_ION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BIO_PICADURAS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "QUI_LIQUIDOS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_HERRAMIENTAS",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BM_CARGAS",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "SEG_LOCATIVO",
+          "ne": "EF"
+        },
+        {
+          "peligro": "NAT_TORMENTA",
+          "ne": "EO"
+        }
+      ],
+      "competencias": [
+        "SGA"
+      ]
+    },
+    {
+      "codigo": "DOCENTE",
+      "nombre": "Docente",
+      "descripcion": "Enseñanza presencial en aula",
+      "peligros": [
+        {
+          "peligro": "PSI_ATENCION",
+          "ne": "EC"
+        },
+        {
+          "peligro": "PSI_TAREA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EC"
+        },
+        {
+          "peligro": "BIO_VIRUS_BACT",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_LOCATIVO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "NAT_SISMO",
+          "ne": "EE"
+        }
+      ],
+      "competencias": []
+    },
+    {
+      "codigo": "RESPONSABLE_SST",
+      "nombre": "Responsable del SG-SST",
+      "descripcion": "Diseño, ejecución y seguimiento del SG-SST; inspecciones en campo",
+      "peligros": [
+        {
+          "peligro": "BM_POSTURA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "PSI_TAREA",
+          "ne": "EF"
+        },
+        {
+          "peligro": "SEG_TRANSITO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "SEG_LOCATIVO",
+          "ne": "EO"
+        },
+        {
+          "peligro": "NAT_SISMO",
+          "ne": "EE"
+        }
+      ],
+      "competencias": [
+        "CURSO_50H",
+        "LICENCIA_SST"
+      ]
+    }
+  ]
+}

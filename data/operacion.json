@@ -1,0 +1,52 @@
+{
+  "_fuente": "D. 1072/2015 arts. 2.2.4.6.12, .25, .27 y .28; Res. 4272/2021 (alturas); Res. 0491/2020 (espacios confinados); Res. 5018/2019 (riesgo electrico)",
+  "_no_verificado": [
+    "Meses de vigencia de equipos de emergencia: valores de producto (NTC 2885 exige recarga anual de extintores); cada empresa ajusta segun fabricante.",
+    "Trabajo en caliente no tiene reglamento tecnico propio: se toma como buena practica del programa de prevencion.",
+    "Listas de verificacion de permisos: resumen operativo; contrastar con el anexo de cada resolucion antes de produccion.",
+    "Criterios y umbrales de evaluacion de contratistas: plantilla de producto (el D. 1072 exige criterios SST, no fija puntajes)."
+  ],
+  "equipos": [
+    { "codigo": "EXTINTOR", "nombre": "Extintor portatil", "meses_vigencia": 12 },
+    { "codigo": "BOTIQUIN", "nombre": "Botiquin de primeros auxilios", "meses_vigencia": 6 },
+    { "codigo": "CAMILLA", "nombre": "Camilla con inmovilizadores", "meses_vigencia": 12 },
+    { "codigo": "DEA", "nombre": "Desfibrilador externo automatico", "meses_vigencia": 12 },
+    { "codigo": "ALARMA", "nombre": "Sistema de alarma", "meses_vigencia": 12 },
+    { "codigo": "GABINETE", "nombre": "Gabinete contra incendio", "meses_vigencia": 12 },
+    { "codigo": "LAMPARA", "nombre": "Lampara de emergencia", "meses_vigencia": 12 },
+    { "codigo": "KIT_DERRAMES", "nombre": "Kit de control de derrames", "meses_vigencia": 12 }
+  ],
+  "permisos": [
+    {
+      "codigo": "alturas", "nombre": "Trabajo en alturas", "competencia_codigo": "ALTURAS", "norma_codigo": "RES-4272-2021", "documento_tipo": "PERMISO_ALTURAS",
+      "verificaciones": ["Sistema de acceso inspeccionado", "Puntos de anclaje certificados", "Equipo contra caidas inspeccionado", "Plan de rescate disponible", "Area demarcada y senalizada", "Coordinador de alturas presente"]
+    },
+    {
+      "codigo": "confinado", "nombre": "Espacio confinado", "competencia_codigo": "CONFINADOS", "norma_codigo": "RES-0491-2020", "documento_tipo": "PERMISO_CONFINADO",
+      "verificaciones": ["Medicion atmosferica (oxigeno, inflamables, toxicos)", "Ventilacion instalada", "Aislamiento y bloqueo de energias", "Vigia designado", "Plan de rescate y equipo disponible", "Comunicacion con el exterior"]
+    },
+    {
+      "codigo": "caliente", "nombre": "Trabajo en caliente", "competencia_codigo": null, "norma_codigo": "DEC-1072-2015", "documento_tipo": null,
+      "verificaciones": ["Retiro o proteccion de combustibles en 11 m", "Extintor en el punto de trabajo", "Vigia de fuego designado", "Ventilacion adecuada"]
+    },
+    {
+      "codigo": "electrico", "nombre": "Trabajo con riesgo electrico", "competencia_codigo": "ELECTRICO", "norma_codigo": "RES-5018-2019", "documento_tipo": null,
+      "verificaciones": ["Corte efectivo de todas las fuentes", "Bloqueo y etiquetado", "Verificacion de ausencia de tension", "Puesta a tierra y en cortocircuito", "Senalizacion y delimitacion de la zona"]
+    }
+  ],
+  "contratistas": {
+    "umbral_aprobado": 80,
+    "umbral_condicionado": 60,
+    "criterios": [
+      "Tiene SG-SST implementado y autoevaluacion de estandares minimos vigente",
+      "Afiliacion y pago al Sistema General de Riesgos Laborales de todos sus trabajadores",
+      "Cotiza en la clase de riesgo que corresponde a la actividad",
+      "Matriz de peligros de las actividades que va a ejecutar",
+      "Trabajadores con examenes medicos de ingreso y aptitud para la tarea",
+      "Certificaciones de tareas de alto riesgo vigentes (si aplica)",
+      "Suministro y control de elementos de proteccion personal",
+      "Procedimiento de reporte e investigacion de incidentes y accidentes",
+      "Indicadores de accidentalidad del ultimo anio"
+    ]
+  }
+}
