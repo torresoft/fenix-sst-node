@@ -19,6 +19,8 @@ if (produccion && !/^https:\/\//.test(process.env.APP_URL || '')) throw new Erro
 module.exports = Object.freeze({
   produccion,
   puerto: Number(process.env.PORT || 3000),
+  // Detras del reverse proxy: solo loopback.
+  host: process.env.HOST || '127.0.0.1',
   zonaHoraria: process.env.TZ,
   db: Object.freeze({
     host: requerida('DB_HOST'),

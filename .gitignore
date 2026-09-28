@@ -15,3 +15,6 @@ npm-debug.log*
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Esquema: se aplica a mano
+sql/

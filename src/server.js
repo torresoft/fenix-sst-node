@@ -4,7 +4,7 @@ const app = require('./app');
 
 (async () => {
   const cal = await fechas.inicializar();
-  app.listen(config.puerto, () => {
+  app.listen(config.puerto, config.host, () => {
     console.info(`fenix-sst escuchando en :${config.puerto} (festivos ${cal.desde} a ${cal.hasta}, TZ ${config.zonaHoraria})`);
   });
 })().catch((err) => {
