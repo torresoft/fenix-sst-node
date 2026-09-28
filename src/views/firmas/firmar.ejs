@@ -5,7 +5,7 @@
       <div class="card-header"><h3 class="card-title"><%= f.doc.codigo %> v<%= f.doc.version %>: <%= f.doc.titulo %></h3></div>
       <div class="card-body">
         <p>
-          <a href="/documentos/<%= f.doc.id %>/archivo" class="btn btn-sm btn-default"><i class="fas fa-download mr-1"></i>Descargar y revisar el documento</a>
+          <a download href="/documentos/<%= f.doc.id %>/archivo" class="btn btn-sm btn-default"><i class="fas fa-download mr-1"></i>Descargar y revisar el documento</a>
         </p>
         <p class="small mb-1"><strong>Huella SHA-256 del contenido:</strong></p>
         <p class="small text-monospace text-break"><%= f.doc.archivo_hash %></p>

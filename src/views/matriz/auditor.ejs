@@ -58,7 +58,7 @@
                 <td><%= h.cobertura %>%</td>
                 <td class="text-center text-nowrap">
                   <a href="/matriz-legal/auditor/<%= h.id %>" class="btn btn-xs btn-default" data-toggle="tooltip" title="Ver informe"><i class="fas fa-eye"></i></a>
-                  <a href="/matriz-legal/auditor/<%= h.id %>/csv" class="btn btn-xs btn-default" data-toggle="tooltip" title="Descargar CSV"><i class="fas fa-file-csv"></i></a>
+                  <a download href="/matriz-legal/auditor/<%= h.id %>/csv" class="btn btn-xs btn-default" data-toggle="tooltip" title="Descargar CSV"><i class="fas fa-file-csv"></i></a>
                 </td>
               </tr>
               <% }) %>

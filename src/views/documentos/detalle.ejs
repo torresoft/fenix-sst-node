@@ -9,7 +9,7 @@
 %>
 <div class="mb-3">
   <a href="/documentos" class="btn btn-sm btn-default"><i class="fas fa-arrow-left mr-1"></i>Documentos</a>
-  <% if (doc.archivo_ruta) { %><a href="/documentos/<%= doc.id %>/archivo" class="btn btn-sm btn-default"><i class="fas fa-download mr-1"></i>Descargar</a><% } %>
+  <% if (doc.archivo_ruta) { %><a download href="/documentos/<%= doc.id %>/archivo" class="btn btn-sm btn-default"><i class="fas fa-download mr-1"></i>Descargar</a><% } %>
   <form method="post" action="/documentos/<%= doc.id %>/verificar" class="d-inline">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <button type="submit" class="btn btn-sm btn-default" data-toggle="tooltip" title="Recalcula la huella del archivo y la compara con la registrada y con cada firma"><i class="fas fa-fingerprint mr-1"></i>Verificar integridad</button>

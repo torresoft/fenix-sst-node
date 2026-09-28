@@ -18,7 +18,7 @@
     <span class="text-muted small ml-2"><%= d.met.nombre %> &middot; motivo: <%= m.motivo %> &middot; elaborada <%= m.fecha_elaboracion %><%= m.publicada_en ? ' · publicada ' + m.publicada_en : '' %></span>
   </div>
   <div>
-    <a href="/peligros/<%= m.id %>/csv" class="btn btn-sm btn-default"><i class="fas fa-file-csv mr-1"></i>CSV</a>
+    <a download href="/peligros/<%= m.id %>/csv" class="btn btn-sm btn-default"><i class="fas fa-file-csv mr-1"></i>CSV</a>
     <% if (gestionar && borrador) { %>
     <a href="/peligros/<%= m.id %>/sugerir" class="btn btn-sm btn-default"><i class="fas fa-magic mr-1"></i>Sugerir por cargo</a>
     <a href="/peligros/<%= m.id %>/items/nuevo" class="btn btn-sm btn-primary"><i class="fas fa-plus mr-1"></i>Peligro</a>

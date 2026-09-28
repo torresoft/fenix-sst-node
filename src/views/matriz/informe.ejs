@@ -4,7 +4,7 @@
   var fecha = a.creado_en instanceof Date ? a.creado_en.toISOString().slice(0, 16).replace('T', ' ') : a.creado_en;
 %>
 <div class="mb-3 no-print">
-  <a href="/matriz-legal/auditor/<%= a.id %>/csv" class="btn btn-sm btn-success"><i class="fas fa-file-csv mr-1"></i>Descargar CSV</a>
+  <a download href="/matriz-legal/auditor/<%= a.id %>/csv" class="btn btn-sm btn-success"><i class="fas fa-file-csv mr-1"></i>Descargar CSV</a>
   <button type="button" class="btn btn-sm btn-default js-imprimir"><i class="fas fa-print mr-1"></i>Imprimir / PDF</button>
   <a href="/matriz-legal/auditor" class="btn btn-sm btn-default">Volver</a>
 </div>

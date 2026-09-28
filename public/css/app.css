@@ -28,3 +28,12 @@
 /* Pestanas de detalle: la tarjeta se pega a la pestana. */
 .pestanas > .tab-pane > .card { border-top-left-radius: 0; border-top-right-radius: 0; }
 .nav-tabs + .tab-content { margin-bottom: 1rem; }
+/* Cargando (public/js/comun/app.js). */
+.cargando { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.55); cursor: progress; }
+.cargando[hidden], .cargando-barra[hidden] { display: none; }
+.cargando-caja { display: flex; align-items: center; gap: .6rem; padding: .75rem 1.25rem; border-radius: .5rem; background: #fff; box-shadow: 0 .25rem 1rem rgba(0,0,0,.2); color: #343a40; }
+.cargando-caja .fa-spin { font-size: 1.5rem; color: #007bff; }
+.cargando-barra { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 2001; overflow: hidden; background: rgba(0,123,255,.15); }
+.cargando-barra::before { content: ""; position: absolute; top: 0; bottom: 0; width: 30%; background: #007bff; animation: cargando-barra 1s ease-in-out infinite; }
+@keyframes cargando-barra { from { left: -30%; } to { left: 100%; } }
+@media (prefers-reduced-motion: reduce) { .cargando-barra::before { animation: none; width: 100%; } }
