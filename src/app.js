@@ -35,9 +35,11 @@ app.use(helmet({
 
 const estatico = (dir) => express.static(dir, { maxAge: config.produccion ? '7d' : 0, index: false });
 app.use('/vendor/adminlte', estatico(path.join(adminlte, 'dist')));
-app.use('/vendor/jquery', estatico(path.join(adminlte, 'plugins', 'jquery')));
-app.use('/vendor/bootstrap', estatico(path.join(adminlte, 'plugins', 'bootstrap')));
-app.use('/vendor/fontawesome', estatico(path.join(adminlte, 'plugins', 'fontawesome-free')));
+// Directo de las dependencias de admin-lte: plugins/ lo arma su postinstall, que .npmrc bloquea.
+const dep = (modulo) => require.resolve(modulo, { paths: [adminlte] });
+app.use('/vendor/jquery', estatico(path.dirname(dep('jquery'))));
+app.use('/vendor/bootstrap', estatico(path.join(path.dirname(dep('bootstrap')), '..')));
+app.use('/vendor/fontawesome', estatico(path.dirname(dep('@fortawesome/fontawesome-free/package.json'))));
 app.use(estatico(path.join(raiz, 'public')));
 
 app.use(express.urlencoded({ extended: false, limit: '1mb' }));
