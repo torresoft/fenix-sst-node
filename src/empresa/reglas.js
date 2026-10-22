@@ -6,7 +6,7 @@ const TIPOS_DOCUMENTO = {
   PPT: 'Permiso por proteccion temporal', PEP: 'Permiso especial de permanencia',
 };
 const TIPOS_VINCULACION = {
-  dependiente: 'Dependiente', contratista: 'Contratista', aprendiz: 'Aprendiz', mision: 'Trabajador en mision', independiente: 'Independiente',
+  dependiente: 'De planta', contratista: 'Contratista', aprendiz: 'Aprendiz', mision: 'De misión', independiente: 'Independiente',
 };
 
 function errorValidacion(mensaje) {

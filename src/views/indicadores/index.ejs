@@ -16,9 +16,10 @@
 </div>
 <p class="small text-muted">Se recalculan cada d&iacute;a con el estado real de los m&oacute;dulos. Pase el cursor sobre un valor para ver el m&eacute;todo. Cada cambio de valor queda como una medici&oacute;n nueva.</p>
 
-<% grupos.forEach(function (g) { var lista = filas.filter(function (f) { return f.tipo === g[0]; }); %>
+<% grupos.forEach(function (g) { var lista = filas.filter(function (f) { return f.tipo === g[0]; }); var rs = epr[g[0]]; %>
 <div class="card card-outline card-secondary">
-  <div class="card-header"><h3 class="card-title"><%- g[1] %></h3></div>
+  <div class="card-header"><h3 class="card-title"><%- g[1] %></h3>
+    <div class="card-tools small text-muted" data-toggle="tooltip" title="&Iacute;tems cumplidos / &iacute;tems evaluados (con medici&oacute;n y meta)">Cumplimiento: <strong><%= rs.pct == null ? '-' : fmt(rs.pct) + '%' %></strong> (<%= rs.cumplen %>/<%= rs.evaluados %>)</div></div>
   <div class="card-body p-0">
     <div class="table-responsive">
       <table class="table table-bordered table-hover table-sm mb-0">
@@ -63,10 +64,14 @@
   <form method="post" action="/indicadores/manual" class="modal-content">
     <div class="modal-header"><h5 class="modal-title">Registrar medici&oacute;n</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
     <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="anio" value="<%= anio %>">
-      <div class="form-group"><label>Indicador *</label><select name="indicador_codigo" class="form-control"><% filas.forEach(function (f) { %><option value="<%= f.codigo %>"><%= f.nombre %></option><% }) %></select></div>
-      <div class="form-row"><div class="form-group col-4"><label>Periodo *</label><input type="text" name="periodo" class="form-control" placeholder="AAAA-MM" value="<%= hoy.slice(0, 7) %>" required></div>
-      <div class="form-group col-4"><label>Ejecutado *</label><input type="number" name="numerador" class="form-control" min="0" step="0.0001" required></div>
-      <div class="form-group col-4"><label>Programado *</label><input type="number" name="denominador" class="form-control" min="0.0001" step="0.0001" required></div></div>
+      <div class="form-group"><label>Indicador *</label><select name="indicador_codigo" class="form-control js-indicador"><% filas.forEach(function (f) { %><option value="<%= f.codigo %>"
+        data-tipo="<%= f.tipo %>" data-formula="<%= f.formula_literal || f.formula_texto || '' %>" data-factor="<%= f.factor || (f.tipo === 'estructura' ? '' : 100) %>" data-periodicidad="<%= f.periodicidad || '' %>"
+        data-numerador="<%= f.etiqueta_numerador || '' %>" data-denominador="<%= f.etiqueta_denominador || '' %>"><%= f.nombre %></option><% }) %></select>
+        <small class="text-muted d-block mt-1 js-formula"></small></div>
+      <div class="form-group"><label>Periodo *</label><input type="text" name="periodo" class="form-control w-auto" placeholder="AAAA-MM" value="<%= hoy.slice(0, 7) %>" data-mes="<%= hoy.slice(0, 7) %>" required></div>
+      <div class="form-row"><div class="form-group col-6"><label><span class="js-et-numerador">Ejecutado</span> *</label><input type="number" name="numerador" class="form-control" min="0" step="0.0001" required></div>
+      <div class="form-group col-6"><label><span class="js-et-denominador">Programado</span> *</label><input type="number" name="denominador" class="form-control" min="0.0001" step="0.0001" required></div></div>
+      <p class="small mb-2">Resultado: <strong class="js-resultado">-</strong></p>
       <div class="form-group mb-0"><label>Fuente o m&eacute;todo</label><input type="text" name="metodo" class="form-control" maxlength="500"></div></div>
     <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Registrar</button></div>
   </form></div></div>

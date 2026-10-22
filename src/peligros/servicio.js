@@ -113,6 +113,11 @@ async function guardarItem(repo, empresaId, matrizId, itemId, d) {
   if (d.peligro_tipo_codigo && !tipo) throw motor.errorValidacion('Peligro del catalogo invalido');
   // Medidas del catalogo marcadas en el formulario: se agregan como propuestas.
   const medidas = tipo ? [...new Set([].concat(d.medidas_sugeridas || []).map(Number))].map((i) => tipo.controles[i]).filter(Boolean) : [];
+  // Medidas escritas por nivel de la jerarquia (medida_<codigo>), una por casilla.
+  for (const j of await catalogo.jerarquia()) {
+    const desc = texto(d[`medida_${j.codigo}`], 1000);
+    if (desc) medidas.push({ jerarquia: j.codigo, descripcion: desc });
+  }
   const proceso = texto(d.proceso, 150);
   const actividad = texto(d.actividad, 255);
   const peligro = texto(d.peligro, 255);
@@ -129,7 +134,7 @@ async function guardarItem(repo, empresaId, matrizId, itemId, d) {
     if (!cargo || cargo.empresa_id !== empresaId) throw motor.errorValidacion('Cargo invalido');
   }
   const fila = {
-    proceso, actividad, peligro, centro_trabajo_id: centroId, tarea: texto(d.tarea, 255),
+    proceso, zona_lugar: texto(d.zona_lugar, 150), actividad, peligro, centro_trabajo_id: centroId, tarea: texto(d.tarea, 255),
     rutinaria: d.rutinaria === '0' ? 0 : 1, clase_peligro: d.clase_peligro, efectos: texto(d.efectos, 500),
     peligro_tipo_codigo: tipo && tipo.clase_codigo === d.clase_peligro ? tipo.codigo : null, sugerido: 0,
     control_fuente: texto(d.control_fuente, 500), control_medio: texto(d.control_medio, 500), control_individuo: texto(d.control_individuo, 500),
@@ -245,12 +250,12 @@ async function cerrarControl(repo, empresaId, controlId, d, hoy = hoyBogota()) {
 /** Procesos, actividades y tareas ya usados por la empresa (autocompletar). */
 async function valoresPrevios(repo, empresaId) {
   const filas = await repo.consultar(
-    `SELECT DISTINCT i.proceso, i.actividad, i.tarea FROM riesgo_item i
+    `SELECT DISTINCT i.proceso, i.zona_lugar, i.actividad, i.tarea FROM riesgo_item i
        JOIN matriz_riesgo m ON m.tenant_id = {tenant} AND m.id = i.matriz_id AND m.empresa_id = ?
       WHERE i.tenant_id = {tenant} AND i.estado = 'activo' LIMIT 1000`, [empresaId],
   );
   const unicos = (k) => [...new Set(filas.map((f) => f[k]).filter(Boolean))].sort();
-  return { procesos: unicos('proceso'), actividades: unicos('actividad'), tareas: unicos('tarea') };
+  return { procesos: unicos('proceso'), zonas: unicos('zona_lugar'), actividades: unicos('actividad'), tareas: unicos('tarea') };
 }
 
 /** Cargos activos con su cargo tipo y trabajadores vinculados (para sugerir peligros). */
@@ -316,13 +321,16 @@ async function peligrosPorCargo(repo, empresaId) {
   );
 }
 
+/** Columnas en el orden del Anexo B de la GTC 45; las medidas de intervencion, una columna por nivel de la jerarquia. */
 function aCsv(det) {
-  const filas = [['Proceso', 'Centro', 'Actividad', 'Tarea', 'Rutinaria', 'Clasificacion', 'Peligro', 'Efectos', 'Control fuente', 'Control medio', 'Control individuo',
-    'ND', 'NE', 'NP', 'NC', 'NR', 'Nivel', 'Aceptabilidad', 'Expuestos', 'Peor consecuencia', 'Requisito legal', 'Cargos', 'Medidas de intervencion']];
+  const filas = [['Proceso', 'Zona / Lugar', 'Centro', 'Actividad', 'Tarea', 'Rutinaria', 'Cargo', 'Clasificacion', 'Peligro', 'Efectos', 'Control fuente', 'Control medio', 'Control individuo',
+    'ND', 'NE', 'NP', 'NC', 'NR', 'Nivel', 'Aceptabilidad', 'Expuestos', 'Peor consecuencia', 'Requisito legal', ...det.jerarquia.map((j) => j.nombre)]];
   for (const i of det.items) {
-    filas.push([i.proceso, i.centro, i.actividad, i.tarea, i.rutinaria ? 'Si' : 'No', i.clase_peligro, i.peligro, i.efectos, i.control_fuente, i.control_medio,
-      i.control_individuo, i.nd, i.ne, i.np, i.nc, i.nr, i.nivel_riesgo, i.aceptabilidad, i.expuestos, i.peor_consecuencia, i.norma_codigo,
-      i.cargos.map((c) => c.nombre).join(', '), i.controles.filter((c) => c.estado !== 'descartado').map((c) => `[${c.jerarquia_codigo}] ${c.descripcion}`).join(' | ')]);
+    const vivas = i.controles.filter((c) => c.estado !== 'descartado');
+    filas.push([i.proceso, i.zona_lugar, i.centro, i.actividad, i.tarea, i.rutinaria ? 'Si' : 'No', i.cargos.map((c) => c.nombre).join(', '), i.clase_peligro, i.peligro,
+      i.efectos, i.control_fuente, i.control_medio, i.control_individuo, i.nd, i.ne, i.np, i.nc, i.nr, i.nivel_riesgo, i.aceptabilidad, i.expuestos,
+      i.peor_consecuencia, i.norma_codigo,
+      ...det.jerarquia.map((j) => vivas.filter((c) => c.jerarquia_codigo === j.codigo).map((c) => c.descripcion).join(' | '))]);
   }
   return `﻿${filas.map((f) => f.map(celda).join(';')).join('\r\n')}\r\n`;
 }

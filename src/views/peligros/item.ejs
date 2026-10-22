@@ -11,6 +11,7 @@
 <% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
 <% if (item && Number(item.sugerido)) { %><div class="alert alert-warning small mb-3"><i class="fas fa-magic mr-1"></i>Peligro sugerido desde el perfil del cargo: verifique el nivel de deficiencia, la exposici&oacute;n y los controles existentes en campo antes de guardar.</div><% } %>
 <datalist id="dl-procesos"><% previos.procesos.forEach(function (x) { %><option value="<%= x %>"><% }) %></datalist>
+<datalist id="dl-zonas"><% previos.zonas.forEach(function (x) { %><option value="<%= x %>"><% }) %></datalist>
 <datalist id="dl-actividades"><% previos.actividades.forEach(function (x) { %><option value="<%= x %>"><% }) %></datalist>
 <datalist id="dl-tareas"><% previos.tareas.forEach(function (x) { %><option value="<%= x %>"><% }) %></datalist>
 <form method="post" action="/peligros/<%= d.m.id %>/items<%= item ? '/' + item.id : '' %>" id="form-item"
@@ -31,10 +32,14 @@
         <small class="text-muted">Llena la clasificaci&oacute;n, efectos, consecuencia, requisito legal y propone medidas. Todo es editable.</small>
       </div>
       <div class="form-row">
-        <div class="form-group col-md-4"><label>Proceso *</label><input type="text" name="proceso" class="form-control" value="<%= v.proceso || '' %>" maxlength="150" list="dl-procesos" autocomplete="off" required></div>
-        <div class="form-group col-md-4"><label>Actividad *</label><input type="text" name="actividad" class="form-control" value="<%= v.actividad || '' %>" maxlength="255" list="dl-actividades" autocomplete="off" required></div>
-        <div class="form-group col-md-4"><label>Tarea</label><input type="text" name="tarea" class="form-control" value="<%= v.tarea || '' %>" maxlength="255" list="dl-tareas" autocomplete="off"></div>
+        <div class="form-group col-md-3"><label>Proceso *</label><input type="text" name="proceso" class="form-control" value="<%= v.proceso || '' %>" maxlength="150" list="dl-procesos" autocomplete="off" required></div>
+        <div class="form-group col-md-3"><label>Zona / Lugar</label><input type="text" name="zona_lugar" class="form-control" value="<%= v.zona_lugar || '' %>" maxlength="150" list="dl-zonas" autocomplete="off"></div>
+        <div class="form-group col-md-3"><label>Actividad *</label><input type="text" name="actividad" class="form-control" value="<%= v.actividad || '' %>" maxlength="255" list="dl-actividades" autocomplete="off" required></div>
+        <div class="form-group col-md-3"><label>Tarea</label><input type="text" name="tarea" class="form-control" value="<%= v.tarea || '' %>" maxlength="255" list="dl-tareas" autocomplete="off"></div>
       </div>
+      <div class="form-group"><label>Cargo</label>
+        <select name="cargos" class="form-control" multiple size="4"><% cargos.forEach(function (c) { %><option value="<%= c.id %>"<%= cargosSel.indexOf(String(c.id)) !== -1 ? ' selected' : '' %>><%= c.nombre %></option><% }) %></select>
+        <small class="text-muted">Cargos expuestos (Ctrl + clic para varios). Alimenta las necesidades de formaci&oacute;n y el perfil de riesgo de cada cargo.</small></div>
       <div class="form-row">
         <div class="form-group col-md-4"><label>Centro de trabajo</label>
           <select name="centro_trabajo_id" class="form-control"><option value="">Todos</option><% centros.forEach(function (c) { %><option value="<%= c.id %>"<%= String(v.centro_trabajo_id) === String(c.id) ? ' selected' : '' %>><%= c.nombre %></option><% }) %></select></div>
@@ -67,18 +72,30 @@
         <div class="form-group col-md-3"><div class="border rounded p-2 text-center js-resultado">&nbsp;</div></div>
       </div>
       <div class="form-row">
-        <div class="form-group col-md-6"><label>Peor consecuencia</label><input type="text" name="peor_consecuencia" class="form-control" value="<%= v.peor_consecuencia || '' %>" maxlength="255"></div>
-        <div class="form-group col-md-6"><label>Requisito legal (c&oacute;digo de norma)</label><input type="text" name="norma_codigo" class="form-control" value="<%= v.norma_codigo || '' %>" maxlength="40" placeholder="RES-4272-2021"></div>
+        <div class="form-group col-md-6 mb-0"><label>Peor consecuencia</label><input type="text" name="peor_consecuencia" class="form-control" value="<%= v.peor_consecuencia || '' %>" maxlength="255"></div>
+        <div class="form-group col-md-6 mb-0"><label>Requisito legal (c&oacute;digo de norma)</label><input type="text" name="norma_codigo" class="form-control" value="<%= v.norma_codigo || '' %>" maxlength="40" placeholder="RES-4272-2021"></div>
       </div>
-      <div class="form-group mb-0"><label>Cargos expuestos</label>
-        <select name="cargos" class="form-control" multiple size="4"><% cargos.forEach(function (c) { %><option value="<%= c.id %>"<%= cargosSel.indexOf(String(c.id)) !== -1 ? ' selected' : '' %>><%= c.nombre %></option><% }) %></select>
-        <small class="text-muted">Alimenta las necesidades de formaci&oacute;n y el perfil de riesgo de cada cargo.</small></div>
     </div>
   </div>
 
-  <div class="card card-outline card-success d-none js-medidas-card">
-    <div class="card-header"><h3 class="card-title">Medidas de intervenci&oacute;n sugeridas</h3></div>
-    <div class="card-body js-medidas"></div>
+  <div class="card card-outline card-success">
+    <div class="card-header"><h3 class="card-title">Jerarquizaci&oacute;n de controles (GTC 45)</h3></div>
+    <div class="card-body">
+      <% if (item && item.controles && item.controles.length) { %>
+      <label class="small text-muted">Medidas registradas</label>
+      <ul class="list-unstyled small mb-3"><% item.controles.forEach(function (c) { %>
+        <li class="<%= c.estado === 'descartado' ? 'text-muted' : '' %>"><span class="badge badge-light mr-1"><%= jerarquia[c.jerarquia_codigo] || c.jerarquia_codigo %></span><%= c.descripcion %> <span class="badge badge-<%= c.estado === 'implementado' ? 'success' : (c.estado === 'propuesto' ? 'info' : 'secondary') %>"><%= c.estado %></span></li>
+      <% }) %></ul>
+      <% } %>
+      <div class="d-none js-medidas-card mb-3"><label class="small text-muted">Sugeridas por el cat&aacute;logo</label><div class="js-medidas"></div></div>
+      <label class="small text-muted">Medidas de intervenci&oacute;n nuevas (se registran como propuestas)</label>
+      <div class="form-row">
+        <% d.jerarquia.forEach(function (j) { %>
+        <div class="form-group col-md"><label class="small"><%= j.nivel %>. <%= j.nombre %></label><textarea name="medida_<%= j.codigo %>" class="form-control form-control-sm" rows="3" maxlength="1000"><%= v['medida_' + j.codigo] || '' %></textarea></div>
+        <% }) %>
+      </div>
+      <small class="text-muted">Priorice eliminaci&oacute;n, sustituci&oacute;n e ingenier&iacute;a antes que controles administrativos y EPP (art. 2.2.4.6.24, D. 1072).</small>
+    </div>
   </div>
   <a href="/peligros/<%= d.m.id %>" class="btn btn-default">Cancelar</a>
   <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Guardar valoraci&oacute;n</button>

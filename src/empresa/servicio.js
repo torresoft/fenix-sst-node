@@ -35,14 +35,18 @@ async function resumen(repo, empresaId) {
     ),
     consultarCatalogo("SELECT clase, nivel, descripcion, ejemplos FROM clase_riesgo WHERE estado = 'activo' ORDER BY nivel"),
     repo.consultar(
-      `SELECT COUNT(*) AS total, SUM(tipo = 'dependiente') AS dependientes FROM vinculacion
+      `SELECT COUNT(*) AS total, SUM(tipo = 'dependiente') AS dependientes, SUM(tipo = 'contratista') AS contratistas,
+              SUM(tipo = 'mision') AS mision FROM vinculacion
         WHERE tenant_id = {tenant} AND empresa_id = ? AND estado = 'activa'`, [empresaId],
     ),
   ]);
   return {
     empresa: perfil.empresa, clasificacion, perfil, centros, clases,
     modulos: r.modulosActivos(modulos, perfil.empresa, perfil.activos),
-    vinculaciones: { total: Number(vinc.total), dependientes: Number(vinc.dependientes || 0) },
+    vinculaciones: {
+      total: Number(vinc.total), dependientes: Number(vinc.dependientes || 0),
+      contratistas: Number(vinc.contratistas || 0), mision: Number(vinc.mision || 0),
+    },
   };
 }
 

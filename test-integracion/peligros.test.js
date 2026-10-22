@@ -26,12 +26,18 @@ test('version inicial: valoracion GTC 45 calculada en el servidor y cargos expue
   const r = await pel.guardarItem(s.repo, s.E, s.m1, null, item({ cargos: [String(s.cargo)] }));
   assert.deepEqual([r.np, r.nr, r.nivel_riesgo], [30, 3000, 'I']);
   s.item = r.id;
-  await pel.guardarItem(s.repo, s.E, s.m1, null, item({ peligro: 'Ruido de compresor', clase_peligro: 'FISICO', nd: 'M', ne: 'EO', nc: 'L' }));
+  const ruido = await pel.guardarItem(s.repo, s.E, s.m1, null, item({
+    peligro: 'Ruido de compresor', clase_peligro: 'FISICO', nd: 'M', ne: 'EO', nc: 'L', zona_lugar: 'Cuarto de maquinas', medida_ingenieria: 'Encerramiento acustico del compresor',
+  }));
   await rechaza(pel.guardarItem(s.repo, s.E, s.m1, null, item({ nd: 'X' })), /deficiencia/);
   const d = await pel.detalle(s.repo, s.E, s.m1);
   assert.deepEqual(d.conteo, { I: 1, II: 0, III: 1, IV: 0 }, 'ruido: 2 x 2 x 10 = 40, nivel III');
   assert.equal(d.items.find((i) => i.id === s.item).cargos[0].nombre, 'Tecnico de mantenimiento');
   assert.equal(d.avisos.length, 1, 'riesgo I sin medidas');
+  const r2 = d.items.find((i) => i.id === ruido.id);
+  assert.equal(r2.zona_lugar, 'Cuarto de maquinas');
+  assert.deepEqual(r2.controles.map((c) => [c.jerarquia_codigo, c.estado]), [['ingenieria', 'propuesto']]);
+  assert.match(pel.aCsv(d), /Zona \/ Lugar[\s\S]*Cuarto de maquinas;[\s\S]*Encerramiento acustico/);
 });
 
 test('jerarquia: solo EPP no basta para un riesgo I', async () => {

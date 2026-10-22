@@ -52,7 +52,7 @@ router.get('/salud', async (req, res, next) => {
       ),
     ]);
     res.render('salud/index', {
-      titulo: 'Salud ocupacional', tab: TABS.includes(req.query.tab) ? req.query.tab : 'evaluaciones',
+      titulo: 'Salud', tab: TABS.includes(req.query.tab) ? req.query.tab : 'evaluaciones',
       p, personas, documentos, eventos, anio, hoy, gestionar: puede(req), scripts: ['/js/salud/index.js'],
     });
   } catch (err) {

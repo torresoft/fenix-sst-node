@@ -27,7 +27,7 @@ const GRUPOS = [
     titulo: 'Hacer', icono: 'fa-hard-hat',
     items: [
       { ruta: '/formacion', texto: 'Formación', icono: 'fa-graduation-cap', roles: SST },
-      { ruta: '/salud', texto: 'Salud ocupacional', icono: 'fa-heartbeat', roles: SST },
+      { ruta: '/salud', texto: 'Salud', icono: 'fa-heartbeat', roles: SST },
       { ruta: '/epp', texto: 'EPP', icono: 'fa-mitten', roles: SST },
       { ruta: '/inspecciones', texto: 'Inspecciones', icono: 'fa-clipboard-check', roles: SST },
       { ruta: '/emergencias', texto: 'Emergencias', icono: 'fa-fire-extinguisher', roles: SST },

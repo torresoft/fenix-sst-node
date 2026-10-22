@@ -4,6 +4,7 @@ const cuentas = require('../db/cuentas');
 const { hoyBogota } = require('../fechas/calendario');
 const autoevaluacion = require('../autoevaluacion/servicio');
 const { error } = require('../comun/rutas');
+const { libro } = require('../integraciones/xlsx');
 const r = require('./reglas');
 
 const texto = (v, max) => { const s = String(v ?? '').trim(); return s ? s.slice(0, max) : null; };
@@ -19,6 +20,7 @@ const dinero = (v, nombre) => {
   return r.pesos(r.cent(n));
 };
 const CICLOS = ['PLANEAR', 'HACER', 'VERIFICAR', 'ACTUAR'];
+const TIPOS_RECURSO = { fisicos: 'Físicos', tecnologicos: 'Tecnológicos', humanos: 'Humanos' };
 
 async function planes(repo, empresaId) {
   return repo.listar('plan_anual', { empresa_id: empresaId }, { orden: 'vigencia_anio DESC' });
@@ -99,9 +101,12 @@ async function agregarActividad(repo, empresaId, id, d) {
   const desc = texto(d.descripcion, 500);
   if (!desc || desc.length < 5) throw error(422, 'Describa la actividad');
   if (!CICLOS.includes(d.ciclo)) throw error(422, 'Ciclo PHVA invalido');
-  const inicio = fecha(d.fecha_inicio, 'Fecha de inicio');
-  const fin = fecha(d.fecha_fin, 'Fecha de fin');
+  // Una sola fecha programada (inicio = fin); se aceptan ambas por compatibilidad.
+  const inicio = fecha(d.fecha_programada || d.fecha_inicio, 'Fecha programada');
+  const fin = d.fecha_programada ? inicio : fecha(d.fecha_fin, 'Fecha de fin');
   if (fin < inicio) throw error(422, 'La fecha de fin es anterior al inicio');
+  const tipos = [...new Set([].concat(d.tipos_recurso || []).map(String))];
+  if (tipos.some((t) => !TIPOS_RECURSO[t])) throw error(422, 'Tipo de recurso invalido');
   if (Number(inicio.slice(0, 4)) !== Number(p.vigencia_anio) && Number(fin.slice(0, 4)) !== Number(p.vigencia_anio)) throw error(422, 'La actividad debe estar dentro de la vigencia del plan');
   const objetivoId = d.objetivo_id ? Number.parseInt(d.objetivo_id, 10) : null;
   if (objetivoId) {
@@ -110,7 +115,8 @@ async function agregarActividad(repo, empresaId, id, d) {
   }
   await repo.insertar('plan_actividad', {
     plan_id: id, objetivo_id: objetivoId, descripcion: desc, ciclo: d.ciclo, ...(await responsable(repo, d)),
-    fecha_inicio: inicio, fecha_fin: fin, recursos: texto(d.recursos, 500), presupuesto: dinero(d.presupuesto, 'Presupuesto'),
+    fecha_inicio: inicio, fecha_fin: fin, tipos_recurso: tipos.length ? tipos.join(',') : null,
+    recursos: texto(d.recursos, 500), presupuesto: dinero(d.presupuesto, 'Presupuesto'),
   });
 }
 
@@ -126,7 +132,7 @@ async function importarCapa(repo, empresaId, id) {
       await tx.insertar('plan_actividad', {
         plan_id: id, descripcion: `[${a.referencia || a.origen}] ${a.descripcion}`.slice(0, 500), ciclo: 'ACTUAR',
         responsable_id: x.responsable_id, responsable_texto: x.responsable_id ? null : 'Por asignar',
-        fecha_inicio: hoy < a.fecha_limite ? hoy : a.fecha_limite, fecha_fin: a.fecha_limite, origen: 'capa', accion_mejora_id: a.id,
+        fecha_inicio: a.fecha_limite, fecha_fin: a.fecha_limite, origen: 'capa', accion_mejora_id: a.id,
       });
       n += 1;
     }
@@ -171,8 +177,10 @@ async function reprogramar(repo, empresaId, actividadId, d) {
   const fin = fecha(d.fecha_fin, 'Nueva fecha de fin');
   const motivo = texto(d.motivo, 500);
   if (!motivo) throw error(422, 'Explique la reprogramacion');
-  if (fin < a.fecha_inicio) throw error(422, 'La nueva fecha es anterior al inicio');
-  await repo.actualizar('plan_actividad', actividadId, { fecha_fin: fin, observacion: `Reprogramada: ${motivo}` }, { accion: 'reprogramar' });
+  // Con fecha unica (inicio = fin) la reprogramacion mueve las dos.
+  const unica = a.fecha_inicio === a.fecha_fin;
+  if (!unica && fin < a.fecha_inicio) throw error(422, 'La nueva fecha es anterior al inicio');
+  await repo.actualizar('plan_actividad', actividadId, { ...(unica ? { fecha_inicio: fin } : {}), fecha_fin: fin, observacion: `Reprogramada: ${motivo}` }, { accion: 'reprogramar' });
   return a.plan_id;
 }
 
@@ -193,6 +201,44 @@ async function cerrarPlan(repo, empresaId, id) {
   const p = await obtener(repo, empresaId, id);
   if (p.estado !== 'aprobado') throw error(409, 'Solo se cierra un plan aprobado');
   await repo.actualizar('plan_anual', id, { estado: 'cerrado' }, { accion: 'cerrar' });
+}
+
+const recursosTexto = (a) => String(a.tipos_recurso || '').split(',').filter(Boolean).map((t) => TIPOS_RECURSO[t] || t).join(', ');
+
+/** Plan de trabajo en Excel: cronograma y objetivos. */
+async function aExcel(repo, empresaId, id) {
+  const det = await detalle(repo, empresaId, id);
+  const empresa = await repo.obtener('empresa', empresaId);
+  const objetivo = new Map(det.objetivos.map((o) => [o.id, o]));
+  const a = det.avance;
+  const encabezado = [
+    ['Empresa', `${empresa.razon_social} (NIT ${empresa.nit}${empresa.digito_verificacion != null ? `-${empresa.digito_verificacion}` : ''})`],
+    ['Vigencia', det.p.vigencia_anio], ['Estado', det.p.estado], ['Presupuesto SST', Number(det.p.presupuesto_total)],
+    ['Cumplimiento al corte', a.cumplimiento_corte == null ? '-' : `${a.cumplimiento_corte}% (${a.ejecutadas_al_corte}/${a.programadas_al_corte})`],
+  ];
+  const buffer = await libro([
+    {
+      nombre: 'Plan de trabajo', titulo: `Plan de trabajo anual SG-SST ${det.p.vigencia_anio}`, encabezado,
+      columnas: [
+        { titulo: 'N.º', ancho: 6 }, { titulo: 'Actividad', ancho: 45 }, { titulo: 'Objetivo', ancho: 35 }, { titulo: 'Meta', ancho: 25 },
+        { titulo: 'PHVA', ancho: 11 }, { titulo: 'Responsable', ancho: 25 }, { titulo: 'Fecha programada', ancho: 14 },
+        { titulo: 'Recursos', ancho: 22 }, { titulo: 'Detalle de recursos', ancho: 30 }, { titulo: 'Presupuesto', ancho: 15, formato: '"$"#,##0' },
+        { titulo: 'Estado', ancho: 12 }, { titulo: 'Fecha de ejecución', ancho: 14 }, { titulo: 'Observación', ancho: 40 },
+      ],
+      filas: det.actividades.map((x, i) => {
+        const o = objetivo.get(x.objetivo_id);
+        return [i + 1, x.descripcion, o ? o.descripcion : '', o ? o.meta : '', x.ciclo, x.responsable || '',
+          x.fecha_inicio === x.fecha_fin ? x.fecha_fin : `${x.fecha_inicio} a ${x.fecha_fin}`, recursosTexto(x), x.recursos,
+          Number(x.presupuesto), x.vencida ? 'vencida' : x.estado, x.fecha_ejecucion, x.observacion];
+      }),
+    },
+    {
+      nombre: 'Objetivos y metas',
+      columnas: [{ titulo: 'Objetivo', ancho: 60 }, { titulo: 'Meta', ancho: 35 }, { titulo: 'Indicador', ancho: 40 }],
+      filas: det.objetivos.map((o) => [o.descripcion, o.meta, (det.indicadores.find((i) => i.codigo === o.indicador_codigo) || {}).nombre]),
+    },
+  ]);
+  return { buffer, nombre: `plan-trabajo-${det.p.vigencia_anio}.xlsx` };
 }
 
 // ---------- Gestion del cambio
@@ -235,6 +281,6 @@ async function avanzarCambio(repo, empresaId, id, d, hoy = hoyBogota()) {
 }
 
 module.exports = {
-  planes, crear, detalle, guardarPresupuesto, agregarObjetivo, agregarActividad, importarCapa, cerrarActividad,
+  TIPOS_RECURSO, planes, crear, detalle, aExcel, guardarPresupuesto, agregarObjetivo, agregarActividad, importarCapa, cerrarActividad,
   reprogramar, aprobar, cerrarPlan, cambios, registrarCambio, avanzarCambio,
 };

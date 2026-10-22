@@ -47,3 +47,13 @@ test('cumplimiento de meta segun sentido', () => {
   assert.equal(c.cumpleMeta(null, 90), null);
   assert.equal(c.valor(1, 0), null);
 });
+
+test('E-P-R: items cumplidos sobre evaluados; estructura sin meta cumple si existe', () => {
+  const r = c.resumenEpr([
+    { tipo: 'resultado', cumple: true }, { tipo: 'resultado', cumple: false }, { tipo: 'resultado', cumple: null },
+    { tipo: 'estructura', cumple: null, ultima: { valor: 100 } }, { tipo: 'estructura', cumple: null, ultima: { valor: 0 } }, { tipo: 'estructura', cumple: null, ultima: null },
+  ]);
+  assert.deepEqual(r.resultado, { cumplen: 1, evaluados: 2, pct: 50 });
+  assert.deepEqual(r.estructura, { cumplen: 1, evaluados: 2, pct: 50 });
+  assert.deepEqual(r.proceso, { cumplen: 0, evaluados: 0, pct: null });
+});

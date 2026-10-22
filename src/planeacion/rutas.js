@@ -30,9 +30,21 @@ router.get('/planeacion', async (req, res, next) => {
       ),
     ]);
     res.render('planeacion/index', {
-      titulo: 'Planeaci&oacute;n', tab, planes, d, cambios, usuarios, documentos, hoy, gestionar: puede(req),
+      titulo: 'Planeaci&oacute;n', tab, planes, d, cambios, usuarios, documentos, hoy, gestionar: puede(req), tiposRecurso: servicio.TIPOS_RECURSO,
       scripts: ['/js/planeacion/index.js'],
     });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/planeacion/planes/:id(\\d+)/excel', async (req, res, next) => {
+  try {
+    const x = await servicio.aExcel(req.repo, req.session.empresa.id, entero(req.params.id));
+    await req.repo.auditar('exportar', 'plan_anual', entero(req.params.id));
+    res.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.set('Content-Disposition', `attachment; filename="${x.nombre}"`);
+    res.send(x.buffer);
   } catch (err) {
     next(err);
   }

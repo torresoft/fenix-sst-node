@@ -71,4 +71,22 @@ function cumpleMeta(valorActual, meta, sentido = 'mayor') {
   return sentido === 'menor' ? Number(valorActual) <= Number(meta) : Number(valorActual) >= Number(meta);
 }
 
-module.exports = { r4, valor, finDeMes, inicioDeMes, trabajadoresAl, promedioAnual, diasIncapacidadEnMes, resultado, cumpleMeta };
+/**
+ * E-P-R: items cumplidos / items evaluados por tipo. Cuenta la meta de la ficha; sin meta, un indicador
+ * de estructura cumple si existe (100). Sin medicion o sin criterio no se evalua.
+ */
+function resumenEpr(filas) {
+  const out = {};
+  for (const tipo of ['resultado', 'estructura', 'proceso']) {
+    const evaluados = filas.filter((f) => f.tipo === tipo).map((f) => {
+      if (f.cumple != null) return f.cumple;
+      if (tipo === 'estructura' && f.ultima) return Number(f.ultima.valor) >= 100;
+      return null;
+    }).filter((x) => x != null);
+    const cumplen = evaluados.filter(Boolean).length;
+    out[tipo] = { cumplen, evaluados: evaluados.length, pct: evaluados.length ? r4((cumplen / evaluados.length) * 100) : null };
+  }
+  return out;
+}
+
+module.exports = { r4, valor, finDeMes, inicioDeMes, trabajadoresAl, promedioAnual, diasIncapacidadEnMes, resultado, cumpleMeta, resumenEpr };

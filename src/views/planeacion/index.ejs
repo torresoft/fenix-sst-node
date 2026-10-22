@@ -19,6 +19,7 @@
     <% } %>
   </div>
   <div>
+    <% if (d) { %><a href="/planeacion/planes/<%= d.p.id %>/excel" download class="btn btn-sm btn-default" data-toggle="tooltip" title="Descargar el plan de trabajo en Excel"><i class="fas fa-file-excel mr-1"></i>Excel</a><% } %>
     <% if (gestionar && d && d.p.estado !== 'cerrado') { %>
     <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-actividad"><i class="fas fa-plus mr-1"></i>Actividad</button>
     <% if (d.capaPendientes.length) { %>
@@ -87,14 +88,17 @@
   <div class="card-body p-0">
     <div class="table-responsive">
       <table class="table table-bordered table-hover table-sm mb-0">
-        <thead><tr><th>Actividad</th><th>PHVA</th><th>Responsable</th><th>Fechas</th><th class="text-right">Presupuesto</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+        <thead><tr><th>Actividad</th><th>PHVA</th><th>Responsable</th><th>Fecha</th><th class="text-right">Presupuesto</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
         <tbody>
-          <% d.actividades.forEach(function (x) { %>
+          <% d.actividades.forEach(function (x) { var obj = d.objetivos.filter(function (o) { return o.id === x.objetivo_id; })[0]; %>
           <tr class="<%= x.vencida ? 'fila-critica' : (x.estado === 'cancelada' ? 'text-muted' : '') %>">
-            <td><%= x.descripcion %><% if (x.observacion) { %><br><small><i class="fas fa-comment-alt mr-1"></i><%= x.observacion %></small><% } %></td>
+            <td><%= x.descripcion %>
+              <% if (obj) { %><br><small class="text-muted"><i class="fas fa-bullseye mr-1"></i><%= obj.descripcion %></small><% } %>
+              <% if (x.tipos_recurso || x.recursos) { %><br><small><% String(x.tipos_recurso || '').split(',').filter(Boolean).forEach(function (t) { %><span class="badge badge-light mr-1"><%= tiposRecurso[t] || t %></span><% }) %><%= x.recursos || '' %></small><% } %>
+              <% if (x.observacion) { %><br><small><i class="fas fa-comment-alt mr-1"></i><%= x.observacion %></small><% } %></td>
             <td class="small"><%= x.ciclo %></td>
             <td class="small"><%= x.responsable || '-' %></td>
-            <td class="text-nowrap small"><%= x.fecha_inicio %><br><%= x.fecha_fin %></td>
+            <td class="text-nowrap small"><% if (x.fecha_inicio !== x.fecha_fin) { %><%= x.fecha_inicio %><br><% } %><%= x.fecha_fin %></td>
             <td class="text-right">$<%= fmt(x.presupuesto) %></td>
             <td><span class="badge badge-<%= x.vencida ? 'danger' : colorAct[x.estado] %>"><%= x.vencida ? 'vencida' : x.estado %></span><% if (x.fecha_ejecucion) { %><br><small><%= x.fecha_ejecucion %></small><% } %></td>
             <td class="text-center text-nowrap">
@@ -169,16 +173,21 @@
       <div class="form-group"><label>Actividad *</label><input type="text" name="descripcion" class="form-control" maxlength="500" required></div>
       <div class="form-row">
         <div class="form-group col-md-3"><label>PHVA *</label><select name="ciclo" class="form-control"><option>PLANEAR</option><option selected>HACER</option><option>VERIFICAR</option><option>ACTUAR</option></select></div>
-        <div class="form-group col-md-5"><label>Objetivo</label><select name="objetivo_id" class="form-control"><option value="">Ninguno</option><% d.objetivos.forEach(function (o) { %><option value="<%= o.id %>"><%= o.descripcion.slice(0, 60) %></option><% }) %></select></div>
+        <div class="form-group col-md-5"><label>Objetivo</label><select name="objetivo_id" class="form-control"><option value="">Ninguno</option><% d.objetivos.forEach(function (o) { %><option value="<%= o.id %>"><%= o.descripcion.slice(0, 60) %></option><% }) %></select>
+          <% if (!d.objetivos.length) { %><small class="text-muted">Primero registre los objetivos en <strong>Objetivos y metas</strong>.</small><% } %></div>
         <div class="form-group col-md-4"><label>Presupuesto $</label><input type="number" name="presupuesto" class="form-control" min="0" step="0.01" value="0"></div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-4"><label>Responsable</label><select name="responsable_id" class="form-control"><option value="">Externo / otro</option><% usuarios.forEach(function (u) { %><option value="<%= u.id %>"><%= u.nombre %></option><% }) %></select></div>
         <div class="form-group col-md-4"><label>o nombre</label><input type="text" name="responsable_texto" class="form-control" maxlength="150"></div>
-        <div class="form-group col-md-2"><label>Inicio *</label><input type="date" name="fecha_inicio" class="form-control" required></div>
-        <div class="form-group col-md-2"><label>Fin *</label><input type="date" name="fecha_fin" class="form-control" required></div>
+        <div class="form-group col-md-4"><label>Fecha programada *</label><input type="date" name="fecha_programada" class="form-control" min="<%= d.p.vigencia_anio %>-01-01" max="<%= d.p.vigencia_anio %>-12-31" required></div>
       </div>
-      <div class="form-group mb-0"><label>Recursos</label><input type="text" name="recursos" class="form-control" maxlength="500"></div></div>
+      <div class="form-row">
+        <div class="form-group col-md-5 mb-0"><label>Recursos</label><div>
+          <% Object.keys(tiposRecurso).forEach(function (t) { %><div class="custom-control custom-checkbox custom-control-inline"><input type="checkbox" class="custom-control-input" id="rec-<%= t %>" name="tipos_recurso" value="<%= t %>"><label class="custom-control-label font-weight-normal" for="rec-<%= t %>"><%= tiposRecurso[t] %></label></div><% }) %>
+        </div></div>
+        <div class="form-group col-md-7 mb-0"><label>Detalle de recursos</label><input type="text" name="recursos" class="form-control" maxlength="500"></div>
+      </div></div>
     <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Programar</button></div>
   </form></div></div>
 
@@ -197,7 +206,7 @@
   <form method="post" class="modal-content" id="form-reprogramar">
     <div class="modal-header"><h5 class="modal-title">Reprogramar</h5><button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button></div>
     <div class="modal-body"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
-      <div class="form-group"><label>Nueva fecha de fin *</label><input type="date" name="fecha_fin" class="form-control" required></div>
+      <div class="form-group"><label>Nueva fecha programada *</label><input type="date" name="fecha_fin" class="form-control" required></div>
       <div class="form-group mb-0"><label>Motivo *</label><input type="text" name="motivo" class="form-control" maxlength="500" required></div></div>
     <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
   </form></div></div>

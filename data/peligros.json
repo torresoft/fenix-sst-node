@@ -184,27 +184,27 @@
     {
       "nivel": 1,
       "codigo": "eliminacion",
-      "nombre": "Eliminacion"
+      "nombre": "Eliminación"
     },
     {
       "nivel": 2,
       "codigo": "sustitucion",
-      "nombre": "Sustitucion"
+      "nombre": "Sustitución"
     },
     {
       "nivel": 3,
       "codigo": "ingenieria",
-      "nombre": "Controles de ingenieria"
+      "nombre": "Controles de ingeniería"
     },
     {
       "nivel": 4,
       "codigo": "administrativo",
-      "nombre": "Controles administrativos, senalizacion y advertencia"
+      "nombre": "Controles administrativos, señalización y advertencia"
     },
     {
       "nivel": 5,
       "codigo": "epp",
-      "nombre": "Equipos y elementos de proteccion personal"
+      "nombre": "Equipos y elementos de protección personal"
     }
   ],
   "peligros_tipo": [

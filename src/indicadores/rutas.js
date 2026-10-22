@@ -4,6 +4,7 @@ const { requiereSesion, requiereEmpresa } = require('../middleware/auth');
 const { hoyBogota } = require('../fechas/calendario');
 const { ROLES_VER, ROLES_GESTIONAR, entero, puede, accion, requiereRol } = require('../comun/rutas');
 const servicio = require('./servicio');
+const { resumenEpr } = require('./calculo');
 
 const router = express.Router();
 const gestionar = requiereRol(...ROLES_GESTIONAR);
@@ -15,8 +16,9 @@ router.get('/indicadores', async (req, res, next) => {
   try {
     const hoy = hoyBogota();
     const anio = entero(req.query.anio) || Number(hoy.slice(0, 4));
+    const filas = await servicio.tablero(req.repo, req.session.empresa.id, anio);
     res.render('indicadores/index', {
-      titulo: 'Indicadores', anio, hoy, filas: await servicio.tablero(req.repo, req.session.empresa.id, anio),
+      titulo: 'Indicadores', anio, hoy, filas, epr: resumenEpr(filas),
       gestionar: puede(req), scripts: ['/js/indicadores/index.js'],
     });
   } catch (err) {

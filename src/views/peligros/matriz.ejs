@@ -80,7 +80,7 @@
         <tbody>
           <% items.filter(function (i) { return i.proceso === p; }).forEach(function (i) { %>
           <tr id="item-<%= i.id %>" class="<%= avisoDe[i.id] ? 'fila-critica' : '' %>">
-            <td><%= i.actividad %><% if (i.tarea) { %><br><small class="text-muted"><%= i.tarea %></small><% } %><br><small><%= i.rutinaria ? 'Rutinaria' : 'No rutinaria' %><%= i.centro ? ' · ' + i.centro : '' %></small></td>
+            <td><%= i.actividad %><% if (i.tarea) { %><br><small class="text-muted"><%= i.tarea %></small><% } %><br><small><%= i.zona_lugar ? i.zona_lugar + ' · ' : '' %><%= i.rutinaria ? 'Rutinaria' : 'No rutinaria' %><%= i.centro ? ' · ' + i.centro : '' %></small></td>
             <td><small class="text-muted"><%= nombreClase[i.clase_peligro] %></small><% if (Number(i.sugerido)) { %> <span class="badge badge-warning" data-toggle="tooltip" title="Generado desde el perfil del cargo: revise y guarde la valoraci&oacute;n">Sugerido</span><% } %><br><%= i.peligro %><% if (i.cargos.length) { %><br><small><i class="fas fa-id-badge mr-1"></i><%= i.cargos.map(function (c) { return c.nombre; }).join(', ') %></small><% } %></td>
             <td class="text-center"><%= i.nd %></td>
             <td class="text-center"><%= i.ne %></td>

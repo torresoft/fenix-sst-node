@@ -78,6 +78,7 @@ function construirLotes() {
       codigo: i.codigo, nombre: i.nombre, tipo: i.tipo, formula_texto: i.formula_texto ?? null,
       formula_literal: i.formula_literal ?? null, definicion: i.definicion ?? null, interpretacion: i.interpretacion ?? null,
       numerador: i.numerador ?? null, denominador: i.denominador ?? null, factor: i.factor ?? null,
+      etiqueta_numerador: i.etiqueta_numerador ?? null, etiqueta_denominador: i.etiqueta_denominador ?? null,
       periodicidad: i.periodicidad ?? null, derivable: i.derivable == null ? null : (i.derivable ? 1 : 0),
       norma_codigo: i.norma_codigo,
     };

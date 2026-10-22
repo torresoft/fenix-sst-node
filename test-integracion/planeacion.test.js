@@ -59,11 +59,27 @@ test('gestion del cambio: sin evaluacion de impacto no se aprueba', async () => 
   await rechaza(plan.avanzarCambio(s.repo, s.E, c, { accion: 'rechazar' }, HOY), /cerrado/);
 });
 
+test('fecha programada unica, tipos de recurso y descarga en Excel', async () => {
+  const p = await plan.crear(s.repo, s.E, { vigencia_anio: '2027', presupuesto_total: '0' });
+  await plan.agregarActividad(s.repo, s.E, p, { descripcion: 'Capacitacion en alturas', ciclo: 'HACER', responsable_texto: 'ARL', fecha_programada: '2027-04-10', tipos_recurso: ['humanos', 'fisicos'], recursos: 'Sala y ARL' });
+  await rechaza(plan.agregarActividad(s.repo, s.E, p, { descripcion: 'Recurso raro', ciclo: 'HACER', responsable_texto: 'X', fecha_programada: '2027-04-10', tipos_recurso: ['magicos'] }), /recurso/);
+  let [a] = (await plan.detalle(s.repo, s.E, p, HOY)).actividades;
+  assert.deepEqual([a.fecha_inicio, a.fecha_fin, a.tipos_recurso], ['2027-04-10', '2027-04-10', 'fisicos,humanos']);
+  await plan.reprogramar(s.repo, s.E, a.id, { fecha_fin: '2027-03-01', motivo: 'Disponibilidad de la ARL' });
+  [a] = (await plan.detalle(s.repo, s.E, p, HOY)).actividades;
+  assert.deepEqual([a.fecha_inicio, a.fecha_fin], ['2027-03-01', '2027-03-01'], 'fecha unica: se mueven las dos');
+  const x = await plan.aExcel(s.repo, s.E, p);
+  assert.equal(x.nombre, 'plan-trabajo-2027.xlsx');
+  assert.equal(x.buffer.subarray(0, 2).toString(), 'PK');
+});
+
 test('http: plan y gestion del cambio', async () => {
   const ir = await u.clienteHttp(s);
   let r = await ir('/planeacion');
   assert.equal(r.status, 200);
   assert.match(r.texto, /Simulacro anual/);
+  r = await ir(`/planeacion/planes/${s.plan}/excel`);
+  assert.equal(r.status, 200);
   r = await ir('/planeacion?tab=cambios');
   assert.match(r.texto, /Nueva prensa/);
 });
